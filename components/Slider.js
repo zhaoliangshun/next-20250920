@@ -83,6 +83,86 @@ const Slider = ({
     };
   }, []);
   
+  // 优化的事件处理 - 使用原生事件
+  const handleNativeMouseDown = useCallback((e, handleIndex = null) => {
+    if (disabled) return;
+    
+    e.preventDefault();
+    setIsDragging(true);
+    isDraggingRef.current = true;
+    
+    if (range) {
+      setActiveHandle(handleIndex);
+    }
+    
+    // 获取触摸或鼠标位置
+    const getEventPosition = (e) => {
+      if (e.touches && e.touches[0]) {
+        return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+      }
+      return { clientX: e.clientX, clientY: e.clientY };
+    };
+    
+    // 创建高性能事件处理函数
+    const moveHandler = (e) => {
+      if (!isDraggingRef.current) return;
+      
+      e.preventDefault();
+      const { clientX, clientY } = getEventPosition(e);
+      
+      // 直接计算位置，避免函数调用开销
+      if (!sliderRef.current) return;
+      
+      const rect = sliderRef.current.getBoundingClientRect();
+      const position = vertical ? clientY : clientX;
+      const size = vertical ? rect.height : rect.width;
+      const offset = vertical ? rect.top : rect.left;
+      
+      const percentage = Math.max(0, Math.min(1, (position - offset) / size));
+      const rawValue = min + percentage * (max - min);
+      const stepCount = Math.round((rawValue - min) / step);
+      const newValue = Math.min(max, Math.max(min, min + stepCount * step));
+      
+      // 直接更新值
+      if (range && handleIndex !== null) {
+        const newRangeValue = [...currentValue];
+        newRangeValue[handleIndex] = newValue;
+        
+        // 确保范围值的顺序正确
+        if (handleIndex === 0 && newRangeValue[0] > newRangeValue[1]) {
+          newRangeValue[0] = newRangeValue[1];
+        } else if (handleIndex === 1 && newRangeValue[1] < newRangeValue[0]) {
+          newRangeValue[1] = newRangeValue[0];
+        }
+        
+        onChange?.(newRangeValue);
+      } else if (!range) {
+        onChange?.(newValue);
+      }
+    };
+    
+    const upHandler = () => {
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      setActiveHandle(null);
+      
+      // 移除事件监听器
+      document.removeEventListener('mousemove', moveHandler);
+      document.removeEventListener('mouseup', upHandler);
+      document.removeEventListener('touchmove', moveHandler);
+      document.removeEventListener('touchend', upHandler);
+      
+      // 触发 onAfterChange
+      onAfterChange?.(currentValue);
+    };
+    
+    // 添加全局事件监听
+    document.addEventListener('mousemove', moveHandler);
+    document.addEventListener('mouseup', upHandler);
+    document.addEventListener('touchmove', moveHandler, { passive: false });
+    document.addEventListener('touchend', upHandler);
+  }, [disabled, range, currentValue, min, max, step, vertical, onChange, onAfterChange]);
+  
   // 计算轨道样式 - 优化性能
   const trackStyle = useMemo(() => {
     if (range) {
@@ -168,8 +248,15 @@ const Slider = ({
       return { clientX: e.clientX, clientY: e.clientY };
     };
     
-    // 直接更新值，不使用节流
-    const updateValue = (newValue) => {
+    // 创建事件处理函数
+    const moveHandler = (e) => {
+      if (!isDraggingRef.current) return;
+      
+      e.preventDefault();
+      const { clientX, clientY } = getEventPosition(e);
+      const newValue = getValueFromPosition(clientX, clientY);
+      
+      // 直接更新值，立即响应
       if (range && handleIndex !== null) {
         const newRangeValue = [...currentValue];
         newRangeValue[handleIndex] = newValue;
@@ -185,18 +272,6 @@ const Slider = ({
       } else if (!range) {
         onChange?.(newValue);
       }
-    };
-    
-    // 创建事件处理函数
-    const moveHandler = (e) => {
-      if (!isDraggingRef.current) return;
-      
-      e.preventDefault();
-      const { clientX, clientY } = getEventPosition(e);
-      const newValue = getValueFromPosition(clientX, clientY);
-      
-      // 直接更新，不使用 requestAnimationFrame
-      updateValue(newValue);
     };
     
     // 创建防抖的 onAfterChange 处理函数
@@ -376,8 +451,8 @@ const Slider = ({
               [vertical ? 'bottom' : 'left']: `${percent}%`,
               transform: vertical ? 'translateY(50%)' : 'translateX(-50%)'
             }}
-            onMouseDown={(e) => handleMouseDown(e, index)}
-            onTouchStart={(e) => handleMouseDown(e, index)}
+            onMouseDown={(e) => handleNativeMouseDown(e, index)}
+            onTouchStart={(e) => handleNativeMouseDown(e, index)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             tabIndex={disabled ? -1 : 0}
             role="slider"
@@ -404,8 +479,8 @@ const Slider = ({
             [vertical ? 'bottom' : 'left']: `${percent}%`,
             transform: vertical ? 'translateY(50%)' : 'translateX(-50%)'
           }}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleMouseDown}
+          onMouseDown={handleNativeMouseDown}
+          onTouchStart={handleNativeMouseDown}
           onKeyDown={handleKeyDown}
           tabIndex={disabled ? -1 : 0}
           role="slider"
