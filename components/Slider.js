@@ -305,7 +305,7 @@ const Slider = ({
     document.addEventListener('mouseup', upHandler);
     document.addEventListener('touchmove', moveHandler, { passive: false });
     document.addEventListener('touchend', upHandler);
-  }, [disabled, range, currentValue, getValueFromPosition, onChange, onAfterChange]);
+  }, [disabled, range, debounce, currentValue, getValueFromPosition, onChange, onAfterChange]);
   
   // 处理轨道点击
   const handleTrackClick = useCallback((e) => {

@@ -25,16 +25,17 @@
 .track {
   position: relative;
   width: 100%;
-  height: 6px;
+  height: 8px;
   background: transparent;
-  border-radius: 3px;
-  margin: 10px 0;
+  border-radius: 4px;
+  margin: 9px 0;
+  z-index: 1;
 }
 
 .sliderVertical .track {
-  width: 6px;
+  width: 8px;
   height: 100%;
-  margin: 0 10px;
+  margin: 0 9px;
 }
 
 .trackBackground {
@@ -44,9 +45,10 @@
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, #e0e0e0 0%, #d0d0d0 100%);
-  border-radius: 3px;
+  border-radius: 4px;
   transition: background-color 0.2s ease;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 1;
 }
 
 .trackActive {
@@ -54,7 +56,7 @@
   top: 0;
   height: 100%;
   background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);
-  border-radius: 3px;
+  border-radius: 4px;
   transition: background-color 0.1s ease;
   will-change: left, width, background-color;
   backface-visibility: hidden;
@@ -63,6 +65,7 @@
   -webkit-transform: translateZ(0);
   box-shadow: 0 1px 3px rgba(24, 144, 255, 0.3);
   contain: layout style paint;
+  z-index: 1;
 }
 
 .sliderVertical .trackActive {
@@ -127,12 +130,12 @@
 
 .handle:active,
 .handleActive {
-  cursor: grabbing;
+  /* cursor: grabbing;
   border-color: #096dd9;
   box-shadow: 0 6px 16px rgba(24, 144, 255, 0.5);
   transform: translate(-50%, -50%) scale(1.15);
   will-change: transform, border-color, box-shadow;
-  transition: none !important;
+  transition: none !important; */
 }
 
 .handle:active::before,
@@ -223,11 +226,14 @@
   transform: translate(-50%, -50%);
   width: 8px;
   height: 8px;
-  background: linear-gradient(135deg, #d9d9d9 0%, #bfbfbf 100%);
-  border-radius: 50%;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  border-radius: 1px;
   transition: all 0.2s ease;
-  z-index: 1;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  box-shadow: 
+    inset 0 1px 2px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .sliderVertical .mark {
@@ -238,7 +244,10 @@
 .markActive {
   background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
   transform: translate(-50%, -50%) scale(1.2);
-  box-shadow: 0 2px 6px rgba(24, 144, 255, 0.4);
+  box-shadow: 
+    inset 0 1px 2px rgba(24, 144, 255, 0.3),
+    0 2px 6px rgba(24, 144, 255, 0.4);
+  border: 1px solid rgba(24, 144, 255, 0.3);
 }
 
 .markLabel {
@@ -292,18 +301,18 @@
   }
   
   .track {
-    height: 8px;
-    margin: 12px 0;
+    height: 10px;
+    margin: 11px 0;
   }
   
   .sliderVertical .track {
-    width: 8px;
-    margin: 0 12px;
+    width: 10px;
+    margin: 0 11px;
   }
   
   .trackBackground,
   .trackActive {
-    border-radius: 4px;
+    border-radius: 5px;
   }
   
   .mark {
@@ -407,7 +416,6 @@
   -webkit-transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  contain: layout style paint;
 }
 
 /* 减少重绘优化 */
@@ -428,7 +436,7 @@
 
 /* 极高性能模式 */
 .sliderDragging {
-  contain: strict;
+  /* contain: strict; */
 }
 
 .sliderDragging .handle {
