@@ -281,6 +281,82 @@
   gap: 16px;
 }
 
+.tableDemo {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tableDemo h2 {
+  margin: 0 0 16px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.tableDemo p {
+  margin: 0 0 20px 0;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.sliderDemo {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sliderDemo h2 {
+  margin: 0 0 16px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.sliderDemo p {
+  margin: 0 0 24px 0;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.sliderSection {
+  margin-bottom: 32px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sliderSection:last-child {
+  margin-bottom: 0;
+}
+
+.sliderSection h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.sliderContainer {
+  position: relative;
+  padding: 20px 0;
+}
+
+.sliderValue {
+  margin-top: 16px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 .ctas button,
 .ctas a {
   appearance: none;
@@ -368,7 +444,8 @@ a.secondary {
   }
 
   .demoSection,
-  .instructions {
+  .instructions,
+  .tableDemo {
     padding: 20px;
   }
 
