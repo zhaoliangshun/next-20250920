@@ -321,6 +321,32 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+.sliderExample {
+  margin-bottom: 32px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sliderExample:last-child {
+  margin-bottom: 0;
+}
+
+.sliderExample h3 {
+  margin: 0 0 12px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.sliderExample p {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
 .sliderSection {
   margin-bottom: 32px;
   padding: 20px;

@@ -12,9 +12,12 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Slider 状态
-  const [sliderValue, setSliderValue] = useState(30);
+  const [sliderValue, setSliderValue] = useState(50);
   const [rangeValue, setRangeValue] = useState([20, 80]);
-  const [disabledSliderValue, setDisabledSliderValue] = useState(50);
+  const [stepValue, setStepValue] = useState(25);
+  const [marksValue, setMarksValue] = useState(60);
+  const [rangesValue, setRangesValue] = useState(75);
+  
 
   // 示例数据
   const tableData = [
@@ -216,8 +219,10 @@ export default function Home() {
             <li>✅ 鼠标拖拽和键盘导航</li>
             <li>✅ 实时工具提示显示</li>
             <li>✅ 自定义标记和步长</li>
-            <li>✅ 禁用状态和主题支持</li>
+            <li>✅ 区间颜色自定义</li>
+            <li>✅ 高性能优化，拖动流畅</li>
             <li>✅ 移动端触摸优化</li>
+            <li>✅ 无障碍访问支持</li>
           </ul>
         </div>
 
@@ -236,90 +241,121 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 滑动输入条演示 */}
+        {/* Slider 组件演示 */}
         <div className={styles.sliderDemo}>
           <h2>滑动输入条演示</h2>
-          <p>体验各种滑动输入条功能，包括单值滑块、范围滑块、标记和禁用状态。</p>
           
-          <div className={styles.sliderSection}>
+          {/* 基础滑块 */}
+          <div className={styles.sliderExample}>
             <h3>基础滑块</h3>
-            <div className={styles.sliderContainer}>
-              <Slider
-                min={0}
-                max={100}
-                value={sliderValue}
-                onChange={setSliderValue}
-                tooltipVisible={true}
-              />
-              <div className={styles.sliderValue}>当前值: {sliderValue}</div>
-            </div>
+            <p>当前值: {sliderValue}</p>
+            <Slider
+              min={0}
+              max={100}
+              value={sliderValue}
+              onChange={setSliderValue}
+              tooltip={true}
+            />
           </div>
-
-          <div className={styles.sliderSection}>
+          
+          {/* 范围滑块 */}
+          <div className={styles.sliderExample}>
             <h3>范围滑块</h3>
-            <div className={styles.sliderContainer}>
-              <Slider
-                min={0}
-                max={100}
-                value={rangeValue}
-                onChange={setRangeValue}
-                range={true}
-                tooltipVisible={true}
-              />
-              <div className={styles.sliderValue}>范围: {rangeValue[0]} - {rangeValue[1]}</div>
-            </div>
+            <p>当前范围: {rangeValue[0]} - {rangeValue[1]}</p>
+            <Slider
+              min={0}
+              max={100}
+              range={true}
+              rangeValue={rangeValue}
+              onChange={setRangeValue}
+              tooltip={true}
+            />
           </div>
-
-          <div className={styles.sliderSection}>
-            <h3>带标记的滑块</h3>
-            <div className={styles.sliderContainer}>
-              <Slider
-                min={0}
-                max={100}
-                step={10}
-                value={sliderValue}
-                onChange={setSliderValue}
-                marks={{
-                  0: '0°C',
-                  20: '20°C',
-                  40: '40°C',
-                  60: '60°C',
-                  80: '80°C',
-                  100: '100°C'
-                }}
-                tooltipVisible={true}
-              />
-              <div className={styles.sliderValue}>温度: {sliderValue}°C</div>
-            </div>
+          
+          {/* 步长滑块 */}
+          <div className={styles.sliderExample}>
+            <h3>步长滑块 (步长: 10)</h3>
+            <p>当前值: {stepValue}</p>
+            <Slider
+              min={0}
+              max={100}
+              step={10}
+              value={stepValue}
+              onChange={setStepValue}
+              tooltip={true}
+            />
           </div>
-
-          <div className={styles.sliderSection}>
-            <h3>禁用状态</h3>
-            <div className={styles.sliderContainer}>
-              <Slider
-                min={0}
-                max={100}
-                value={disabledSliderValue}
-                disabled={true}
-                tooltipVisible={true}
-              />
-              <div className={styles.sliderValue}>禁用状态 (值: {disabledSliderValue})</div>
-            </div>
+          
+          {/* 标记滑块 */}
+          <div className={styles.sliderExample}>
+            <h3>标记滑块</h3>
+            <p>当前值: {marksValue}</p>
+            <Slider
+              min={0}
+              max={100}
+              value={marksValue}
+              onChange={setMarksValue}
+              marks={{
+                0: '0°C',
+                25: '25°C',
+                50: '50°C',
+                75: '75°C',
+                100: '100°C'
+              }}
+              tooltip={true}
+            />
           </div>
-
-          <div className={styles.sliderSection}>
-            <h3>小步长滑块</h3>
-            <div className={styles.sliderContainer}>
-              <Slider
-                min={0}
-                max={1}
-                step={0.1}
-                value={sliderValue / 100}
-                onChange={(value) => setSliderValue(Math.round(value * 100))}
-                tooltipVisible={true}
-              />
-              <div className={styles.sliderValue}>精度: {(sliderValue / 100).toFixed(1)}</div>
-            </div>
+          
+          {/* 区间颜色滑块 */}
+          <div className={styles.sliderExample}>
+            <h3>区间颜色滑块</h3>
+            <p>当前值: {rangesValue}</p>
+            <Slider
+              min={0}
+              max={100}
+              value={rangesValue}
+              onChange={setRangesValue}
+              ranges={[
+                { start: 0, end: 30, color: '#52c41a' },    // 绿色 - 低温
+                { start: 30, end: 70, color: '#faad14' },   // 黄色 - 中温
+                { start: 70, end: 100, color: '#f5222d' }   // 红色 - 高温
+              ]}
+              marks={{
+                0: '低温',
+                30: '中温',
+                70: '高温',
+                100: '极高温'
+              }}
+              tooltip={true}
+            />
+          </div>
+          
+          {/* 组合功能滑块 */}
+          <div className={styles.sliderExample}>
+            <h3>组合功能滑块 (范围 + 步长 + 标记 + 区间颜色)</h3>
+            <p>当前范围: {rangeValue[0]} - {rangeValue[1]}</p>
+            <Slider
+              min={0}
+              max={100}
+              step={5}
+              range={true}
+              rangeValue={rangeValue}
+              onChange={setRangeValue}
+              ranges={[
+                { start: 0, end: 25, color: '#52c41a' },    // 绿色
+                { start: 25, end: 50, color: '#1890ff' },   // 蓝色
+                { start: 50, end: 75, color: '#faad14' },   // 黄色
+                { start: 75, end: 100, color: '#f5222d' }   // 红色
+              ]}
+              marks={{
+                0: '0',
+                25: '25',
+                50: '50',
+                75: '75',
+                100: '100'
+              }}
+              tooltip={true}
+            />
           </div>
         </div>
 
