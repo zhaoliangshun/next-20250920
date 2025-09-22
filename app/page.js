@@ -5,6 +5,7 @@ import BottomSheet from '../components/BottomSheet';
 import Modal from '../components/Modal';
 import FixedColumnTable from '../components/FixedColumnTable';
 import Slider from '../components/Slider';
+import AnimatedSwitch from '../components/AnimatedSwitch';
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -17,6 +18,14 @@ export default function Home() {
   const [stepValue, setStepValue] = useState(25);
   const [marksValue, setMarksValue] = useState(60);
   const [rangesValue, setRangesValue] = useState(75);
+  
+  // Switch 状态
+  const [basicSwitch, setBasicSwitch] = useState(false);
+  const [disabledSwitch, setDisabledSwitch] = useState(true);
+  const [loadingSwitch, setLoadingSwitch] = useState(false);
+  const [smallSwitch, setSmallSwitch] = useState(true);
+  const [largeSwitch, setLargeSwitch] = useState(false);
+  const [textSwitch, setTextSwitch] = useState(true);
   
 
   // 示例数据
@@ -226,6 +235,20 @@ export default function Home() {
           </ul>
         </div>
 
+        <div className={styles.demoSection}>
+          <h2>动画开关功能特点</h2>
+          <ul className={styles.featureList}>
+            <li>✅ 流畅的切换动画效果</li>
+            <li>✅ 悬停和点击交互反馈</li>
+            <li>✅ 多种尺寸支持（小、中、大）</li>
+            <li>✅ 自定义文本标签</li>
+            <li>✅ 加载状态显示</li>
+            <li>✅ 禁用状态支持</li>
+            <li>✅ 渐变背景和发光效果</li>
+            <li>✅ 波纹点击效果</li>
+          </ul>
+        </div>
+
         <div className={styles.ctas}>
           <button
             className={styles.primary}
@@ -239,6 +262,131 @@ export default function Home() {
           >
             打开居中弹窗
           </button>
+        </div>
+
+        {/* Switch 组件演示 */}
+        <div className={styles.switchDemo}>
+          <h2>动画开关演示</h2>
+          
+          {/* 基础开关 */}
+          <div className={styles.switchExample}>
+            <h3>基础开关</h3>
+            <p>状态: {basicSwitch ? '开启' : '关闭'}</p>
+            <AnimatedSwitch
+              checked={basicSwitch}
+              onChange={setBasicSwitch}
+            />
+          </div>
+          
+          {/* 不同尺寸 */}
+          <div className={styles.switchExample}>
+            <h3>不同尺寸</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+              <div>
+                <p>小尺寸: {smallSwitch ? '开启' : '关闭'}</p>
+                <AnimatedSwitch
+                  size="small"
+                  checked={smallSwitch}
+                  onChange={setSmallSwitch}
+                />
+              </div>
+              <div>
+                <p>默认尺寸: {basicSwitch ? '开启' : '关闭'}</p>
+                <AnimatedSwitch
+                  checked={basicSwitch}
+                  onChange={setBasicSwitch}
+                />
+              </div>
+              <div>
+                <p>大尺寸: {largeSwitch ? '开启' : '关闭'}</p>
+                <AnimatedSwitch
+                  size="large"
+                  checked={largeSwitch}
+                  onChange={setLargeSwitch}
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* 带文本标签 */}
+          <div className={styles.switchExample}>
+            <h3>带文本标签</h3>
+            <p>状态: {textSwitch ? '开启' : '关闭'}</p>
+            <AnimatedSwitch
+              checked={textSwitch}
+              onChange={setTextSwitch}
+              checkedChildren="开"
+              unCheckedChildren="关"
+            />
+          </div>
+          
+          {/* 禁用状态 */}
+          <div className={styles.switchExample}>
+            <h3>禁用状态</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+              <div>
+                <p>禁用 - 关闭</p>
+                <AnimatedSwitch
+                  checked={false}
+                  disabled={true}
+                />
+              </div>
+              <div>
+                <p>禁用 - 开启</p>
+                <AnimatedSwitch
+                  checked={disabledSwitch}
+                  disabled={true}
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* 加载状态 */}
+          <div className={styles.switchExample}>
+            <h3>加载状态</h3>
+            <p>状态: {loadingSwitch ? '开启' : '关闭'}</p>
+            <AnimatedSwitch
+              checked={loadingSwitch}
+              onChange={setLoadingSwitch}
+              loading={true}
+            />
+          </div>
+          
+          {/* 组合示例 */}
+          <div className={styles.switchExample}>
+            <h3>组合示例</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <AnimatedSwitch
+                  size="small"
+                  checked={smallSwitch}
+                  onChange={setSmallSwitch}
+                  checkedChildren="是"
+                  unCheckedChildren="否"
+                />
+                <span>接收通知</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <AnimatedSwitch
+                  checked={basicSwitch}
+                  onChange={setBasicSwitch}
+                  checkedChildren="ON"
+                  unCheckedChildren="OFF"
+                />
+                <span>自动保存</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <AnimatedSwitch
+                  size="large"
+                  checked={largeSwitch}
+                  onChange={setLargeSwitch}
+                  checkedChildren="启用"
+                  unCheckedChildren="禁用"
+                />
+                <span>深色模式</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Slider 组件演示 */}
