@@ -1,0 +1,166 @@
+.switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background: #d9d9d9;
+    border-radius: 100px;
+    overflow: hidden;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+}
+
+.switch:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.switch:active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Size variants */
+
+.small {
+    min-width: 28px;
+    height: 16px;
+    line-height: 16px;
+}
+
+.default {
+    min-width: 56px;
+    height: 22px;
+    line-height: 20px;
+}
+
+.large {
+    min-width: 56px;
+    height: 28px;
+    line-height: 26px;
+}
+
+
+/* Checked state */
+
+.switch.checked {
+    background: linear-gradient(135deg, #1890ff, #40a9ff);
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+}
+
+.switch.checked:hover {
+    background: linear-gradient(135deg, #40a9ff, #69c0ff);
+    box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+}
+
+
+/* Handle */
+
+.handle {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.small .handle {
+    width: 12px;
+    height: 12px;
+}
+
+.large .handle {
+    width: 24px;
+    height: 24px;
+}
+
+.switch.checked .handle {
+    left: auto;
+    right: 2px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.switch.checked.small .handle {
+    left: auto;
+    right: 2px;
+}
+
+.switch.checked.large .handle {
+    left: auto;
+    right: 2px;
+}
+
+
+/* Inner text */
+
+.inner {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 24px;
+    right: 6px;
+    color: #999;
+    font-size: 12px;
+    text-align: right;
+}
+
+.small .inner {
+    left: 16px;
+    right: 4px;
+    font-size: 10px;
+}
+
+.large .inner {
+    left: 32px;
+    right: 8px;
+    font-size: 14px;
+}
+
+.switch.checked .inner {
+    left: 12px;
+    right: 24px;
+    color: #fff;
+    text-align: left;
+    visibility: visible;
+}
+
+.switch.checked.small .inner {
+    left: 4px;
+    right: 16px;
+}
+
+.switch.checked.large .inner {
+    left: 8px;
+    right: 32px;
+}
+
+
+
+
+
+
+/* Text visibility control */
+.inner.hidden {
+    visibility: hidden !important;
+}
+
+.inner.visible {
+    visibility: visible !important;
+}
+
+/* Focus styles */
+
+.switch:focus-visible {
+    outline: 2px solid #1890ff;
+    outline-offset: 2px;
+}
