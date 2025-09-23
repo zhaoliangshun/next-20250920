@@ -230,16 +230,8 @@ export default function Home() {
         <div className={styles.demoSection}>
           <h2>开关 Switch 演示</h2>
           <div className={styles.sliderExample}>
-            <h3>基础</h3>
-            <Switch defaultChecked onChange={(val)=>console.log('switch:', val)} />
-          </div>
-          <div className={styles.sliderExample}>
-            <h3>小尺寸</h3>
-            <Switch size="small" />
-          </div>
-          <div className={styles.sliderExample}>
             <h3>带文字</h3>
-            <Switch defaultChecked checkedChildren="ON" unCheckedChildren="OFF" />
+            <Switch checkedChildren="ON" unCheckedChildren="OFF" />
           </div>
           
         </div>

@@ -12,6 +12,7 @@
   transition: background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease;
   outline: none;
   padding: 0 2px;
+  width: 56px;
 }
 
 .content {
@@ -22,6 +23,7 @@
   display: flex;
   align-items: center;
   transition: transform 0.2s ease;
+  justify-content: flex-end;
   transform: translateX(0)
 }
 
@@ -52,5 +54,5 @@
 }
 
 .switchChecked .contentInner {
-  transform: translateX(calc(var(--translateXWidth) * -1px))
+  transform: translateX(calc(var(--translateXWidth) * 1px));
 }
