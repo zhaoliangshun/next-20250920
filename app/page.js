@@ -5,6 +5,7 @@ import BottomSheet from '../components/BottomSheet';
 import Modal from '../components/Modal';
 import FixedColumnTable from '../components/FixedColumnTable';
 import Slider from '../components/Slider';
+import Switch from '../components/Switch';
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -224,6 +225,16 @@ export default function Home() {
             <li>✅ 移动端触摸优化</li>
             <li>✅ 无障碍访问支持</li>
           </ul>
+        </div>
+
+        <div className={styles.demoSection}>
+          <h2>开关 Switch 演示</h2>
+         
+          <div className={styles.sliderExample}>
+            <h3>带文字</h3>
+            <Switch defaultChecked checkedChildren="ON" unCheckedChildren="OFF" />
+          </div>
+          
         </div>
 
         <div className={styles.ctas}>
