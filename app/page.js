@@ -6,6 +6,7 @@ import Modal from '../components/Modal';
 import FixedColumnTable from '../components/FixedColumnTable';
 import Slider from '../components/Slider';
 import AnimatedSwitch from '../components/AnimatedSwitch';
+import Tour from '../components/Tour';
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -26,6 +27,44 @@ export default function Home() {
   const [smallSwitch, setSmallSwitch] = useState(true);
   const [largeSwitch, setLargeSwitch] = useState(false);
   const [textSwitch, setTextSwitch] = useState(true);
+
+  // Tour 状态
+  const [isTourOpen, setIsTourOpen] = useState(false);
+  const [currentTourStep, setCurrentTourStep] = useState(0);
+
+  // Tour 步骤配置
+  const tourSteps = [
+    {
+      target: '#switch-demo',
+      title: '开关组件演示',
+      content: '这里展示了不同尺寸和状态的开关组件，支持自定义文本和禁用状态。',
+      placement: 'bottom'
+    },
+    {
+      target: '#slider-demo',
+      title: '滑块组件演示',
+      content: '滑块组件支持单值、范围、步长和标记等多种模式，适用于数值选择场景。',
+      placement: 'top'
+    },
+    {
+      target: '#table-demo',
+      title: '表格组件演示',
+      content: '固定列表格组件，支持水平滚动时固定重要列，提升数据浏览体验。',
+      placement: 'top'
+    },
+    {
+      target: '#modal-demo',
+      title: '弹窗组件',
+      content: '点击这里可以打开模态弹窗，支持自定义内容和操作按钮。',
+      placement: 'left'
+    },
+    {
+      target: '#bottomsheet-demo',
+      title: '底部抽屉',
+      content: '底部抽屉组件适用于移动端，从底部滑出显示更多内容或操作选项。',
+      placement: 'top'
+    }
+  ];
   
 
   // 示例数据
@@ -253,19 +292,27 @@ export default function Home() {
           <button
             className={styles.primary}
             onClick={openBottomSheet}
+            id="bottomsheet-demo"
           >
             打开底部弹出层
           </button>
           <button
             className={styles.primary}
             onClick={openModal}
+            id="modal-demo"
           >
             打开居中弹窗
+          </button>
+          <button
+            className={styles.secondary}
+            onClick={() => setIsTourOpen(true)}
+          >
+            开始引导教程
           </button>
         </div>
 
         {/* Switch 组件演示 */}
-        <div className={styles.switchDemo}>
+        <div className={styles.switchDemo} id="switch-demo">
           <h2>动画开关演示</h2>
           
           {/* 基础开关 */}
@@ -390,7 +437,7 @@ export default function Home() {
         </div>
 
         {/* Slider 组件演示 */}
-        <div className={styles.sliderDemo}>
+        <div className={styles.sliderDemo} id="slider-demo">
           <h2>滑动输入条演示</h2>
           
           {/* 基础滑块 */}
