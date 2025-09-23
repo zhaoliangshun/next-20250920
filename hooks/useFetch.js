@@ -6,6 +6,10 @@ const useFetch = (url, options = {}) => {
     const [error, setError] = useState(null);
     const abortControllerRef = useRef(null);
     const cacheRef = useRef(new Map());
+    const optionsRef = useRef(options);
+    
+    // Update options ref when options change
+    optionsRef.current = options;
 
     const {
         method = 'GET',
@@ -89,16 +93,27 @@ const useFetch = (url, options = {}) => {
 
     // Main execute function
     const execute = useCallback(async (customUrl, customOptions = {}) => {
+        const currentOptions = optionsRef.current;
+        const {
+            method: currentMethod = 'GET',
+            headers: currentHeaders = {},
+            body: currentBody = null,
+            cache: currentCache = false,
+            onSuccess: currentOnSuccess,
+            onError: currentOnError,
+            ...currentFetchOptions
+        } = currentOptions;
+        
         const requestUrl = customUrl || url;
         const requestOptions = {
-            method,
+            method: currentMethod,
             headers: {
                 'Content-Type': 'application/json',
-                ...headers,
+                ...currentHeaders,
                 ...customOptions.headers,
             },
-            body: customOptions.body || body,
-            ...fetchOptions,
+            body: customOptions.body || currentBody,
+            ...currentFetchOptions,
             ...customOptions,
         };
 
@@ -108,7 +123,7 @@ const useFetch = (url, options = {}) => {
         }
 
         // Check cache first
-        if (cache && method === 'GET') {
+        if (currentCache && currentMethod === 'GET') {
             const cacheKey = getCacheKey(requestUrl, requestOptions);
             const cachedData = cacheRef.current.get(cacheKey);
             
@@ -116,7 +131,7 @@ const useFetch = (url, options = {}) => {
                 setData(cachedData.data);
                 setError(null);
                 setLoading(false);
-                onSuccess?.(cachedData.data);
+                currentOnSuccess?.(cachedData.data);
                 return cachedData.data;
             }
         }
@@ -131,7 +146,7 @@ const useFetch = (url, options = {}) => {
             setError(null);
 
             // Cache the result if caching is enabled
-            if (cache && method === 'GET') {
+            if (currentCache && currentMethod === 'GET') {
                 const cacheKey = getCacheKey(requestUrl, requestOptions);
                 cacheRef.current.set(cacheKey, {
                     data: result,
@@ -139,18 +154,18 @@ const useFetch = (url, options = {}) => {
                 });
             }
 
-            onSuccess?.(result);
+            currentOnSuccess?.(result);
             return result;
         } catch (err) {
             const errorObj = err instanceof Error ? err : new Error(String(err));
             setError(errorObj);
             setData(null);
-            onError?.(errorObj);
+            currentOnError?.(errorObj);
             throw errorObj;
         } finally {
             setLoading(false);
         }
-    }, [url, method, headers, body, fetchOptions, cache, getCacheKey, isCacheValid, fetchWithRetry, onSuccess, onError]);
+    }, [url, getCacheKey, isCacheValid, fetchWithRetry]);
 
     // Refetch function
     const refetch = useCallback(() => {
@@ -177,9 +192,11 @@ const useFetch = (url, options = {}) => {
 
         // Cleanup function
         return () => {
-            cancel();
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
         };
-    }, [immediate, url, execute, cancel]);
+    }, [immediate, url, execute]);
 
     return {
         data,
