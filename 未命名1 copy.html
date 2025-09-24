@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>可折叠固定列表格</title>
+  <!-- 引入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入 Font Awesome 图标库 -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 自定义配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#F2F3F5',
+            neutral: '#86909C',
+          },
+          boxShadow: {
+            'table': '0 2px 8px rgba(0, 0, 0, 0.08)',
+          }
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      /* 表格容器滚动条样式 */
+      .table-scrollbar::-webkit-scrollbar {
+        height: 6px;
+      }
+      .table-scrollbar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+      .table-scrollbar::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+      }
+      .table-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+      
+      /* 固定列过渡效果 */
+      .fixed-col-transition {
+        transition: width 0.3s ease, padding 0.3s ease;
+      }
+      
+      /* 表头单元格样式 */
+      .table-header-cell {
+        @apply px-4 py-3 text-sm font-semibold text-left text-neutral bg-secondary;
+      }
+      
+      /* 表格内容单元格样式 */
+      .table-body-cell {
+        @apply px-4 py-3 text-sm text-gray-700 border-t border-gray-100;
+      }
+    }
+  </style>
+</head>
+<body class="p-6 bg-gray-50">
+  <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-table overflow-hidden">
+    <h3 class="px-6 py-4 text-lg font-bold text-gray-800 border-b border-gray-100">可折叠固定列数据表格</h3>
+    
+    <!-- 表格容器（设置overflow-x实现滑动） -->
+    <div id="tableContainer" class="table-scrollbar overflow-x-auto relative">
+      <table class="w-full border-collapse">
+        <!-- 表头 -->
+        <thead>
+          <tr>
+            <!-- 固定表头列 -->
+            <th id="fixedHeader" class="fixed left-0 z-10 fixed-col-transition w-48 bg-secondary border-r border-gray-200">
+              <div class="flex items-center gap-2">
+                <i class="fa fa-user-o text-primary hidden" id="headerIcon"></i>
+                <span id="headerText">用户信息</span>
+              </div>
+            </th>
+            <!-- 可滑动表头列 -->
+            <th class="table-header-cell pl-52">订单编号</th>
+            <th class="table-header-cell">商品名称</th>
+            <th class="table-header-cell">商品分类</th>
+            <th class="table-header-cell">订单金额</th>
+            <th class="table-header-cell">支付方式</th>
+            <th class="table-header-cell">订单状态</th>
+            <th class="table-header-cell">下单时间</th>
+            <th class="table-header-cell">发货时间</th>
+            <th class="table-header-cell pr-8">操作</th>
+          </tr>
+        </thead>
+        
+        <!-- 表体 -->
+        <tbody>
+          <!-- 数据行 1 -->
+          <tr class="hover:bg-gray-50">
+            <!-- 固定内容列 -->
+            <td id="fixedCell1" class="fixed left-0 z-0 fixed-col-transition w-48 bg-white border-r border-gray-200">
+              <div class="flex items-center gap-2 table-body-cell">
+                <i class="fa fa-user text-primary hidden" id="cellIcon1"></i>
+                <span id="cellText1">张三 (ID: 1001)</span>
+              </div>
+            </td>
+            <!-- 可滑动内容列 -->
+            <td class="table-body-cell pl-52">ORD20240501001</td>
+            <td class="table-body-cell">智能手表 Series 8</td>
+            <td class="table-body-cell">智能设备</td>
+            <td class="table-body-cell">¥2,999.00</td>
+            <td class="table-body-cell">支付宝</td>
+            <td class="table-body-cell"><span class="px-2 py-1 text-xs rounded-full bg-green-50 text-green-600">已完成</span></td>
+            <td class="table-body-cell">2024-05-01 09:23</td>
+            <td class="table-body-cell">2024-05-01 14:15</td>
+            <td class="table-body-cell pr-8">
+              <button class="text-primary hover:text-primary/80 text-sm">详情</button>
+            </td>
+          </tr>
+          
+          <!-- 数据行 2 -->
+          <tr class="hover:bg-gray-50">
+            <td id="fixedCell2" class="fixed left-0 z-0 fixed-col-transition w-48 bg-white border-r border-gray-200">
+              <div class="flex items-center gap-2 table-body-cell">
+                <i class="fa fa-user text-primary hidden" id="cellIcon2"></i>
+                <span id="cellText2">李四 (ID: 1002)</span>
+              </div>
+            </td>
+            <td class="table-body-cell pl-52">ORD20240502003</td>
+            <td class="table-body-cell">无线降噪耳机 Pro</td>
+            <td class="table-body-cell">音频设备</td>
+            <td class="table-body-cell">¥1,599.00</td>
+            <td class="table-body-cell">微信支付</td>
+            <td class="table-body-cell"><span class="px-2 py-1 text-xs rounded-full bg-green-50 text-green-600">已完成</span></td>
+            <td class="table-body-cell">2024-05-02 11:45</td>
+            <td class="table-body-cell">2024-05-02 16:30</td>
+            <td class="table-body-cell pr-8">
+              <button class="text-primary hover:text-primary/80 text-sm">详情</button>
+            </td>
+          </tr>
+          
+          <!-- 数据行 3 -->
+          <tr class="hover:bg-gray-50">
+            <td id="fixedCell3" class="fixed left-0 z-0 fixed-col-transition w-48 bg-white border-r border-gray-200">
+              <div class="flex items-center gap-2 table-body-cell">
+                <i class="fa fa-user text-primary hidden" id="cellIcon3"></i>
+                <span id="cellText3">王五 (ID: 1003)</span>
+              </div>
+            </td>
+            <td class="table-body-cell pl-52">ORD20240503005</td>
+            <td class="table-body-cell">超薄笔记本电脑 Air</td>
+            <td class="table-body-cell">电脑设备</td>
+            <td class="table-body-cell">¥7,999.00</td>
+            <td class="table-body-cell">银行卡支付</td>
+            <td class="table-body-cell"><span class="px-2 py-1 text-xs rounded-full bg-yellow-50 text-yellow-600">待收货</span></td>
+            <td class="table-body-cell">2024-05-03 15:18</td>
+            <td class="table-body-cell">2024-05-04 08:42</td>
+            <td class="table-body-cell pr-8">
+              <button class="text-primary hover:text-primary/80 text-sm">详情</button>
+            </td>
+          </tr>
+          
+          <!-- 数据行 4 -->
+          <tr class="hover:bg-gray-50">
+            <td id="fixedCell4" class="fixed left-0 z-0 fixed-col-transition w-48 bg-white border-r border-gray-200">
+              <div class="flex items-center gap-2 table-body-cell">
+                <i class="fa fa-user text-primary hidden" id="cellIcon4"></i>
+                <span id="cellText4">赵六 (ID: 1004)</span>
+              </div>
+            </td>
+            <td class="table-body-cell pl-52">ORD20240504002</td>
+            <td class="table-body-cell">高清投影仪 Mini</td>
+            <td class="table-body-cell">影音设备</td>
+            <td class="table-body-cell">¥3,299.00</td>
+            <td class="table-body-cell">支付宝</td>
+            <td class="table-body-cell"><span class="px-2 py-1 text-xs rounded-full bg-red-50 text-red-600">已取消</span></td>
+            <td class="table-body-cell">2024-05-04 09:05</td>
+            <td class="table-body-cell">-</td>
+            <td class="table-body-cell pr-8">
+              <button class="text-primary hover:text-primary/80 text-sm">详情</button>
+            </td>
+          </tr>
+          
+          <!-- 数据行 5 -->
+          <tr class="hover:bg-gray-50">
+            <td id="fixedCell5" class="fixed left-0 z-0 fixed-col-transition w-48 bg-white border-r border-gray-200">
+              <div class="flex items-center gap-2 table-body-cell">
+                <i class="fa fa-user text-primary hidden" id="cellIcon5"></i>
+                <span id="cellText5">孙七 (ID: 1005)</span>
+              </div>
+            </td>
+            <td class="table-body-cell pl-52">ORD20240505007</td>
+            <td class="table-body-cell">便携式蓝牙音箱</td>
+            <td class="table-body-cell">音频设备</td>
+            <td class="table-body-cell">¥499.00</td>
+            <td class="table-body-cell">微信支付</td>
+            <td class="table-body-cell"><span class="px-2 py-1 text-xs rounded-full bg-blue-50 text-blue-600">待支付</span></td>
+            <td class="table-body-cell">2024-05-05 16:32</td>
+            <td class="table-body-cell">-</td>
+            <td class="table-body-cell pr-8">
+              <button class="text-primary hover:text-primary/80 text-sm">详情</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // 获取DOM元素
+    const tableContainer = document.getElementById('tableContainer');
+    const fixedHeader = document.getElementById('fixedHeader');
+    const headerIcon = document.getElementById('headerIcon');
+    const headerText = document.getElementById('headerText');
+    
+    // 固定列元素集合
+    const fixedCells = [
+      { cell: document.getElementById('fixedCell1'), icon: document.getElementById('cellIcon1'), text: document.getElementById('cellText1') },
+      { cell: document.getElementById('fixedCell2'), icon: document.getElementById('cellIcon2'), text: document.getElementById('cellText2') },
+      { cell: document.getElementById('fixedCell3'), icon: document.getElementById('cellIcon3'), text: document.getElementById('cellText3') },
+      { cell: document.getElementById('fixedCell4'), icon: document.getElementById('cellIcon4'), text: document.getElementById('cellText4') },
+      { cell: document.getElementById('fixedCell5'), icon: document.getElementById('cellIcon5'), text: document.getElementById('cellText5') }
+    ];
+    
+    // 定义折叠阈值（滚动距离超过此值则折叠）
+    const collapseThreshold = 50;
+    
+    // 处理滚动事件
+    tableContainer.addEventListener('scroll', function() {
+      const scrollLeft = this.scrollLeft;
+      
+      // 表头折叠逻辑
+      if (scrollLeft > collapseThreshold) {
+        // 折叠状态：缩小宽度，显示图标，隐藏文字
+        fixedHeader.classList.remove('w-48');
+        fixedHeader.classList.add('w-12', 'justify-center');
+        headerIcon.classList.remove('hidden');
+        headerText.classList.add('hidden');
+        
+        // 表体固定列同步折叠
+        fixedCells.forEach(item => {
+          item.cell.classList.remove('w-48');
+          item.cell.classList.add('w-12', 'justify-center');
+          item.icon.classList.remove('hidden');
+          item.text.classList.add('hidden');
+        });
+      } else {
+        // 展开状态：恢复宽度，显示文字，隐藏图标
+        fixedHeader.classList.remove('w-12', 'justify-center');
+        fixedHeader.classList.add('w-48');
+        headerIcon.classList.add('hidden');
+        headerText.classList.remove('hidden');
+        
+        // 表体固定列同步展开
+        fixedCells.forEach(item => {
+          item.cell.classList.remove('w-12', 'justify-center');
+          item.cell.classList.add('w-48');
+          item.icon.classList.add('hidden');
+          item.text.classList.remove('hidden');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

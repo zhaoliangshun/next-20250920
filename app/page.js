@@ -1,16 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import BottomSheet from '../components/BottomSheet';
 import Modal from '../components/Modal';
-import FixedColumnTable from '../components/FixedColumnTable';
 import Slider from '../components/Slider';
 import Switch from '../components/Switch';
+import Tour from '../components/Tour';
+import FixedColumnTable from '../components/FixedColumnTable';
 import styles from "./page.module.css";
 
 export default function Home() {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTourOpen, setIsTourOpen] = useState(false);
   
   // Slider 状态
   const [sliderValue, setSliderValue] = useState(50);
@@ -92,6 +95,26 @@ export default function Home() {
   // 表格列配置
   const tableColumns = [
     {
+      key: 'name',
+      title: '姓名',
+      width: '200px',
+      render: (value, rowData) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Image 
+            src={`https://s3.amazonaws.com/my-bucket/profile.png`} 
+            alt={value} 
+            width={32}
+            height={32}
+            style={{ 
+              borderRadius: '50%', 
+              objectFit: 'cover' 
+            }} 
+          />
+          <span style={{ fontWeight: '500', color: '#262626' }}>{value}</span>
+        </div>
+      )
+    },
+    {
       key: 'department',
       title: '部门',
       width: '120px'
@@ -172,10 +195,57 @@ export default function Home() {
     setIsModalOpen(false);
   };
 
+  const openTour = () => {
+    setIsTourOpen(true);
+  };
+
+  const closeTour = () => {
+    setIsTourOpen(false);
+  };
+
+  const tourSteps = [
+    {
+      target: '#page-title',
+      title: '欢迎使用组件演示页',
+      content: '本向导将带你快速了解页面上的关键组件。',
+      placement: 'bottom'
+    },
+    {
+      target: '#btn-bottomsheet',
+      title: '底部弹出层',
+      content: '点击这里打开 BottomSheet，模拟移动端抽屉效果。',
+      placement: 'bottom'
+    },
+    {
+      target: '#btn-modal',
+      title: '居中弹窗',
+      content: '这里可以打开一个居中弹窗，支持多种尺寸与动画。',
+      placement: 'bottom'
+    },
+    {
+      target: '#switch-demo',
+      title: '开关 Switch',
+      content: '与 Ant Design 风格一致的开关组件，支持文字与状态切换。',
+      placement: 'right'
+    },
+    {
+      target: '#slider-demo',
+      title: '滑动输入条',
+      content: '支持单值、范围、标记与区间色等高级功能。',
+      placement: 'top'
+    },
+    {
+      target: '#table-demo',
+      title: '固定列表格',
+      content: '左侧固定列、右侧横向滚动，支持自定义单元格。',
+      placement: 'top'
+    }
+  ];
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h1 className={styles.title}>弹窗组件演示</h1>
+        <h1 id="page-title" className={styles.title}>弹窗组件演示</h1>
         
         <div className={styles.demoSection}>
           <h2>底部弹出层功能特点</h2>
@@ -227,7 +297,7 @@ export default function Home() {
           </ul>
         </div>
 
-        <div className={styles.demoSection}>
+        <div id="switch-demo" className={styles.demoSection}>
           <h2>开关 Switch 演示</h2>
           <div className={styles.sliderExample}>
             <h3>带文字</h3>
@@ -239,20 +309,28 @@ export default function Home() {
         <div className={styles.ctas}>
           <button
             className={styles.primary}
+            id="btn-bottomsheet"
             onClick={openBottomSheet}
           >
             打开底部弹出层
           </button>
           <button
             className={styles.primary}
+            id="btn-modal"
             onClick={openModal}
           >
             打开居中弹窗
           </button>
+          <button
+            className={styles.primary}
+            onClick={openTour}
+          >
+            开始引导
+          </button>
         </div>
 
         {/* Slider 组件演示 */}
-        <div className={styles.sliderDemo}>
+        <div id="slider-demo" className={styles.sliderDemo}>
           <h2>滑动输入条演示</h2>
           
           {/* 基础滑块 */}
@@ -370,15 +448,16 @@ export default function Home() {
         </div>
 
         {/* 固定列表格演示 */}
-        <div className={styles.tableDemo}>
+        <div id="table-demo" className={styles.tableDemo}>
           <h2>固定列表格演示</h2>
-          <p>向右滚动表格，观察左侧固定列如何缩小为图标。点击图标可以展开并回到左侧。</p>
+          <p>左右滑动表格，当滑动到右边时，左边的固定列会自动缩小为图标，点击图标可以回到左侧。</p>
+          
           <FixedColumnTable
             data={tableData}
             columns={tableColumns}
+            fixedColumnKey="name"
             fixedColumnWidth={200}
             collapsedWidth={60}
-            icon="👤"
             onRowClick={handleRowClick}
           />
         </div>
@@ -443,6 +522,15 @@ export default function Home() {
           </div>
         </div>
       </Modal>
+
+      <Tour
+        isOpen={isTourOpen}
+        steps={tourSteps}
+        onClose={closeTour}
+        onComplete={closeTour}
+        showProgress={true}
+        showSkip={true}
+      />
     </div>
   );
 }

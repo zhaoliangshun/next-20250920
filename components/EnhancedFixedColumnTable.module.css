@@ -8,106 +8,100 @@
   background: white;
 }
 
-.scrollableContainer {
-  overflow-x: scroll;
-  overflow-y: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: #d9d9d9 transparent;
+.tableWrapper {
+  display: flex;
+  position: relative;
+  width: 100%;
 }
 
-.scrollableContainer::-webkit-scrollbar {
-  height: 8px;
-}
-
-.scrollableContainer::-webkit-scrollbar-track {
-  background: #f5f5f5;
-}
-
-.scrollableContainer::-webkit-scrollbar-thumb {
-  background: #d9d9d9;
-  border-radius: 4px;
-}
-
-.scrollableContainer::-webkit-scrollbar-thumb:hover {
-  background: #bfbfbf;
-}
-
-/* 固定列Header样式 */
-.fixedHeader {
+/* 固定列样式 */
+.fixedColumn {
   position: sticky;
   left: 0;
   z-index: 10;
+  background: white;
+  border-right: 2px solid #e8e8e8;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 200px;
+  width: 200px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  will-change: width, min-width, transform, opacity;
+}
+
+.fixedColumn.collapsed {
+  min-width: 60px;
+  width: 60px;
+  cursor: pointer;
+  background: #f8f9fa;
+  border-right: 2px solid #1890ff;
+}
+
+.fixedColumn.collapsed:hover {
+  background: #e6f7ff;
+  transform: scale(1.02);
+}
+
+/* 固定列头部 */
+.fixedHeader {
   height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
   background: #fafafa;
   border-bottom: 1px solid #e8e8e8;
-  border-right: 2px solid #e8e8e8;
   font-weight: 600;
   color: #262626;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .fixedHeader.collapsed {
   background: #1890ff;
   color: white;
-  border-right: 2px solid #1890ff;
-}
-
-.fixedHeader:hover {
-  background: #f0f0f0;
-}
-
-.fixedHeader.collapsed:hover {
-  background: #40a9ff;
-}
-
-.headerContent {
-  height: 100%;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  position: relative;
-  padding: 0 16px;
+  padding: 0 8px;
 }
 
 .fixedTitle {
   font-size: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 1;
-  transform: scale(1);
-}
-
-.fixedTitle.hidden {
-  opacity: 0;
-  transform: scale(0.8);
-  position: absolute;
+  white-space: nowrap;
+  will-change: transform, opacity;
 }
 
 .collapseIcon {
-  opacity: 0;
-  transform: scale(0.8);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  opacity: 0;
+  will-change: transform, opacity;
 }
 
-.fixedHeader.collapsed .collapseIcon {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* 固定列内容样式 */
-.fixedCell {
-  position: sticky;
-  left: 0;
-  z-index: 5;
-  height: 60px;
+/* 固定列内容 */
+.fixedContent {
   background: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.fixedCell {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
   border-bottom: 1px solid #f0f0f0;
-  border-right: 2px solid #e8e8e8;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .fixedCell:hover {
@@ -115,82 +109,8 @@
 }
 
 .fixedCell.collapsed {
-  background: #f8f9fa;
-  border-right: 2px solid #1890ff;
-  box-shadow: 6px 0 16px rgba(24, 144, 255, 0.25), 3px 0 8px rgba(24, 144, 255, 0.15);
-}
-
-/* 滚动提示层 */
-.scrollHint {
-  position: sticky;
-  right: 0;
-  left: 0;
-  height: 0;
-  z-index: 20;
-  bottom: 50px;
-}
-
-.hintInner {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.55);
-  color: white;
-  font-size: 12px;
-  line-height: 1;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-  animation: hintFadeIn 300ms ease, hintFloat 1.6s ease-in-out infinite;
-}
-
-.hintText {
-  font-weight: 600;
-}
-
-.hintArrows {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.arrowLeft, .arrowRight {
-  width: 16px;
-  height: 16px;
-  opacity: 0.9;
-}
-
-.arrowLeft {
-  animation: arrowSlideLeft 900ms ease-in-out infinite;
-}
-
-.arrowRight {
-  animation: arrowSlideRight 900ms ease-in-out infinite;
-}
-
-@keyframes hintFadeIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes hintFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
-}
-
-@keyframes arrowSlideLeft {
-  0% { transform: translateX(2px); opacity: 0.4; }
-  50% { transform: translateX(0); opacity: 1; }
-  100% { transform: translateX(2px); opacity: 0.4; }
-}
-
-@keyframes arrowSlideRight {
-  0% { transform: translateX(-2px); opacity: 0.4; }
-  50% { transform: translateX(0); opacity: 1; }
-  100% { transform: translateX(-2px); opacity: 0.4; }
+  justify-content: center;
+  padding: 0 8px;
 }
 
 .fixedCell.collapsed:hover {
@@ -200,12 +120,11 @@
 /* 展开状态的内容 */
 .expandedContent {
   width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 16px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 .expandedContent img {
@@ -222,12 +141,15 @@
 
 /* 折叠状态的内容 */
 .collapsedContent {
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 8px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 .avatar {
@@ -252,11 +174,39 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* 可滚动区域 */
+.scrollableArea {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #d9d9d9 transparent;
+  -webkit-overflow-scrolling: touch; /* 增强移动端滚动体验 */
+}
+
+.scrollableArea::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scrollableArea::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.scrollableArea::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 4px;
+}
+
+.scrollableArea::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}
+
 /* 表格样式 */
 .table {
   width: 100%;
   border-collapse: collapse;
   min-width: 600px;
+  table-layout: fixed;
 }
 
 .tableHeader {
@@ -272,6 +222,7 @@
   position: sticky;
   top: 0;
   z-index: 5;
+  box-sizing: border-box;
 }
 
 .tableRow {
@@ -292,13 +243,13 @@
 }
 
 .tableCell {
-  height: 60px;
-  padding: 0 16px;
+  padding: 16px;
   border-bottom: 1px solid #f0f0f0;
   font-size: 14px;
   color: #595959;
   white-space: nowrap;
   vertical-align: middle;
+  box-sizing: border-box;
 }
 
 /* 响应式设计 */

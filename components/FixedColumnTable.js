@@ -1,18 +1,19 @@
-'use client';
-
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import styles from './FixedColumnTable.module.css';
 
-export default function FixedColumnTable({ 
+const FixedColumnTable = ({ 
   data = [], 
   columns = [], 
+  fixedColumnKey = 'name',
   fixedColumnWidth = 200,
   collapsedWidth = 60,
-  icon = '👤',
-  onRowClick = null 
-}) {
+  onRowClick,
+  className = ''
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [showScrollHint, setShowScrollHint] = useState(false);
   const tableRef = useRef(null);
   const scrollContainerRef = useRef(null);
 
@@ -20,12 +21,19 @@ export default function FixedColumnTable({
   useEffect(() => {
     const handleScroll = () => {
       if (scrollContainerRef.current) {
-        const scrollLeft = scrollContainerRef.current.scrollLeft;
-        setScrollPosition(scrollLeft);
+        const scrollLeftValue = scrollContainerRef.current.scrollLeft;
+        setScrollLeft(scrollLeftValue);
         
         // 当滚动超过一定距离时，固定列缩小为图标
-        const shouldCollapse = scrollLeft > 100;
-        setIsCollapsed(shouldCollapse);
+        const shouldCollapse = scrollLeftValue > 50;
+        if (shouldCollapse !== isCollapsed) {
+          setIsCollapsed(shouldCollapse);
+        }
+
+        // 一旦用户发生横向滚动，隐藏提示
+        if (scrollLeftValue > 0 && showScrollHint) {
+          setShowScrollHint(false);
+        }
       }
     };
 
@@ -34,134 +42,177 @@ export default function FixedColumnTable({
       scrollContainer.addEventListener('scroll', handleScroll);
       return () => scrollContainer.removeEventListener('scroll', handleScroll);
     }
-  }, []);
+  }, [isCollapsed, showScrollHint]);
+
+  // 初次渲染后检测是否可横向滚动，决定是否展示提示
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const canScroll = el.scrollWidth > el.clientWidth;
+    if (canScroll) {
+      setShowScrollHint(true);
+      // 超时自动隐藏
+      // const timer = setTimeout(() => setShowScrollHint(false), 3500);
+      // return () => clearTimeout(timer);
+    } else {
+      setShowScrollHint(false);
+    }
+  }, [data, columns]);
+
+  // 处理固定列点击，回到左侧
+  const handleFixedColumnClick = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   // 处理行点击
   const handleRowClick = (rowData, index) => {
-    if (onRowClick) {
-      onRowClick(rowData, index);
-    }
+    onRowClick?.(rowData, index);
   };
 
-  // 处理固定列点击
-  const handleFixedColumnClick = (rowData, index) => {
-    if (isCollapsed) {
-      // 如果已折叠，点击图标时展开并滚动到该行
-      setIsCollapsed(false);
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-      }
+  // 获取固定列的数据
+  const getFixedColumnData = (rowData) => {
+    const fixedColumn = columns.find(col => col.key === fixedColumnKey);
+    if (fixedColumn && fixedColumn.render) {
+      return fixedColumn.render(rowData[fixedColumnKey], rowData);
     }
-    handleRowClick(rowData, index);
+    return rowData[fixedColumnKey];
+  };
+
+  // 获取固定列的标题
+  const getFixedColumnTitle = () => {
+    const fixedColumn = columns.find(col => col.key === fixedColumnKey);
+    return fixedColumn?.title || fixedColumnKey;
+  };
+
+  // 获取其他列的数据
+  const getOtherColumns = () => {
+    return columns.filter(col => col.key !== fixedColumnKey);
   };
 
   return (
-    <div className={styles.tableContainer}>
+    <div className={`${styles.tableContainer} ${className}`}>
       <div 
         ref={scrollContainerRef}
-        className={styles.scrollContainer}
+        className={styles.scrollableContainer}
       >
-        <table className={styles.table}>
+        <table ref={tableRef} className={styles.table}>
           <thead>
             <tr>
-              {/* 固定列头部 */}
+              {/* 固定列Header */}
               <th 
-                className={`${styles.fixedColumn} ${isCollapsed ? styles.collapsed : ''}`}
-                style={{
-                  width: isCollapsed ? `${collapsedWidth}px` : `${fixedColumnWidth}px`
+                className={`${styles.fixedHeader} ${isCollapsed ? styles.collapsed : ''}`}
+                style={{ 
+                  width: isCollapsed ? `${collapsedWidth}px` : `${fixedColumnWidth}px`,
+                  minWidth: isCollapsed ? `${collapsedWidth}px` : `${fixedColumnWidth}px`,
+                  maxWidth: isCollapsed ? `${collapsedWidth}px` : `${fixedColumnWidth}px`
                 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (isCollapsed) {
-                    setIsCollapsed(false);
-                    if (scrollContainerRef.current) {
-                      scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-                    }
-                  }
-                }}
+                onClick={handleFixedColumnClick}
               >
-                {isCollapsed ? (
-                  <div className={styles.iconCell}>
-                    <span className={styles.icon}>{icon}</span>
-                  </div>
-                ) : (
-                  '姓名'
-                )}
+                <div className={styles.headerContent}>
+                  <span className={`${styles.fixedTitle} ${isCollapsed ? styles.hidden : ''}`}>
+                    {getFixedColumnTitle()}
+                  </span>
+                  {isCollapsed && (
+                    <div className={styles.collapseIcon}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 18l6-6-6-6"/>
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <div className={styles.fixedShadow} aria-hidden="true" />
               </th>
               
-              {/* 可滚动列头部 */}
-              {columns.map((column, index) => (
+              {/* 其他列Header */}
+              {getOtherColumns().map((column, index) => (
                 <th 
-                  key={index}
-                  className={styles.scrollableColumn}
-                  style={{ minWidth: column.width || '150px' }}
+                  key={column.key || index}
+                  className={styles.tableHeader}
+                  style={{ width: column.width || 'auto' }}
                 >
                   {column.title}
                 </th>
               ))}
             </tr>
           </thead>
-          
           <tbody>
-            {data.map((row, rowIndex) => (
+            {data.map((rowData, rowIndex) => (
               <tr 
-                key={rowIndex}
+                key={rowData.id || rowIndex}
                 className={styles.tableRow}
-                onClick={() => handleRowClick(row, rowIndex)}
+                onClick={() => handleRowClick(rowData, rowIndex)}
               >
                 {/* 固定列内容 */}
                 <td 
-                  className={`${styles.fixedColumn} ${isCollapsed ? styles.collapsed : ''}`}
-                  style={{
-                    width: isCollapsed ? `${collapsedWidth}px` : `${fixedColumnWidth}px`
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleFixedColumnClick(row, rowIndex);
+                  className={`${styles.fixedCell} ${isCollapsed ? styles.collapsed : ''}`}
+                  style={{ 
+                    width: isCollapsed ? `${collapsedWidth}px` : `${fixedColumnWidth}px`,
+                    minWidth: isCollapsed ? `${collapsedWidth}px` : `${fixedColumnWidth}px`,
+                    maxWidth: isCollapsed ? `${collapsedWidth}px` : `${fixedColumnWidth}px`
                   }}
                 >
-                  {isCollapsed ? (
-                    <div className={styles.iconCell}>
-                      <span className={styles.icon}>{icon}</span>
-                    </div>
-                  ) : (
-                    <div className={styles.nameCell}>
-                      <span className={styles.name}>{row.name}</span>
-                      {row.avatar && (
-                        <img 
-                          src={row.avatar} 
-                          alt={row.name}
-                          className={styles.avatar}
-                        />
-                      )}
-                    </div>
-                  )}
+                  <div className={styles.fixedCellInner}>
+                    {isCollapsed ? (
+                      <div className={styles.collapsedContent}>
+                        {/* 显示头像或图标 */}
+                        {rowData.avatar ? (
+                          <Image 
+                            src={rowData.avatar} 
+                            alt={rowData[fixedColumnKey]} 
+                            width={32}
+                            height={32}
+                            className={styles.avatar}
+                          />
+                        ) : (
+                          <div className={styles.defaultAvatar}>
+                            {rowData[fixedColumnKey]?.charAt(0) || '?'}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className={styles.expandedContent}>
+                        {getFixedColumnData(rowData)}
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.fixedShadow} aria-hidden="true" />
                 </td>
                 
-                {/* 可滚动列内容 */}
-                {columns.map((column, colIndex) => (
+                {/* 其他列内容 */}
+                {getOtherColumns().map((column, colIndex) => (
                   <td 
-                    key={colIndex}
-                    className={styles.scrollableColumn}
-                    style={{ minWidth: column.width || '150px' }}
+                    key={column.key || colIndex}
+                    className={styles.tableCell}
                   >
-                    {column.render ? column.render(row[column.key], row, rowIndex) : row[column.key]}
+                    {column.render 
+                      ? column.render(rowData[column.key], rowData)
+                      : rowData[column.key]
+                    }
                   </td>
                 ))}
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-      
-      {/* 滚动提示 */}
-      <div className={styles.scrollHint}>
-        {isCollapsed ? (
-          <span>← 向左滚动查看完整信息</span>
-        ) : (
-          <span>→ 向右滚动查看更多列</span>
+        {showScrollHint && (
+          <div className={styles.scrollHint} role="status" aria-live="polite">
+            <div className={styles.hintInner}>
+              <span className={styles.hintText}>可左右滑动</span>
+              <span className={styles.hintArrows} aria-hidden="true">
+                <svg viewBox="0 0 24 24" className={styles.arrowLeft}><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg viewBox="0 0 24 24" className={styles.arrowRight}><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
         )}
       </div>
     </div>
   );
-}
+};
+
+export default FixedColumnTable;

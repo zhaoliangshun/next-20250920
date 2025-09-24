@@ -1,0 +1,265 @@
+/* 表格容器 */
+.tableContainer {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: white;
+  position: relative;
+}
+
+.scrollContainer {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #d9d9d9 transparent;
+  -webkit-overflow-scrolling: touch; /* 增强移动端滚动体验 */
+}
+
+.scrollContainer::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 4px;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}
+
+/* 表格样式 */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+  table-layout: fixed;
+}
+
+/* 表头样式 */
+.tableHeader {
+  height: 48px;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 0 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #262626;
+  font-size: 14px;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* 固定列表头 */
+.fixedHeader {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: #fafafa;
+  border-right: 2px solid #e8e8e8;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  will-change: width, min-width, transform;
+}
+
+.fixedHeader.collapsed {
+  background: #1890ff;
+  color: white;
+  justify-content: center;
+  cursor: pointer;
+  border-right: 2px solid #1890ff;
+}
+
+.fixedHeader.collapsed:hover {
+  background: #40a9ff;
+}
+
+.fixedTitle {
+  font-size: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.collapseIcon {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* 表格行 */
+.tableRow {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+  background: #f5f5f5;
+}
+
+.tableRow:nth-child(even) {
+  background: #fafafa;
+}
+
+.tableRow:nth-child(even):hover {
+  background: #f0f0f0;
+}
+
+/* 表格单元格 */
+.tableCell {
+  height: 60px;
+  padding: 0 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #595959;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* 固定列单元格 */
+.fixedCell {
+  position: sticky;
+  left: 0;
+  z-index: 9;
+  background: inherit;
+  border-right: 2px solid #e8e8e8;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  will-change: width, min-width, transform;
+}
+
+.fixedCell.collapsed {
+  border-right: 2px solid #1890ff;
+  background: #f8f9fa;
+}
+
+.tableRow:hover .fixedCell {
+  background: #f5f5f5;
+}
+
+.tableRow:nth-child(even) .fixedCell {
+  background: #fafafa;
+}
+
+.tableRow:nth-child(even):hover .fixedCell {
+  background: #f0f0f0;
+}
+
+.tableRow:hover .fixedCell.collapsed {
+  background: #e6f7ff;
+}
+
+/* 展开状态的内容 */
+.expandedContent {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.expandedContent img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 折叠状态的内容 */
+.collapsedContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.defaultAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1890ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .tableHeader {
+    height: 40px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+  
+  .tableCell {
+    height: 50px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+  
+  .expandedContent img,
+  .avatar,
+  .defaultAvatar {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* 动画关键帧 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}

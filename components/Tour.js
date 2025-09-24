@@ -17,19 +17,6 @@ const Tour = ({
     const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
     const tooltipRef = useRef(null);
 
-    useEffect(() => {
-        if (isOpen && steps[activeStep]) {
-            updateTargetPosition();
-            window.addEventListener('resize', updateTargetPosition);
-            window.addEventListener('scroll', updateTargetPosition);
-            
-            return () => {
-                window.removeEventListener('resize', updateTargetPosition);
-                window.removeEventListener('scroll', updateTargetPosition);
-            };
-        }
-    }, [isOpen, activeStep, steps, updateTargetPosition]);
-
     const updateTargetPosition = useCallback(() => {
         const step = steps[activeStep];
         if (!step?.target) return;
@@ -57,6 +44,21 @@ const Tour = ({
             }, 0);
         }
     }, [activeStep, steps]);
+
+    useEffect(() => {
+        if (isOpen && steps[activeStep]) {
+            updateTargetPosition();
+            window.addEventListener('resize', updateTargetPosition);
+            window.addEventListener('scroll', updateTargetPosition);
+            
+            return () => {
+                window.removeEventListener('resize', updateTargetPosition);
+                window.removeEventListener('scroll', updateTargetPosition);
+            };
+        }
+    }, [isOpen, activeStep, steps, updateTargetPosition]);
+
+    
 
     const calculateTooltipPosition = (targetRect, tooltipRect, placement = 'bottom') => {
         const margin = 12;

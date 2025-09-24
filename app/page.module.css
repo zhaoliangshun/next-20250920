@@ -301,6 +301,10 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+.demoTable {
+  margin-top: 16px;
+}
+
 .sliderDemo {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
