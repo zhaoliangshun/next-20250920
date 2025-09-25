@@ -1,0 +1,182 @@
+/* 组件容器 */
+.radioGroupContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* 基础样式 */
+.radioGroup {
+  position: relative;
+  display: inline-flex;
+  background: #f0f0f0;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 0;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+/* 移动指示器 */
+.indicator {
+  position: absolute;
+  background: #007bff;
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 选项按钮基础样式 */
+.option {
+  position: relative;
+  z-index: 2;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  outline: none;
+  white-space: nowrap;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+.option:hover {
+  color: #333;
+}
+
+.option.selected {
+  color: white;
+}
+
+.option:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Pill 变体样式 */
+.pill {
+  border-radius: 20px;
+  background: #f0f0f0;
+}
+
+.pill .indicator {
+  border-radius: 16px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.pill .option {
+  padding: 10px 20px;
+  border-radius: 16px;
+}
+
+/* Button 变体样式 */
+.button {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  gap: 2px;
+}
+
+.button .indicator {
+  background: #007bff;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+}
+
+.button .option {
+  padding: 12px 24px;
+  font-weight: 600;
+}
+
+/* Underline 变体样式 */
+.underline {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  gap: 8px;
+}
+
+.underline .indicator {
+  background: #007bff;
+  border-radius: 1px;
+  height: 2px !important;
+}
+
+.underline .option {
+  background: transparent;
+  border-radius: 0;
+  padding: 12px 16px 8px;
+  position: relative;
+}
+
+.underline .option:hover {
+  background: rgba(0, 123, 255, 0.05);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .option {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  
+  .pill .option {
+    padding: 8px 16px;
+  }
+  
+  .button .option {
+    padding: 10px 16px;
+  }
+  
+  .underline .option {
+    padding: 10px 12px 6px;
+  }
+}
+
+/* 动画效果增强 */
+.radioGroup:hover .indicator {
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.option {
+  transform: scale(1);
+  transition: transform 0.1s ease, color 0.3s ease;
+}
+
+.option:active {
+  transform: scale(0.98);
+}
+
+/* 无障碍支持 */
+@media (prefers-reduced-motion: reduce) {
+  .indicator,
+  .option {
+    transition-duration: 0.1s;
+  }
+}
+
+/* 深色主题支持 */
+@media (prefers-color-scheme: dark) {
+  .radioGroup {
+    background: #2a2a2a;
+  }
+  
+  .option {
+    color: #ccc;
+  }
+  
+  .option:hover {
+    color: #fff;
+  }
+  
+  .button {
+    background: #333;
+    border-color: #555;
+  }
+}
