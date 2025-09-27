@@ -55,8 +55,7 @@ export interface EnhancedSliderProps {
   };
   showMarks?: boolean;
   
-  // 主题配置
-  theme?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'custom';
+  // 颜色配置
   trackColor?: string;
   railColor?: string;
   handleColor?: string;
@@ -77,7 +76,7 @@ export interface EnhancedSliderProps {
 
 /**
  * 增强型滑块组件
- * 支持单值、范围、步长、标记、区间颜色、主题、动画等功能
+ * 支持单值、范围、步长、标记、区间颜色、动画等功能
  */
 const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   // 基础配置
@@ -104,11 +103,10 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   tooltip = true,
   showMarks = true,
   
-  // 主题配置
-  theme = 'default',
-  trackColor,
-  railColor,
-  handleColor,
+  // 颜色配置
+  trackColor = '#1890ff',
+  railColor = '#f5f5f5',
+  handleColor = '#1890ff',
   
   // 分段背景色配置
   segmentedTrack = false,
@@ -437,36 +435,12 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       
       // 计算区间颜色
       let backgroundColor = trackColor;
-      if (!backgroundColor) {
-        if (ranges.length > 0) {
-          const rangeIndex = ranges.findIndex(r => 
-            currentValue[0] >= r.start && currentValue[currentValue.length - 1] <= r.end
-          );
-          if (rangeIndex !== -1) {
-            backgroundColor = ranges[rangeIndex].color;
-          }
-        }
-        
-        if (!backgroundColor) {
-          switch (theme) {
-            case 'primary':
-              backgroundColor = 'var(--slider-primary-color, #1890ff)';
-              break;
-            case 'success':
-              backgroundColor = 'var(--slider-success-color, #52c41a)';
-              break;
-            case 'warning':
-              backgroundColor = 'var(--slider-warning-color, #faad14)';
-              break;
-            case 'danger':
-              backgroundColor = 'var(--slider-danger-color, #f5222d)';
-              break;
-            case 'custom':
-              backgroundColor = trackColor || 'var(--slider-track-color, #1890ff)';
-              break;
-            default:
-              backgroundColor = 'var(--slider-track-color, #1890ff)';
-          }
+      if (ranges.length > 0) {
+        const rangeIndex = ranges.findIndex(r => 
+          currentValue[0] >= r.start && currentValue[currentValue.length - 1] <= r.end
+        );
+        if (rangeIndex !== -1) {
+          backgroundColor = ranges[rangeIndex].color;
         }
       }
       
@@ -481,36 +455,12 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       
       // 计算区间颜色
       let backgroundColor = trackColor;
-      if (!backgroundColor) {
-        if (ranges.length > 0) {
-          const rangeIndex = ranges.findIndex(r => 
-            currentValue[0] >= r.start && currentValue[0] <= r.end
-          );
-          if (rangeIndex !== -1) {
-            backgroundColor = ranges[rangeIndex].color;
-          }
-        }
-        
-        if (!backgroundColor) {
-          switch (theme) {
-            case 'primary':
-              backgroundColor = 'var(--slider-primary-color, #1890ff)';
-              break;
-            case 'success':
-              backgroundColor = 'var(--slider-success-color, #52c41a)';
-              break;
-            case 'warning':
-              backgroundColor = 'var(--slider-warning-color, #faad14)';
-              break;
-            case 'danger':
-              backgroundColor = 'var(--slider-danger-color, #f5222d)';
-              break;
-            case 'custom':
-              backgroundColor = trackColor || 'var(--slider-track-color, #1890ff)';
-              break;
-            default:
-              backgroundColor = 'var(--slider-track-color, #1890ff)';
-          }
+      if (ranges.length > 0) {
+        const rangeIndex = ranges.findIndex(r => 
+          currentValue[0] >= r.start && currentValue[0] <= r.end
+        );
+        if (rangeIndex !== -1) {
+          backgroundColor = ranges[rangeIndex].color;
         }
       }
       
@@ -520,12 +470,12 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
         transition: animation ? `all ${animationDuration}ms` : 'none'
       };
     }
-  }, [rangeConfig.enabled, currentValue, getPercentage, vertical, trackColor, ranges, theme, animation, animationDuration]);
+  }, [rangeConfig.enabled, currentValue, getPercentage, vertical, trackColor, ranges, animation, animationDuration]);
   
   // 计算轨道背景样式
   const railStyle = useMemo(() => {
     return {
-      backgroundColor: railColor || 'var(--slider-rail-color, #f5f5f5)',
+      backgroundColor: railColor,
       transition: animation ? `all ${animationDuration}ms` : 'none',
       opacity: hideRailWhenDragging && isDragging ? 0 : 1
     };
@@ -607,12 +557,12 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       let label: React.ReactNode;
       let markStyle: React.CSSProperties = {};
       
-      if (markLabel && typeof markLabel === 'object' && !React.isValidElement(markLabel)) {
+      if (markLabel && typeof markLabel === 'object' && !React.isValidElement(markLabel) && 'label' in markLabel) {
         const markObj = markLabel as { label: React.ReactNode; style?: React.CSSProperties };
         label = markObj.label;
         markStyle = markObj.style || {};
       } else {
-        label = markLabel;
+        label = markLabel as React.ReactNode;
       }
       
       return (
@@ -642,9 +592,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       const handleStyleObj: React.CSSProperties = {
         [vertical ? 'bottom' : 'left']: `${percent}%`,
         transform: vertical ? 'translateY(50%)' : 'translateX(-50%)',
-        borderColor: isActive || isHover 
-          ? handleColor || 'var(--slider-handle-active-color, #1890ff)' 
-          : handleColor || 'var(--slider-handle-color, #1890ff)',
+        borderColor: isActive || isHover ? handleColor : handleColor,
         transition: animation && !isDragging ? `all ${animationDuration}ms` : 'none'
       };
       
@@ -702,8 +650,8 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   
   // 计算滑块类名
   const sliderClassName = useMemo(() => {
-    return `${styles.slider} ${vertical ? styles.sliderVertical : ''} ${disabled ? styles.sliderDisabled : ''} ${isDragging ? styles.sliderDragging : ''} ${styles[`theme${theme.charAt(0).toUpperCase() + theme.slice(1)}`]} ${className}`;
-  }, [vertical, disabled, isDragging, theme, className]);
+    return `${styles.slider} ${vertical ? styles.sliderVertical : ''} ${disabled ? styles.sliderDisabled : ''} ${isDragging ? styles.sliderDragging : ''} ${className}`;
+  }, [vertical, disabled, isDragging, className]);
   
   return (
     <div
