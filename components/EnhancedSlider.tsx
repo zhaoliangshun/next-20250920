@@ -47,10 +47,9 @@ export interface EnhancedSliderProps {
   
   // 样式配置
   disabled?: boolean;
-  vertical?: boolean;
   tooltip?: boolean | {
     formatter?: (value: number) => React.ReactNode;
-    placement?: 'top' | 'bottom' | 'left' | 'right';
+    placement?: 'top' | 'bottom';
     visible?: boolean;
   };
   showMarks?: boolean;
@@ -99,7 +98,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   
   // 样式配置
   disabled = false,
-  vertical = false,
   tooltip = true,
   showMarks = true,
   
@@ -209,20 +207,15 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
     if (!sliderRef.current) return min;
     
     const rect = sliderRef.current.getBoundingClientRect();
-    const position = vertical ? clientY : clientX;
-    const size = vertical ? rect.height : rect.width;
-    const offset = vertical ? rect.top : rect.left;
+    const position = clientX;
+    const size = rect.width;
+    const offset = rect.left;
     
-    let percentage: number;
-    if (vertical) {
-      percentage = Math.max(0, Math.min(1, (rect.bottom - position) / size));
-    } else {
-      percentage = Math.max(0, Math.min(1, (position - offset) / size));
-    }
+    const percentage = Math.max(0, Math.min(1, (position - offset) / size));
     
     const rawValue = min + percentage * (max - min);
     return getStepValue(rawValue);
-  }, [min, max, getStepValue, vertical]);
+  }, [min, max, getStepValue]);
   
   // 处理鼠标按下
   const handleMouseDown = useCallback((e: React.MouseEvent | React.TouchEvent, handleIndex: number | null = null) => {
@@ -445,8 +438,8 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       }
       
       return {
-        [vertical ? 'bottom' : 'left']: `${startPercent}%`,
-        [vertical ? 'height' : 'width']: `${endPercent - startPercent}%`,
+        left: `${startPercent}%`,
+        width: `${endPercent - startPercent}%`,
         backgroundColor,
         transition: animation ? `all ${animationDuration}ms` : 'none'
       };
@@ -465,12 +458,12 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       }
       
       return {
-        [vertical ? 'height' : 'width']: `${percent}%`,
+        width: `${percent}%`,
         backgroundColor,
         transition: animation ? `all ${animationDuration}ms` : 'none'
       };
     }
-  }, [rangeConfig.enabled, currentValue, getPercentage, vertical, trackColor, ranges, animation, animationDuration]);
+  }, [rangeConfig.enabled, currentValue, getPercentage, trackColor, ranges, animation, animationDuration]);
   
   // 计算轨道背景样式
   const railStyle = useMemo(() => {
@@ -531,8 +524,8 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
         const width = endPercent - startPercent;
         
         return {
-          [vertical ? 'bottom' : 'left']: `${startPercent}%`,
-          [vertical ? 'height' : 'width']: `${width}%`,
+          left: `${startPercent}%`,
+          width: `${width}%`,
           backgroundColor: segmentColors[index],
           position: 'absolute' as const,
           borderRadius: '4px',
@@ -541,7 +534,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       });
     
     return segments;
-  }, [segmentedTrack, vertical, animation, animationDuration]);
+  }, [segmentedTrack, animation, animationDuration]);
   
   // 渲染标记
   const renderMarks = () => {
@@ -570,8 +563,8 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
           key={markValue}
           className={`${styles.mark} ${isActive ? styles.markActive : ''}`}
           style={{
-            [vertical ? 'bottom' : 'left']: `${percent}%`,
-            transform: vertical ? 'translateY(50%)' : 'translateX(-50%)',
+            left: `${percent}%`,
+            transform: 'translateX(-50%)',
             ...markStyle
           }}
         >
@@ -590,8 +583,8 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       
       // 计算手柄样式
       const handleStyleObj: React.CSSProperties = {
-        [vertical ? 'bottom' : 'left']: `${percent}%`,
-        transform: vertical ? 'translateY(50%)' : 'translateX(-50%)',
+        left: `${percent}%`,
+        transform: 'translateX(-50%)',
         borderColor: isActive || isHover ? handleColor : handleColor,
         transition: animation && !isDragging ? `all ${animationDuration}ms` : 'none'
       };
@@ -606,8 +599,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       let tooltipPlacement = 'top';
       if (tooltip && typeof tooltip === 'object' && tooltip.placement) {
         tooltipPlacement = tooltip.placement;
-      } else if (vertical) {
-        tooltipPlacement = 'right';
       }
       
       // 计算工具提示可见性
@@ -650,8 +641,8 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   
   // 计算滑块类名
   const sliderClassName = useMemo(() => {
-    return `${styles.slider} ${vertical ? styles.sliderVertical : ''} ${disabled ? styles.sliderDisabled : ''} ${isDragging ? styles.sliderDragging : ''} ${className}`;
-  }, [vertical, disabled, isDragging, className]);
+    return `${styles.slider} ${disabled ? styles.sliderDisabled : ''} ${isDragging ? styles.sliderDragging : ''} ${className}`;
+  }, [disabled, isDragging, className]);
   
   return (
     <div

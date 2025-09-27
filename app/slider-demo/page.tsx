@@ -119,32 +119,28 @@ export default function SliderDemo() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>垂直滑块</h2>
-        <div className={styles.verticalContainer}>
-          <div className={styles.verticalSlider}>
-            <EnhancedSlider 
-              vertical={true}
-              value={value1} 
-              onChange={(val) => {
-                if (typeof val === 'number') {
-                  setValue1(val);
-                }
-              }} 
-            />
-          </div>
-          <div className={styles.verticalSlider}>
-            <EnhancedSlider 
-              vertical={true}
-              value={value3} 
-              onChange={(val) => {
-                if (typeof val === 'number') {
-                  setValue3(val);
-                }
-              }}
-              segmentedTrack={true}
-              hideRailWhenDragging={true}
-            />
-          </div>
+        <h2 className={styles.sectionTitle}>更多示例</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider 
+            value={value1} 
+            onChange={(val) => {
+              if (typeof val === 'number') {
+                setValue1(val);
+              }
+            }}
+            marks={{
+              0: '0%',
+              25: '25%',
+              50: '50%',
+              75: '75%',
+              100: '100%'
+            }}
+            tooltip={{
+              formatter: (val) => `${val}%`,
+              placement: 'bottom'
+            }}
+          />
+          <div className={styles.value}>当前值: {value1}</div>
         </div>
       </section>
     </div>

@@ -37,12 +37,6 @@
   box-sizing: border-box;
 }
 
-.sliderVertical {
-  width: 26px;
-  height: 200px;
-  padding: 0 10px;
-}
-
 .sliderDisabled {
   cursor: not-allowed;
   opacity: 0.6;
@@ -57,12 +51,6 @@
   border-radius: 4px;
   margin: 9px 0;
   z-index: 1;
-}
-
-.sliderVertical .track {
-  width: 8px;
-  height: 100%;
-  margin: 0 9px;
 }
 
 .rail {
@@ -96,14 +84,6 @@
   z-index: 2;
 }
 
-.sliderVertical .trackFill {
-  width: 100%;
-  height: auto;
-  bottom: 0;
-  top: auto;
-  will-change: bottom, height, background-color;
-}
-
 /* 分段轨道样式 */
 .trackSegment {
   position: absolute;
@@ -122,12 +102,7 @@
   z-index: 2;
 }
 
-.sliderVertical .trackSegment {
-  width: 100%;
-  height: auto;
-  left: 0;
-  will-change: bottom, height, background-color;
-}
+
 
 /* 拖拽手柄样式 */
 .handle {
@@ -163,11 +138,6 @@
   border-radius: 50%;
   opacity: 0.8;
   transition: all var(--slider-animation-duration) ease;
-}
-
-.sliderVertical .handle {
-  left: 50%;
-  top: auto;
 }
 
 .handle:hover,
@@ -243,6 +213,7 @@
 }
 
 .tooltipBottom {
+  bottom: unset;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
@@ -250,6 +221,7 @@
 }
 
 .tooltipLeft {
+  left: unset;
   right: 100%;
   top: 50%;
   transform: translateY(-50%);
@@ -305,7 +277,7 @@
 /* 标记样式 */
 .mark {
   position: absolute;
-  top: 50%;
+  top: 19px;
   transform: translate(-50%, -50%);
   width: 8px;
   height: 8px;
@@ -313,11 +285,6 @@
   border-radius: 50%;
   transition: all var(--slider-animation-duration) ease;
   z-index: 2;
-}
-
-.sliderVertical .mark {
-  left: 50%;
-  transform: translate(-50%, 50%);
 }
 
 .markActive {
@@ -334,14 +301,6 @@
   font-size: 12px;
   color: #666;
   white-space: nowrap;
-}
-
-.sliderVertical .markLabel {
-  top: 50%;
-  left: 100%;
-  transform: translateY(-50%);
-  margin-top: 0;
-  margin-left: 8px;
 }
 
 /* 主题样式 */
@@ -372,12 +331,6 @@
     padding: 14px 0;
   }
   
-  .sliderVertical {
-    width: 32px;
-    height: 150px;
-    padding: 0 14px;
-  }
-  
   .handle {
     width: 24px;
     height: 24px;
@@ -386,11 +339,6 @@
   .track {
     height: 10px;
     margin: 11px 0;
-  }
-  
-  .sliderVertical .track {
-    width: 10px;
-    margin: 0 11px;
   }
 }
 
