@@ -1,0 +1,404 @@
+/* EnhancedSlider 组件样式 */
+
+:root {
+  /* 默认主题变量 */
+  --slider-primary-color: #1890ff;
+  --slider-success-color: #52c41a;
+  --slider-warning-color: #faad14;
+  --slider-danger-color: #f5222d;
+  
+  --slider-track-color: #1890ff;
+  --slider-rail-color: #f5f5f5;
+  --slider-handle-color: #fff;
+  --slider-handle-border-color: #1890ff;
+  --slider-handle-active-color: #1890ff;
+  --slider-handle-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --slider-handle-active-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+  
+  --slider-mark-color: #e8e8e8;
+  --slider-mark-active-color: #1890ff;
+  
+  --slider-tooltip-bg: rgba(0, 0, 0, 0.75);
+  --slider-tooltip-color: #fff;
+  --slider-tooltip-arrow-size: 4px;
+  
+  --slider-animation-duration: 200ms;
+}
+
+/* 基础滑块样式 */
+.slider {
+  position: relative;
+  width: 100%;
+  height: 26px;
+  padding: 10px 0;
+  cursor: pointer;
+  user-select: none;
+  touch-action: none;
+  box-sizing: border-box;
+}
+
+.sliderVertical {
+  width: 26px;
+  height: 200px;
+  padding: 0 10px;
+}
+
+.sliderDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 轨道样式 */
+.track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: transparent;
+  border-radius: 4px;
+  margin: 9px 0;
+  z-index: 1;
+}
+
+.sliderVertical .track {
+  width: 8px;
+  height: 100%;
+  margin: 0 9px;
+}
+
+.rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--slider-rail-color);
+  border-radius: 4px;
+  transition: background-color var(--slider-animation-duration) ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+.trackFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--slider-track-color);
+  border-radius: 4px;
+  transition: all var(--slider-animation-duration) ease;
+  will-change: left, width, background-color;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  contain: layout style paint;
+  z-index: 2;
+}
+
+.sliderVertical .trackFill {
+  width: 100%;
+  height: auto;
+  bottom: 0;
+  top: auto;
+  will-change: bottom, height, background-color;
+}
+
+/* 拖拽手柄样式 */
+.handle {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border: 2px solid var(--slider-handle-border-color);
+  border-radius: 50%;
+  cursor: grab;
+  transform: translate(-50%, -50%);
+  transition: all var(--slider-animation-duration) ease;
+  will-change: transform, border-color, box-shadow;
+  z-index: 3;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  box-shadow: var(--slider-handle-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.handle::before {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--slider-handle-border-color);
+  border-radius: 50%;
+  opacity: 0.8;
+  transition: all var(--slider-animation-duration) ease;
+}
+
+.sliderVertical .handle {
+  left: 50%;
+  top: auto;
+}
+
+.handle:hover,
+.handleHover {
+  border-color: var(--slider-handle-active-color);
+  box-shadow: var(--slider-handle-active-shadow);
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.handle:hover::before,
+.handleHover::before {
+  background: var(--slider-handle-active-color);
+  opacity: 1;
+}
+
+.handle:active,
+.handleActive {
+  cursor: grabbing;
+  border-color: var(--slider-handle-active-color);
+  box-shadow: var(--slider-handle-active-shadow);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.handle:active::before,
+.handleActive::before {
+  background: var(--slider-handle-active-color);
+  opacity: 1;
+}
+
+.handleDisabled {
+  cursor: not-allowed;
+  border-color: #d9d9d9;
+  background: #f5f5f5;
+  box-shadow: none;
+}
+
+.handleDisabled::before {
+  background: #d9d9d9;
+  opacity: 0.5;
+}
+
+.handleDisabled:hover {
+  border-color: #d9d9d9;
+  box-shadow: none;
+  transform: translate(-50%, -50%);
+}
+
+/* 工具提示样式 */
+.tooltip {
+  position: absolute;
+  padding: 4px 8px;
+  background-color: var(--slider-tooltip-bg);
+  color: var(--slider-tooltip-color);
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--slider-animation-duration) ease;
+  pointer-events: none;
+  z-index: 10;
+  transform: translateX(-50%);
+  bottom: 100%;
+  left: 50%;
+  margin-bottom: 8px;
+}
+
+.tooltipTop {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+}
+
+.tooltipBottom {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+}
+
+.tooltipLeft {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 8px;
+}
+
+.tooltipRight {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 8px;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  border: var(--slider-tooltip-arrow-size) solid transparent;
+}
+
+.tooltipTop::after {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-color: var(--slider-tooltip-bg);
+}
+
+.tooltipBottom::after {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: var(--slider-tooltip-bg);
+}
+
+.tooltipLeft::after {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left-color: var(--slider-tooltip-bg);
+}
+
+.tooltipRight::after {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right-color: var(--slider-tooltip-bg);
+}
+
+.tooltipVisible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 标记样式 */
+.mark {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: var(--slider-mark-color);
+  border-radius: 50%;
+  transition: all var(--slider-animation-duration) ease;
+  z-index: 2;
+}
+
+.sliderVertical .mark {
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.markActive {
+  background: var(--slider-mark-active-color);
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.markLabel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.sliderVertical .markLabel {
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  margin-top: 0;
+  margin-left: 8px;
+}
+
+/* 主题样式 */
+.themeDefault .trackFill {
+  background-color: var(--slider-primary-color);
+}
+
+.themePrimary .trackFill {
+  background-color: var(--slider-primary-color);
+}
+
+.themeSuccess .trackFill {
+  background-color: var(--slider-success-color);
+}
+
+.themeWarning .trackFill {
+  background-color: var(--slider-warning-color);
+}
+
+.themeDanger .trackFill {
+  background-color: var(--slider-danger-color);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .slider {
+    height: 32px;
+    padding: 14px 0;
+  }
+  
+  .sliderVertical {
+    width: 32px;
+    height: 150px;
+    padding: 0 14px;
+  }
+  
+  .handle {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .track {
+    height: 10px;
+    margin: 11px 0;
+  }
+  
+  .sliderVertical .track {
+    width: 10px;
+    margin: 0 11px;
+  }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+  .handle,
+  .trackFill,
+  .tooltip,
+  .mark {
+    transition: none !important;
+  }
+}
+
+/* 焦点样式 */
+.handle:focus {
+  outline: 2px solid var(--slider-primary-color);
+  outline-offset: 2px;
+}
+
+.handle:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* 拖拽时的性能优化 */
+.sliderDragging {
+  pointer-events: none;
+}
+
+.sliderDragging .handle {
+  pointer-events: auto;
+  transition: none !important;
+}
+
+.sliderDragging .trackFill {
+  transition: none !important;
+}

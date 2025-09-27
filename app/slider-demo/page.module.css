@@ -1,0 +1,137 @@
+/* 滑块演示页面样式 */
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #333;
+  text-align: center;
+}
+
+.section {
+  margin-bottom: 3rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.sliderContainer {
+  padding: 1rem 2rem;
+}
+
+.value {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.verticalContainer {
+  display: flex;
+  align-items: center;
+  height: 300px;
+  padding: 0 2rem;
+}
+
+.verticalContainer .value {
+  margin-left: 2rem;
+  margin-top: 0;
+}
+
+.themeContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.themeSlider {
+  padding: 1rem;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+}
+
+.themeSlider h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.disabledContainer {
+  opacity: 0.8;
+}
+
+.controlsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.control label {
+  margin-right: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.control input {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.control select {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #40a9ff;
+}
+
+.button:active {
+  background-color: #096dd9;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .themeContainer {
+    grid-template-columns: 1fr;
+  }
+}

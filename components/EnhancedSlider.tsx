@@ -1,0 +1,662 @@
+'use client';
+
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import styles from './EnhancedSlider.module.css';
+
+/**
+ * 增强型滑块组件接口定义
+ */
+export interface EnhancedSliderProps {
+  // 基础配置
+  min?: number;
+  max?: number;
+  step?: number | null;
+  value?: number | number[];
+  defaultValue?: number | number[];
+  range?: boolean | {
+    editable?: boolean;
+    draggableTrack?: boolean;
+    minCount?: number;
+    maxCount?: number;
+  };
+  
+  // 标记配置
+  marks?: Record<number | string, React.ReactNode | { label: React.ReactNode; style?: React.CSSProperties }>;
+  
+  // 区间颜色配置
+  ranges?: Array<{
+    start: number;
+    end: number;
+    color: string;
+  }>;
+  
+  // 事件回调
+  onChange?: (value: number | number[]) => void;
+  onChangeComplete?: (value: number | number[]) => void;
+  
+  // 样式配置
+  disabled?: boolean;
+  vertical?: boolean;
+  tooltip?: boolean | {
+    formatter?: (value: number) => React.ReactNode;
+    placement?: 'top' | 'bottom' | 'left' | 'right';
+    visible?: boolean;
+  };
+  showMarks?: boolean;
+  
+  // 主题配置
+  theme?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'custom';
+  trackColor?: string;
+  railColor?: string;
+  handleColor?: string;
+  
+  // 动画配置
+  animation?: boolean;
+  animationDuration?: number;
+  
+  // 其他配置
+  className?: string;
+  style?: React.CSSProperties;
+  id?: string;
+  
+  // 无障碍配置
+  ariaLabel?: string | string[];
+  ariaValueText?: string | string[];
+}
+
+/**
+ * 增强型滑块组件
+ * 支持单值、范围、步长、标记、区间颜色、主题、动画等功能
+ */
+const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
+  // 基础配置
+  min = 0,
+  max = 100,
+  step = 1,
+  value,
+  defaultValue,
+  range = false,
+  
+  // 标记配置
+  marks = {},
+  
+  // 区间颜色配置
+  ranges = [],
+  
+  // 事件回调
+  onChange,
+  onChangeComplete,
+  
+  // 样式配置
+  disabled = false,
+  vertical = false,
+  tooltip = true,
+  showMarks = true,
+  
+  // 主题配置
+  theme = 'default',
+  trackColor,
+  railColor,
+  handleColor,
+  
+  // 动画配置
+  animation = true,
+  animationDuration = 200,
+  
+  // 其他配置
+  className = '',
+  style = {},
+  id,
+  
+  // 无障碍配置
+  ariaLabel,
+  ariaValueText,
+  
+  ...props
+}) => {
+  // 解析range配置
+  const rangeConfig = useMemo(() => {
+    if (typeof range === 'boolean') {
+      return {
+        enabled: range,
+        editable: false,
+        draggableTrack: false,
+        minCount: 2,
+        maxCount: 2
+      };
+    }
+    
+    return {
+      enabled: true,
+      editable: range.editable || false,
+      draggableTrack: range.draggableTrack || false,
+      minCount: range.minCount || 2,
+      maxCount: range.maxCount || 2
+    };
+  }, [range]);
+  
+  // 状态管理
+  const [isDragging, setIsDragging] = useState(false);
+  const [activeHandle, setActiveHandle] = useState<number | null>(null);
+  const [hoverHandle, setHoverHandle] = useState<number | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState<boolean[]>([]);
+  
+  // 计算当前值
+  const [currentValue, setCurrentValue] = useState<number[]>(() => {
+    if (rangeConfig.enabled) {
+      if (Array.isArray(value)) {
+        return [...value].sort((a, b) => a - b);
+      }
+      if (Array.isArray(defaultValue)) {
+        return [...defaultValue].sort((a, b) => a - b);
+      }
+      return [min, max];
+    }
+    
+    const singleValue = value !== undefined ? value : defaultValue !== undefined ? defaultValue : min;
+    return [typeof singleValue === 'number' ? singleValue : min];
+  });
+  
+  // 引用
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
+  const animationFrameRef = useRef<number | null>(null);
+  const moveHandlerRef = useRef<((e: MouseEvent | TouchEvent) => void) | null>(null);
+  const upHandlerRef = useRef<(() => void) | null>(null);
+  
+  // 更新外部受控值
+  useEffect(() => {
+    if (value !== undefined) {
+      if (rangeConfig.enabled && Array.isArray(value)) {
+        setCurrentValue([...value].sort((a, b) => a - b));
+      } else if (!rangeConfig.enabled && typeof value === 'number') {
+        setCurrentValue([value]);
+      }
+    }
+  }, [value, rangeConfig.enabled]);
+  
+  // 计算步长值
+  const getStepValue = useCallback((rawValue: number): number => {
+    if (step === null) {
+      return Math.min(max, Math.max(min, rawValue));
+    }
+    
+    const stepCount = Math.round((rawValue - min) / (step as number));
+    return Math.min(max, Math.max(min, min + stepCount * (step as number)));
+  }, [min, max, step]);
+  
+  // 计算百分比
+  const getPercentage = useCallback((val: number): number => {
+    return ((val - min) / (max - min)) * 100;
+  }, [min, max]);
+  
+  // 获取鼠标位置对应的值
+  const getValueFromPosition = useCallback((clientX: number, clientY: number): number => {
+    if (!sliderRef.current) return min;
+    
+    const rect = sliderRef.current.getBoundingClientRect();
+    const position = vertical ? clientY : clientX;
+    const size = vertical ? rect.height : rect.width;
+    const offset = vertical ? rect.top : rect.left;
+    
+    let percentage: number;
+    if (vertical) {
+      percentage = Math.max(0, Math.min(1, (rect.bottom - position) / size));
+    } else {
+      percentage = Math.max(0, Math.min(1, (position - offset) / size));
+    }
+    
+    const rawValue = min + percentage * (max - min);
+    return getStepValue(rawValue);
+  }, [min, max, getStepValue, vertical]);
+  
+  // 处理鼠标按下
+  const handleMouseDown = useCallback((e: React.MouseEvent | React.TouchEvent, handleIndex: number | null = null) => {
+    if (disabled) return;
+    
+    e.preventDefault();
+    setIsDragging(true);
+    isDraggingRef.current = true;
+    
+    if (handleIndex !== null) {
+      setActiveHandle(handleIndex);
+    }
+    
+    // 获取触摸或鼠标位置
+    const getEventPosition = (e: MouseEvent | TouchEvent) => {
+      if ('touches' in e && e.touches[0]) {
+        return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+      }
+      return { clientX: (e as MouseEvent).clientX, clientY: (e as MouseEvent).clientY };
+    };
+    
+    // 创建事件处理函数
+    const moveHandler = (e: MouseEvent | TouchEvent) => {
+      if (!isDraggingRef.current) return;
+      
+      e.preventDefault();
+      const { clientX, clientY } = getEventPosition(e);
+      const newValue = getValueFromPosition(clientX, clientY);
+      
+      // 更新值
+      if (handleIndex !== null) {
+        const newValues = [...currentValue];
+        newValues[handleIndex] = newValue;
+        
+        // 确保范围值的顺序正确
+        if (rangeConfig.enabled) {
+          if (handleIndex > 0 && newValues[handleIndex] < newValues[handleIndex - 1]) {
+            newValues[handleIndex] = newValues[handleIndex - 1];
+          } else if (handleIndex < newValues.length - 1 && newValues[handleIndex] > newValues[handleIndex + 1]) {
+            newValues[handleIndex] = newValues[handleIndex + 1];
+          }
+        }
+        
+        setCurrentValue(newValues);
+        onChange?.(rangeConfig.enabled ? newValues : newValues[0]);
+      }
+    };
+    
+    const upHandler = () => {
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      setActiveHandle(null);
+      
+      // 移除事件监听器
+      document.removeEventListener('mousemove', moveHandler);
+      document.removeEventListener('mouseup', upHandler);
+      document.removeEventListener('touchmove', moveHandler);
+      document.removeEventListener('touchend', upHandler);
+      
+      // 触发 onChangeComplete
+      onChangeComplete?.(rangeConfig.enabled ? currentValue : currentValue[0]);
+    };
+    
+    // 保存引用以便清理
+    moveHandlerRef.current = moveHandler;
+    upHandlerRef.current = upHandler;
+    
+    // 添加全局事件监听
+    document.addEventListener('mousemove', moveHandler);
+    document.addEventListener('mouseup', upHandler);
+    document.addEventListener('touchmove', moveHandler, { passive: false });
+    document.addEventListener('touchend', upHandler);
+  }, [disabled, rangeConfig.enabled, currentValue, getValueFromPosition, onChange, onChangeComplete]);
+  
+  // 处理轨道点击
+  const handleTrackClick = useCallback((e: React.MouseEvent) => {
+    if (disabled || isDragging) return;
+    
+    const newValue = getValueFromPosition(e.clientX, e.clientY);
+    
+    if (rangeConfig.enabled) {
+      // 找到最近的手柄
+      let closestHandleIndex = 0;
+      let minDistance = Math.abs(newValue - currentValue[0]);
+      
+      for (let i = 1; i < currentValue.length; i++) {
+        const distance = Math.abs(newValue - currentValue[i]);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestHandleIndex = i;
+        }
+      }
+      
+      const newValues = [...currentValue];
+      newValues[closestHandleIndex] = newValue;
+      
+      // 确保范围值的顺序正确
+      if (closestHandleIndex > 0 && newValues[closestHandleIndex] < newValues[closestHandleIndex - 1]) {
+        newValues[closestHandleIndex] = newValues[closestHandleIndex - 1];
+      } else if (closestHandleIndex < newValues.length - 1 && newValues[closestHandleIndex] > newValues[closestHandleIndex + 1]) {
+        newValues[closestHandleIndex] = newValues[closestHandleIndex + 1];
+      }
+      
+      setCurrentValue(newValues);
+      onChange?.(newValues);
+      onChangeComplete?.(newValues);
+    } else {
+      setCurrentValue([newValue]);
+      onChange?.(newValue);
+      onChangeComplete?.(newValue);
+    }
+  }, [disabled, isDragging, rangeConfig.enabled, currentValue, getValueFromPosition, onChange, onChangeComplete]);
+  
+  // 处理键盘事件
+  const handleKeyDown = useCallback((e: React.KeyboardEvent, handleIndex: number) => {
+    if (disabled) return;
+    
+    const stepSize = e.shiftKey ? (step as number) * 10 : (step as number);
+    const newValues = [...currentValue];
+    
+    switch (e.key) {
+      case 'ArrowLeft':
+      case 'ArrowDown':
+        e.preventDefault();
+        newValues[handleIndex] = Math.max(min, newValues[handleIndex] - stepSize);
+        break;
+      case 'ArrowRight':
+      case 'ArrowUp':
+        e.preventDefault();
+        newValues[handleIndex] = Math.min(max, newValues[handleIndex] + stepSize);
+        break;
+      case 'Home':
+        e.preventDefault();
+        newValues[handleIndex] = min;
+        break;
+      case 'End':
+        e.preventDefault();
+        newValues[handleIndex] = max;
+        break;
+      default:
+        return;
+    }
+    
+    // 确保范围值的顺序正确
+    if (rangeConfig.enabled) {
+      if (handleIndex > 0 && newValues[handleIndex] < newValues[handleIndex - 1]) {
+        newValues[handleIndex] = newValues[handleIndex - 1];
+      } else if (handleIndex < newValues.length - 1 && newValues[handleIndex] > newValues[handleIndex + 1]) {
+        newValues[handleIndex] = newValues[handleIndex + 1];
+      }
+    }
+    
+    setCurrentValue(newValues);
+    onChange?.(rangeConfig.enabled ? newValues : newValues[0]);
+    onChangeComplete?.(rangeConfig.enabled ? newValues : newValues[0]);
+  }, [disabled, currentValue, min, max, step, rangeConfig.enabled, onChange, onChangeComplete]);
+  
+  // 处理鼠标悬停
+  const handleMouseEnter = useCallback((handleIndex: number) => {
+    setHoverHandle(handleIndex);
+    
+    // 更新工具提示可见性
+    setTooltipVisible(prev => {
+      const newVisibility = [...prev];
+      newVisibility[handleIndex] = true;
+      return newVisibility;
+    });
+  }, []);
+  
+  const handleMouseLeave = useCallback((handleIndex: number) => {
+    setHoverHandle(null);
+    
+    // 更新工具提示可见性
+    setTooltipVisible(prev => {
+      const newVisibility = [...prev];
+      newVisibility[handleIndex] = false;
+      return newVisibility;
+    });
+  }, []);
+  
+  // 清理事件监听器
+  useEffect(() => {
+    return () => {
+      // 清理动画帧
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      // 清理事件监听器
+      if (moveHandlerRef.current) {
+        document.removeEventListener('mousemove', moveHandlerRef.current);
+        document.removeEventListener('touchmove', moveHandlerRef.current);
+      }
+      if (upHandlerRef.current) {
+        document.removeEventListener('mouseup', upHandlerRef.current);
+        document.removeEventListener('touchend', upHandlerRef.current);
+      }
+    };
+  }, []);
+  
+  // 初始化工具提示可见性
+  useEffect(() => {
+    setTooltipVisible(new Array(currentValue.length).fill(false));
+  }, [currentValue.length]);
+  
+  // 计算轨道样式
+  const trackStyle = useMemo(() => {
+    if (rangeConfig.enabled && currentValue.length >= 2) {
+      const startPercent = getPercentage(currentValue[0]);
+      const endPercent = getPercentage(currentValue[currentValue.length - 1]);
+      
+      // 计算区间颜色
+      let backgroundColor = trackColor;
+      if (!backgroundColor) {
+        if (ranges.length > 0) {
+          const rangeIndex = ranges.findIndex(r => 
+            currentValue[0] >= r.start && currentValue[currentValue.length - 1] <= r.end
+          );
+          if (rangeIndex !== -1) {
+            backgroundColor = ranges[rangeIndex].color;
+          }
+        }
+        
+        if (!backgroundColor) {
+          switch (theme) {
+            case 'primary':
+              backgroundColor = 'var(--slider-primary-color, #1890ff)';
+              break;
+            case 'success':
+              backgroundColor = 'var(--slider-success-color, #52c41a)';
+              break;
+            case 'warning':
+              backgroundColor = 'var(--slider-warning-color, #faad14)';
+              break;
+            case 'danger':
+              backgroundColor = 'var(--slider-danger-color, #f5222d)';
+              break;
+            case 'custom':
+              backgroundColor = trackColor || 'var(--slider-track-color, #1890ff)';
+              break;
+            default:
+              backgroundColor = 'var(--slider-track-color, #1890ff)';
+          }
+        }
+      }
+      
+      return {
+        [vertical ? 'bottom' : 'left']: `${startPercent}%`,
+        [vertical ? 'height' : 'width']: `${endPercent - startPercent}%`,
+        backgroundColor,
+        transition: animation ? `all ${animationDuration}ms` : 'none'
+      };
+    } else {
+      const percent = getPercentage(currentValue[0]);
+      
+      // 计算区间颜色
+      let backgroundColor = trackColor;
+      if (!backgroundColor) {
+        if (ranges.length > 0) {
+          const rangeIndex = ranges.findIndex(r => 
+            currentValue[0] >= r.start && currentValue[0] <= r.end
+          );
+          if (rangeIndex !== -1) {
+            backgroundColor = ranges[rangeIndex].color;
+          }
+        }
+        
+        if (!backgroundColor) {
+          switch (theme) {
+            case 'primary':
+              backgroundColor = 'var(--slider-primary-color, #1890ff)';
+              break;
+            case 'success':
+              backgroundColor = 'var(--slider-success-color, #52c41a)';
+              break;
+            case 'warning':
+              backgroundColor = 'var(--slider-warning-color, #faad14)';
+              break;
+            case 'danger':
+              backgroundColor = 'var(--slider-danger-color, #f5222d)';
+              break;
+            case 'custom':
+              backgroundColor = trackColor || 'var(--slider-track-color, #1890ff)';
+              break;
+            default:
+              backgroundColor = 'var(--slider-track-color, #1890ff)';
+          }
+        }
+      }
+      
+      return {
+        [vertical ? 'height' : 'width']: `${percent}%`,
+        backgroundColor,
+        transition: animation ? `all ${animationDuration}ms` : 'none'
+      };
+    }
+  }, [rangeConfig.enabled, currentValue, getPercentage, vertical, trackColor, ranges, theme, animation, animationDuration]);
+  
+  // 计算轨道背景样式
+  const railStyle = useMemo(() => {
+    return {
+      backgroundColor: railColor || 'var(--slider-rail-color, #f5f5f5)',
+      transition: animation ? `all ${animationDuration}ms` : 'none'
+    };
+  }, [railColor, animation, animationDuration]);
+  
+  // 渲染标记
+  const renderMarks = () => {
+    if (!showMarks || Object.keys(marks).length === 0) return null;
+    
+    return Object.entries(marks).map(([markValue, markLabel]) => {
+      const percent = getPercentage(Number(markValue));
+      const isActive = rangeConfig.enabled 
+        ? currentValue[0] <= Number(markValue) && Number(markValue) <= currentValue[currentValue.length - 1]
+        : currentValue[0] >= Number(markValue);
+      
+      // 处理标记标签
+      let label: React.ReactNode;
+      let markStyle: React.CSSProperties = {};
+      
+      if (markLabel && typeof markLabel === 'object' && !React.isValidElement(markLabel)) {
+        const markObj = markLabel as { label: React.ReactNode; style?: React.CSSProperties };
+        label = markObj.label;
+        markStyle = markObj.style || {};
+      } else {
+        label = markLabel;
+      }
+      
+      return (
+        <div
+          key={markValue}
+          className={`${styles.mark} ${isActive ? styles.markActive : ''}`}
+          style={{
+            [vertical ? 'bottom' : 'left']: `${percent}%`,
+            transform: vertical ? 'translateY(50%)' : 'translateX(-50%)',
+            ...markStyle
+          }}
+        >
+          <span className={styles.markLabel}>{label}</span>
+        </div>
+      );
+    });
+  };
+  
+  // 渲染拖拽手柄
+  const renderHandles = () => {
+    return currentValue.map((val, index) => {
+      const percent = getPercentage(val);
+      const isActive = activeHandle === index;
+      const isHover = hoverHandle === index;
+      
+      // 计算手柄样式
+      const handleStyleObj: React.CSSProperties = {
+        [vertical ? 'bottom' : 'left']: `${percent}%`,
+        transform: vertical ? 'translateY(50%)' : 'translateX(-50%)',
+        borderColor: isActive || isHover 
+          ? handleColor || 'var(--slider-handle-active-color, #1890ff)' 
+          : handleColor || 'var(--slider-handle-color, #1890ff)',
+        transition: animation && !isDragging ? `all ${animationDuration}ms` : 'none'
+      };
+      
+      // 计算工具提示内容
+      let tooltipContent: React.ReactNode = val;
+      if (tooltip && typeof tooltip === 'object' && tooltip.formatter) {
+        tooltipContent = tooltip.formatter(val);
+      }
+      
+      // 计算工具提示位置
+      let tooltipPlacement = 'top';
+      if (tooltip && typeof tooltip === 'object' && tooltip.placement) {
+        tooltipPlacement = tooltip.placement;
+      } else if (vertical) {
+        tooltipPlacement = 'right';
+      }
+      
+      // 计算工具提示可见性
+      const isTooltipVisible = tooltip && (
+        (typeof tooltip === 'object' && tooltip.visible !== undefined)
+          ? tooltip.visible
+          : (isDragging && activeHandle === index) || tooltipVisible[index]
+      );
+      
+      return (
+        <div
+          key={index}
+          className={`${styles.handle} ${isActive ? styles.handleActive : ''} ${isHover ? styles.handleHover : ''} ${disabled ? styles.handleDisabled : ''}`}
+          style={handleStyleObj}
+          onMouseDown={(e) => handleMouseDown(e, index)}
+          onTouchStart={(e) => handleMouseDown(e, index)}
+          onMouseEnter={() => handleMouseEnter(index)}
+          onMouseLeave={() => handleMouseLeave(index)}
+          onKeyDown={(e) => handleKeyDown(e, index)}
+          tabIndex={disabled ? -1 : 0}
+          role="slider"
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={val}
+          aria-disabled={disabled}
+          aria-label={Array.isArray(ariaLabel) ? ariaLabel[index] : ariaLabel}
+          aria-valuetext={Array.isArray(ariaValueText) ? ariaValueText[index] : ariaValueText}
+        >
+          {tooltip && (
+            <div 
+              className={`${styles.tooltip} ${isTooltipVisible ? styles.tooltipVisible : ''} ${styles[`tooltip${tooltipPlacement.charAt(0).toUpperCase() + tooltipPlacement.slice(1)}`]}`}
+            >
+              {tooltipContent}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
+  
+  // 计算滑块类名
+  const sliderClassName = useMemo(() => {
+    return `${styles.slider} ${vertical ? styles.sliderVertical : ''} ${disabled ? styles.sliderDisabled : ''} ${isDragging ? styles.sliderDragging : ''} ${styles[`theme${theme.charAt(0).toUpperCase() + theme.slice(1)}`]} ${className}`;
+  }, [vertical, disabled, isDragging, theme, className]);
+  
+  return (
+    <div
+      ref={sliderRef}
+      className={sliderClassName}
+      style={{
+        ...style,
+        '--slider-animation-duration': `${animationDuration}ms`,
+      } as React.CSSProperties}
+      id={id}
+      {...props}
+    >
+      <div
+        ref={trackRef}
+        className={styles.track}
+        onClick={handleTrackClick}
+      >
+        <div 
+          className={styles.rail}
+          style={railStyle}
+        />
+        <div
+          className={styles.trackFill}
+          style={trackStyle}
+        />
+      </div>
+      
+      {renderMarks()}
+      {renderHandles()}
+    </div>
+  );
+};
+
+export default EnhancedSlider;
