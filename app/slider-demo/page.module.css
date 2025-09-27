@@ -1,7 +1,7 @@
 /* 滑块演示页面样式 */
 
 .container {
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -12,126 +12,103 @@
   margin-bottom: 2rem;
   color: #333;
   text-align: center;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 1rem;
 }
 
 .section {
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
   padding: 1.5rem;
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.section h2 {
-  margin-top: 0;
+.sectionTitle {
+  font-size: 1.25rem;
   margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  color: #333;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.5rem;
+  color: #444;
+  border-left: 4px solid #1890ff;
+  padding-left: 0.75rem;
 }
 
 .sliderContainer {
-  padding: 1rem 2rem;
+  padding: 1rem 1.5rem;
+  background-color: #fafafa;
+  border-radius: 6px;
 }
 
 .value {
   margin-top: 1rem;
   font-size: 0.9rem;
   color: #666;
+  text-align: center;
 }
 
 .verticalContainer {
   display: flex;
-  align-items: center;
-  height: 300px;
-  padding: 0 2rem;
-}
-
-.verticalContainer .value {
-  margin-left: 2rem;
-  margin-top: 0;
-}
-
-.themeContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.themeSlider {
+  justify-content: center;
+  gap: 3rem;
+  height: 250px;
   padding: 1rem;
+  background-color: #fafafa;
   border-radius: 6px;
-  background-color: #f9f9f9;
 }
 
-.themeSlider h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  color: #555;
-}
-
-.disabledContainer {
-  opacity: 0.8;
-}
-
-.controlsContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.control {
+.verticalSlider {
+  height: 100%;
   display: flex;
   align-items: center;
-  margin-right: 1rem;
 }
 
-.control label {
-  margin-right: 0.5rem;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.control input {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.control select {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.button {
-  padding: 0.5rem 1rem;
-  background-color: #1890ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
-}
-
-.button:hover {
-  background-color: #40a9ff;
-}
-
-.button:active {
-  background-color: #096dd9;
-}
-
+/* 响应式设计 */
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
   }
   
-  .themeContainer {
-    grid-template-columns: 1fr;
+  .section {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .sliderContainer {
+    padding: 0.75rem;
+  }
+  
+  .verticalContainer {
+    height: 200px;
+    gap: 2rem;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+  
+  .title {
+    color: #e0e0e0;
+    border-bottom-color: #333;
+  }
+  
+  .section {
+    background-color: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .sectionTitle {
+    color: #d0d0d0;
+  }
+  
+  .sliderContainer,
+  .verticalContainer {
+    background-color: #252525;
+  }
+  
+  .value {
+    color: #aaa;
   }
 }

@@ -30,6 +30,17 @@ export interface EnhancedSliderProps {
     color: string;
   }>;
   
+  // 分段背景色配置
+  segmentedTrack?: boolean | {
+    segments?: number;
+    colors?: string[];
+    startColor?: string;
+    endColor?: string;
+  };
+  
+  // 拖动时隐藏rail
+  hideRailWhenDragging?: boolean;
+  
   // 事件回调
   onChange?: (value: number | number[]) => void;
   onChangeComplete?: (value: number | number[]) => void;
@@ -98,6 +109,10 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   trackColor,
   railColor,
   handleColor,
+  
+  // 分段背景色配置
+  segmentedTrack = false,
+  hideRailWhenDragging = false,
   
   // 动画配置
   animation = true,
@@ -511,9 +526,72 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   const railStyle = useMemo(() => {
     return {
       backgroundColor: railColor || 'var(--slider-rail-color, #f5f5f5)',
-      transition: animation ? `all ${animationDuration}ms` : 'none'
+      transition: animation ? `all ${animationDuration}ms` : 'none',
+      opacity: hideRailWhenDragging && isDragging ? 0 : 1
     };
-  }, [railColor, animation, animationDuration]);
+  }, [railColor, animation, animationDuration, hideRailWhenDragging, isDragging]);
+  
+  // 计算分段背景色
+  const segmentedTrackStyle = useMemo(() => {
+    if (!segmentedTrack) return null;
+    
+    // 解析分段配置
+    const segmentConfig = typeof segmentedTrack === 'boolean' 
+      ? { segments: 5, startColor: '#e6f7ff', endColor: '#1890ff' } 
+      : {
+          segments: segmentedTrack.segments || 5,
+          startColor: segmentedTrack.startColor || '#e6f7ff',
+          endColor: segmentedTrack.endColor || '#1890ff',
+          colors: segmentedTrack.colors
+        };
+    
+    // 生成分段颜色
+    const segmentColors = segmentConfig.colors || Array(segmentConfig.segments)
+      .fill(0)
+      .map((_, index) => {
+        const ratio = index / (segmentConfig.segments - 1);
+        
+        // 解析颜色
+        const startRGB = {
+          r: parseInt(segmentConfig.startColor.slice(1, 3), 16),
+          g: parseInt(segmentConfig.startColor.slice(3, 5), 16),
+          b: parseInt(segmentConfig.startColor.slice(5, 7), 16)
+        };
+        
+        const endRGB = {
+          r: parseInt(segmentConfig.endColor.slice(1, 3), 16),
+          g: parseInt(segmentConfig.endColor.slice(3, 5), 16),
+          b: parseInt(segmentConfig.endColor.slice(5, 7), 16)
+        };
+        
+        // 计算渐变色
+        const r = Math.round(startRGB.r + (endRGB.r - startRGB.r) * ratio);
+        const g = Math.round(startRGB.g + (endRGB.g - startRGB.g) * ratio);
+        const b = Math.round(startRGB.b + (endRGB.b - startRGB.b) * ratio);
+        
+        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+      });
+    
+    // 生成分段样式
+    const segments = Array(segmentConfig.segments)
+      .fill(0)
+      .map((_, index) => {
+        const startPercent = (index / segmentConfig.segments) * 100;
+        const endPercent = ((index + 1) / segmentConfig.segments) * 100;
+        const width = endPercent - startPercent;
+        
+        return {
+          [vertical ? 'bottom' : 'left']: `${startPercent}%`,
+          [vertical ? 'height' : 'width']: `${width}%`,
+          backgroundColor: segmentColors[index],
+          position: 'absolute' as const,
+          borderRadius: '4px',
+          transition: animation ? `all ${animationDuration}ms` : 'none'
+        };
+      });
+    
+    return segments;
+  }, [segmentedTrack, vertical, animation, animationDuration]);
   
   // 渲染标记
   const renderMarks = () => {
@@ -647,10 +725,20 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
           className={styles.rail}
           style={railStyle}
         />
-        <div
-          className={styles.trackFill}
-          style={trackStyle}
-        />
+        {segmentedTrack ? (
+          segmentedTrackStyle?.map((style, index) => (
+            <div
+              key={`segment-${index}`}
+              className={styles.trackSegment}
+              style={style}
+            />
+          ))
+        ) : (
+          <div
+            className={styles.trackFill}
+            style={trackStyle}
+          />
+        )}
       </div>
       
       {renderMarks()}

@@ -104,6 +104,31 @@
   will-change: bottom, height, background-color;
 }
 
+/* 分段轨道样式 */
+.trackSegment {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background-color: var(--slider-track-color);
+  border-radius: 4px;
+  transition: all var(--slider-animation-duration) ease;
+  will-change: left, width, background-color;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  contain: layout style paint;
+  z-index: 2;
+}
+
+.sliderVertical .trackSegment {
+  width: 100%;
+  height: auto;
+  left: 0;
+  will-change: bottom, height, background-color;
+}
+
 /* 拖拽手柄样式 */
 .handle {
   position: absolute;
@@ -399,6 +424,7 @@
   transition: none !important;
 }
 
-.sliderDragging .trackFill {
+.sliderDragging .trackFill,
+.sliderDragging .trackSegment {
   transition: none !important;
 }
