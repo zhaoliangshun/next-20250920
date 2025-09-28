@@ -1,0 +1,25 @@
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(50% - 12px), 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.gridItem {
+  width: 100%;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+/* Optional: Add responsive behavior if needed */
+@media (max-width: 768px) {
+  .gridContainer {
+    grid-template-columns: 1fr;
+  }
+  
+  .fullWidth {
+    grid-column: auto;
+  }
+}

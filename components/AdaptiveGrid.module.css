@@ -1,0 +1,24 @@
+.adaptiveGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+/* 如果最后一个元素是奇数位置（即单独一行），让它占据整行 */
+.adaptiveGrid > *:nth-child(odd):last-child {
+  grid-column: 1 / -1;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .adaptiveGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  /* 在移动端，所有元素都占满整行，所以取消跨列设置 */
+  .adaptiveGrid > *:nth-child(odd):last-child {
+    grid-column: auto;
+  }
+}
