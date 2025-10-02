@@ -1,0 +1,212 @@
+/* Message Container */
+.messageContainer {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1010;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100vw - 32px);
+  /* 添加硬件加速 */
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Message Item */
+.messageItem {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #d9d9d9;
+  min-width: 300px;
+  max-width: 500px;
+  pointer-events: auto;
+  position: relative;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 1;
+  margin-bottom: 8px;
+  overflow: hidden;
+  /* 添加硬件加速 */
+  will-change: transform, opacity, height, margin, padding;
+  backface-visibility: hidden;
+}
+
+/* 为不同位置的消息添加不同的层级 */
+.messageItem:nth-child(1) {
+  z-index: 3;
+}
+
+.messageItem:nth-child(2) {
+  z-index: 2;
+}
+
+.messageItem:nth-child(3) {
+  z-index: 1;
+}
+
+.messageItem.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  /* 添加轻微的弹性效果 */
+  animation: messageBounce 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes messageBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.messageItem.leaving {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  transition: opacity 0.3s cubic-bezier(0.55, 0.06, 0.68, 0.19),
+              transform 0.3s cubic-bezier(0.55, 0.06, 0.68, 0.19),
+              height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              margin 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              padding 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Message Types */
+.messageItem.success {
+  border-left: 4px solid #52c41a;
+}
+
+.messageItem.success .iconWrapper {
+  color: #52c41a;
+}
+
+.messageItem.error {
+  border-left: 4px solid #ff4d4f;
+}
+
+.messageItem.error .iconWrapper {
+  color: #ff4d4f;
+}
+
+.messageItem.warning {
+  border-left: 4px solid #faad14;
+}
+
+.messageItem.warning .iconWrapper {
+  color: #faad14;
+}
+
+.messageItem.info {
+  border-left: 4px solid #1890ff;
+}
+
+.messageItem.info .iconWrapper {
+  color: #1890ff;
+}
+
+/* Icon */
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.text {
+  font-size: 14px;
+  line-height: 1.5715;
+  color: rgba(0, 0, 0, 0.85);
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Close Button */
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-left: 12px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.45);
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  flex-shrink: 0;
+  /* 添加硬件加速 */
+  will-change: transform, background-color, color;
+}
+
+.closeButton:hover {
+  color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, 0.06);
+  transform: scale(1.1);
+}
+
+.closeButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .messageContainer {
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    transform: none;
+    max-width: none;
+  }
+  
+  .messageItem {
+    min-width: auto;
+    max-width: none;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .messageItem {
+    background: #1f1f1f;
+    border-color: #434343;
+  }
+  
+  .text {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  .closeButton {
+    color: rgba(255, 255, 255, 0.45);
+  }
+  
+  .closeButton:hover {
+    color: rgba(255, 255, 255, 0.75);
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+}
