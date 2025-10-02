@@ -14,11 +14,14 @@ const MobilePicker = ({
   defaultValue,
   onChange,
   visibleCount = 5,
+  visibleCountAbove,
+  visibleCountBelow,
   itemHeight = 44,
   className = "",
   style = {},
   disabled = false,
   placeholder = "请选择",
+  symmetricStyles, // 对称样式配置
 }) => {
   // 当前选中的索引
   const [selectedIndex, setSelectedIndex] = useState(() => {
@@ -48,11 +51,16 @@ const MobilePicker = ({
   const lastMoveYRef = useRef(0);
   const animationFrameRef = useRef(null);
 
+  // 计算上下显示数量
+  const countAbove = visibleCountAbove !== undefined ? visibleCountAbove : Math.floor(visibleCount / 2);
+  const countBelow = visibleCountBelow !== undefined ? visibleCountBelow : Math.floor(visibleCount / 2);
+  const totalVisible = countAbove + 1 + countBelow; // 上面 + 选中项 + 下面
+  
   // 计算容器高度
-  const containerHeight = visibleCount * itemHeight;
+  const containerHeight = totalVisible * itemHeight;
   
   // 计算中心位置（选中项的位置）
-  const centerIndex = Math.floor(visibleCount / 2);
+  const centerIndex = countAbove;
 
   // 更新外部受控值
   useEffect(() => {
@@ -249,41 +257,89 @@ const MobilePicker = ({
     const currentPosition = scrollOffset / itemHeight;
     const distance = Math.abs(index + currentPosition);
     
-    // 计算透明度：距离中心越远，透明度越低
+    // 如果有对称样式配置，使用它
+    if (symmetricStyles && symmetricStyles.length > 0) {
+      const distanceLevel = Math.round(distance);
+      
+      // 查找匹配的样式配置
+      const styleConfig = symmetricStyles.find(s => s.distance === distanceLevel);
+      
+      if (styleConfig) {
+        return {
+          color: styleConfig.color || "#000000",
+          fontSize: styleConfig.fontSize || "16px",
+          fontWeight: styleConfig.fontWeight || (distanceLevel === 0 ? 600 : 400),
+          opacity: styleConfig.opacity !== undefined ? styleConfig.opacity : 1,
+          transform: styleConfig.scale ? `scale(${styleConfig.scale})` : "scale(1)",
+        };
+      }
+      
+      // 如果没有找到匹配的，使用最后一个样式（默认样式）
+      const defaultStyle = symmetricStyles[symmetricStyles.length - 1];
+      return {
+        color: defaultStyle.color || "#666666",
+        fontSize: defaultStyle.fontSize || "16px",
+        fontWeight: defaultStyle.fontWeight || 400,
+        opacity: defaultStyle.opacity !== undefined ? defaultStyle.opacity : 0.5,
+        transform: defaultStyle.scale ? `scale(${defaultStyle.scale})` : "scale(0.92)",
+      };
+    }
+    
+    // 默认样式（没有对称配置时）
     let opacity = 1;
     if (distance > 0) {
-      opacity = Math.max(0.2, 1 - distance * 0.3);
+      opacity = Math.max(0.5, 1 - distance * 0.08);
     }
 
-    // 计算缩放：选中项稍大
-    const scale = distance === 0 ? 1 : Math.max(0.85, 1 - distance * 0.08);
-
-    // 计算字体粗细
+    const scale = distance === 0 ? 1 : Math.max(0.92, 1 - distance * 0.04);
     const fontWeight = distance < 0.5 ? 600 : 400;
+    const color = distance < 0.5 ? "#000000" : "#666666";
 
     return {
       opacity,
       transform: `scale(${scale})`,
       fontWeight,
-      color: distance < 0.5 ? "#000" : "#666",
+      color,
     };
   };
 
   // 渲染选项列表
   const renderOptions = () => {
     return options.map((option, index) => {
-      const itemStyle = getItemStyle(index);
       const isSelected = index === selectedIndex && !isDragging;
+      
+      // 检查是否有自定义样式配置
+      const hasCustomStyle = option.customStyle !== undefined;
+      const hasCustomColor = option.color !== undefined;
+      const hasCustomFontSize = option.fontSize !== undefined;
+      
+      // 如果有任何自定义配置，则不应用默认的渐变效果
+      let finalStyle;
+      if (hasCustomStyle || hasCustomColor || hasCustomFontSize) {
+        // 使用自定义样式，不计算 opacity 和 scale
+        finalStyle = {
+          height: `${itemHeight}px`,
+          lineHeight: `${itemHeight}px`,
+          color: option.color,
+          fontSize: option.fontSize,
+          fontWeight: isSelected ? 600 : 400,
+          ...option.customStyle,
+        };
+      } else {
+        // 使用默认的渐变样式
+        const itemStyle = getItemStyle(index);
+        finalStyle = {
+          height: `${itemHeight}px`,
+          lineHeight: `${itemHeight}px`,
+          ...itemStyle,
+        };
+      }
 
       return (
         <div
           key={option.value}
           className={`${styles.pickerItem} ${isSelected ? styles.pickerItemSelected : ""}`}
-          style={{
-            height: `${itemHeight}px`,
-            lineHeight: `${itemHeight}px`,
-            ...itemStyle,
-          }}
+          style={finalStyle}
           onClick={() => !disabled && scrollToIndex(index)}
         >
           {option.label}
@@ -301,20 +357,8 @@ const MobilePicker = ({
       <div
         className={styles.pickerIndicator}
         style={{
-          top: `${centerIndex * itemHeight}px`,
+          top: `${countAbove * itemHeight}px`,
           height: `${itemHeight}px`,
-        }}
-      />
-
-      {/* 遮罩层 - 上 */}
-      <div className={styles.pickerMaskTop} style={{ height: `${centerIndex * itemHeight}px` }} />
-      
-      {/* 遮罩层 - 下 */}
-      <div
-        className={styles.pickerMaskBottom}
-        style={{
-          height: `${(visibleCount - centerIndex - 1) * itemHeight}px`,
-          bottom: 0,
         }}
       />
 
@@ -323,7 +367,7 @@ const MobilePicker = ({
         ref={containerRef}
         className={styles.pickerList}
         style={{
-          transform: `translate3d(0, ${scrollOffset + centerIndex * itemHeight}px, 0)`,
+          transform: `translate3d(0, ${scrollOffset + countAbove * itemHeight}px, 0)`,
         }}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
@@ -339,13 +383,28 @@ const MobilePicker = ({
 };
 
 MobilePicker.propTypes = {
-  // 选项列表 [{ label: string, value: any }]
+  // 选项列表 [{ label: string, value: any, color?: string, fontSize?: string, customStyle?: object }]
   options: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.node.isRequired,
       value: PropTypes.any.isRequired,
+      color: PropTypes.string,
+      fontSize: PropTypes.string,
+      customStyle: PropTypes.object,
     })
   ).isRequired,
+  
+  // 对称样式配置：以选中项为中心，上下对称位置具有相同样式
+  symmetricStyles: PropTypes.arrayOf(
+    PropTypes.shape({
+      distance: PropTypes.number.isRequired, // 距离选中项的距离（0=选中项）
+      color: PropTypes.string,
+      fontSize: PropTypes.string,
+      fontWeight: PropTypes.number,
+      opacity: PropTypes.number,
+      scale: PropTypes.number,
+    })
+  ),
   
   // 当前值（受控）
   value: PropTypes.any,
@@ -356,8 +415,14 @@ MobilePicker.propTypes = {
   // 值变化回调
   onChange: PropTypes.func,
   
-  // 可见项数量（必须是奇数）
+  // 可见项数量（默认模式，上下对称）
   visibleCount: PropTypes.number,
+  
+  // 上方显示的项数
+  visibleCountAbove: PropTypes.number,
+  
+  // 下方显示的项数
+  visibleCountBelow: PropTypes.number,
   
   // 每项高度
   itemHeight: PropTypes.number,
@@ -373,6 +438,10 @@ MobilePicker.propTypes = {
   
   // 占位符
   placeholder: PropTypes.string,
+};
+
+MobilePicker.defaultProps = {
+  symmetricStyles: null,
 };
 
 export default MobilePicker;

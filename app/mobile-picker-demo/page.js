@@ -107,7 +107,6 @@ export default function MobilePickerDemo() {
             </span>
           </div>
         </section>
-
         {/* 示例2: 日期选择（三列） */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>📅 日期选择</h2>
@@ -152,7 +151,6 @@ export default function MobilePickerDemo() {
             </span>
           </div>
         </section>
-
         {/* 示例3: 水果选择（带 Emoji） */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>🍓 水果选择</h2>
@@ -172,7 +170,6 @@ export default function MobilePickerDemo() {
             </span>
           </div>
         </section>
-
         {/* 示例4: 时间选择（两列） */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>⏰ 时间选择</h2>
@@ -198,7 +195,6 @@ export default function MobilePickerDemo() {
             </div>
           </div>
         </section>
-
         {/* 示例5: 不同可见数量 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>🎛️ 可见项数量对比</h2>
@@ -221,7 +217,6 @@ export default function MobilePickerDemo() {
             </div>
           </div>
         </section>
-
         {/* 示例6: 自定义样式 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>🎨 自定义样式</h2>
@@ -240,8 +235,187 @@ export default function MobilePickerDemo() {
             />
           </div>
         </section>
+        示例7: 上下不对称显示
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>⬆️⬇️ 上下不对称显示</h2>
+          <p
+            style={{ color: "#666", marginBottom: "20px", textAlign: "center" }}
+          >
+            支持自定义上方和下方显示的项数，默认选中第一项
+          </p>
+          <div className={styles.compareGroup}>
+            <div className={styles.compareItem}>
+              <h3 className={styles.compareTitle}>上2下2（默认第一项）</h3>
+              <MobilePicker
+                options={fruitOptions}
+                visibleCountAbove={2}
+                visibleCountBelow={2}
+                itemHeight={44}
+                defaultValue={fruitOptions[0]?.value}
+              />
+            </div>
+            <div className={styles.compareItem}>
+              <h3 className={styles.compareTitle}>上1下3</h3>
+              <MobilePicker
+                options={cityOptions}
+                visibleCountAbove={1}
+                visibleCountBelow={4}
+                itemHeight={44}
+                defaultValue={cityOptions[0]?.value}
+              />
+            </div>
+            <div className={styles.compareItem}>
+              <h3 className={styles.compareTitle}>上3下1</h3>
+              <MobilePicker
+                options={cityOptions}
+                visibleCountAbove={3}
+                visibleCountBelow={1}
+                itemHeight={44}
+                defaultValue={cityOptions[0]?.value}
+              />
+            </div>
+          </div>
+        </section>
+        {/* 示例8: 自定义每项样式 */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>🎨 自定义每项样式</h2>
+          <p style={{ color: "#666", marginBottom: "20px", textAlign: "center" }}>
+            可以单独设置每一项的颜色、字体大小和其他样式，无需计算渐变
+          </p>
+          <div className={styles.compareGroup}>
+            <div className={styles.compareItem}>
+              <h3 className={styles.compareTitle}>自定义颜色</h3>
+              <MobilePicker
+                options={[
+                  { label: "红色项", value: "red", color: "#ff0000" },
+                  { label: "蓝色项", value: "blue", color: "#0000ff" },
+                  { label: "绿色项", value: "green", color: "#00aa00" },
+                  { label: "橙色项", value: "orange", color: "#ff8800" },
+                  { label: "紫色项", value: "purple", color: "#aa00aa" },
+                ]}
+                visibleCount={5}
+                itemHeight={44}
+                defaultValue="red"
+              />
+            </div>
+            <div className={styles.compareItem}>
+              <h3 className={styles.compareTitle}>自定义字体大小</h3>
+              <MobilePicker
+                options={[
+                  { label: "12px", value: "12", fontSize: "12px" },
+                  { label: "16px", value: "16", fontSize: "16px" },
+                  { label: "20px", value: "20", fontSize: "20px" },
+                  { label: "24px", value: "24", fontSize: "24px" },
+                  { label: "28px", value: "28", fontSize: "28px" },
+                ]}
+                visibleCount={5}
+                itemHeight={44}
+                defaultValue="20"
+              />
+            </div>
+            <div className={styles.compareItem}>
+              <h3 className={styles.compareTitle}>混合自定义</h3>
+              <MobilePicker
+                options={[
+                  { 
+                    label: "重要", 
+                    value: "important", 
+                    color: "#ff0000",
+                    fontSize: "18px",
+                    customStyle: { fontWeight: 700 }
+                  },
+                  { 
+                    label: "普通", 
+                    value: "normal", 
+                    color: "#333333",
+                    fontSize: "16px"
+                  },
+                  { 
+                    label: "次要", 
+                    value: "secondary", 
+                    color: "#999999",
+                    fontSize: "14px"
+                  },
+                  { 
+                    label: "禁用", 
+                    value: "disabled", 
+                    color: "#cccccc",
+                    fontSize: "14px",
+                    customStyle: { textDecoration: "line-through" }
+                  },
+                ]}
+                visibleCount={5}
+                itemHeight={44}
+                defaultValue="normal"
+              />
+            </div>
+          </div>
+        </section>
 
-        {/* 示例7: 禁用状态 */}
+        {/* 示例9: 对称样式配置 */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>⚖️ 对称样式配置</h2>
+          <p style={{ color: "#666", marginBottom: "20px", textAlign: "center" }}>
+            以选中项为中心，上下对称位置的项目具有相同的颜色和字体大小
+          </p>
+          <div className={styles.compareGroup}>
+            <div className={styles.compareItem}>
+              <h3 className={styles.compareTitle}>渐变对称样式</h3>
+              <MobilePicker
+                options={cityOptions}
+                visibleCount={5}
+                itemHeight={44}
+                defaultValue="beijing"
+                symmetricStyles={[
+                  { distance: 0, color: "#000000", fontSize: "18px", fontWeight: 600, opacity: 1 },
+                  { distance: 1, color: "#333333", fontSize: "16px", fontWeight: 500, opacity: 0.9 },
+                  { distance: 2, color: "#666666", fontSize: "14px", fontWeight: 400, opacity: 0.7 },
+                  { distance: 3, color: "#999999", fontSize: "12px", fontWeight: 400, opacity: 0.5 },
+                ]}
+              />
+              <div style={{ marginTop: "10px", fontSize: "12px", color: "#999", textAlign: "center" }}>
+                距离0: 黑18px | 距离1: 灰16px | 距离2: 浅灰14px
+              </div>
+            </div>
+            <div className={styles.compareItem}>
+              <h3 className={styles.compareTitle}>彩色对称样式</h3>
+              <MobilePicker
+                options={fruitOptions}
+                visibleCount={5}
+                itemHeight={48}
+                defaultValue={fruitOptions[2]?.value}
+                symmetricStyles={[
+                  { distance: 0, color: "#ff0000", fontSize: "20px", fontWeight: 700, scale: 1.1 },
+                  { distance: 1, color: "#ff6600", fontSize: "18px", fontWeight: 600, scale: 1.05 },
+                  { distance: 2, color: "#0088ff", fontSize: "16px", fontWeight: 400, scale: 1 },
+                ]}
+              />
+              <div style={{ marginTop: "10px", fontSize: "12px", color: "#999", textAlign: "center" }}>
+                距离0: 红色20px | 距离1: 橙色18px | 距离2: 蓝色16px
+              </div>
+            </div>
+            <div className={styles.compareItem}>
+              <h3 className={styles.compareTitle}>简约对称样式</h3>
+              <MobilePicker
+                options={yearOptions.slice(20, 30)}
+                visibleCount={7}
+                itemHeight={40}
+                defaultValue={2024}
+                symmetricStyles={[
+                  { distance: 0, color: "#1890ff", fontSize: "20px", fontWeight: 700 },
+                  { distance: 1, color: "#40a9ff", fontSize: "16px", fontWeight: 500 },
+                  { distance: 2, color: "#69c0ff", fontSize: "14px", fontWeight: 400 },
+                  { distance: 3, color: "#91d5ff", fontSize: "13px", fontWeight: 400, opacity: 0.8 },
+                ]}
+              />
+              <div style={{ marginTop: "10px", fontSize: "12px", color: "#999", textAlign: "center" }}>
+                蓝色渐变：选中项最深，距离越远颜色越浅
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 示例10: 禁用状态 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>🚫 禁用状态</h2>
           <div className={styles.pickerWrapper}>
@@ -265,6 +439,9 @@ export default function MobilePickerDemo() {
           <li>选中项为黑色粗体，离选中项越远颜色越淡</li>
           <li>点击任意项可直接选中</li>
           <li>滑动到边界时有阻尼效果</li>
+          <li>支持上下不对称显示，可自定义上方和下方显示的项数</li>
+          <li>支持对称样式配置，上下对称位置的项目具有相同的颜色、字体大小</li>
+          <li>可为每个项目单独设置颜色、字体大小和其他样式</li>
         </ul>
       </div>
     </div>

@@ -70,37 +70,6 @@
   z-index: 1;
 }
 
-/* 遮罩层 - 上 */
-.pickerMaskTop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.7) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* 遮罩层 - 下 */
-.pickerMaskBottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.7) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  pointer-events: none;
-  z-index: 2;
-}
-
 /* 响应式设计 */
 @media (max-width: 768px) {
   .pickerItem {
