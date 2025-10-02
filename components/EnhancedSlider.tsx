@@ -31,11 +31,12 @@ export interface EnhancedSliderProps {
   // 标记配置
   marks?: Record<
     number | string,
-    React.ReactNode | { 
-      label?: React.ReactNode; 
-      style?: React.CSSProperties;
-      showLabel?: boolean;
-    }
+    | React.ReactNode
+    | {
+        label?: React.ReactNode;
+        style?: React.CSSProperties;
+        showLabel?: boolean;
+      }
   >;
 
   // 区间颜色配置
@@ -93,7 +94,6 @@ export interface EnhancedSliderProps {
   trackColor?: string;
   railColor?: string;
   handleColor?: string;
-
 
   // 其他配置
   className?: string;
@@ -580,19 +580,19 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
         .map((_, index) => {
           // 透明度从 1/segments 到 1 等分（避免从0开始）
           const opacity = (index + 1) / segmentConfig.segments;
-          
+
           // 解析基础颜色
           const baseColor = segmentConfig.baseColor!;
           let r: number, g: number, b: number;
 
           // 支持 # 开头的十六进制颜色
-          if (baseColor.startsWith('#')) {
+          if (baseColor.startsWith("#")) {
             r = parseInt(baseColor.slice(1, 3), 16);
             g = parseInt(baseColor.slice(3, 5), 16);
             b = parseInt(baseColor.slice(5, 7), 16);
-          } 
+          }
           // 支持 rgb() 格式
-          else if (baseColor.startsWith('rgb')) {
+          else if (baseColor.startsWith("rgb")) {
             const matches = baseColor.match(/\d+/g);
             if (matches && matches.length >= 3) {
               r = parseInt(matches[0]);
@@ -703,28 +703,20 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
         backgroundColor,
       };
     }
-  }, [
-    rangeConfig.enabled,
-    currentValue,
-    getPercentage,
-    trackColor,
-    ranges,
-  ]);
+  }, [rangeConfig.enabled, currentValue, getPercentage, trackColor, ranges]);
 
   // 计算轨道背景样式
   const railStyle = useMemo(() => {
     return {
       backgroundColor: railColor,
-      backgroundImage: (segmentedTrack || segmentedTrackColor) ? segmentedTrackGradient : undefined,
+      backgroundImage:
+        segmentedTrack || segmentedTrackColor
+          ? segmentedTrackGradient
+          : undefined,
       backgroundSize: "100% 100%",
-      backgroundRepeat: "no-repeat"
+      backgroundRepeat: "no-repeat",
     };
-  }, [
-    railColor,
-    segmentedTrack,
-    segmentedTrackColor,
-    segmentedTrackGradient,
-  ]);
+  }, [railColor, segmentedTrack, segmentedTrackColor, segmentedTrackGradient]);
 
   // 渲染标记
   const renderMarks = () => {
@@ -766,7 +758,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       return (
         <div
           key={markValue}
-          className={`${styles.mark} ${isActive ? styles.markActive : ""}`}
+          className={`${styles.mark}`}
           style={{
             left: `${percent}%`,
             transform: "translateX(-50%)",
@@ -793,8 +785,8 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
         formatter?: (value: number) => React.ReactNode;
         style: React.CSSProperties;
       } = { enabled: false, formatter: undefined, style: {} };
-        
-        // 处理 showValueInHandle 配置，支持布尔值和对象两种形式。如果传入的是对象，则使用对象的属性；如果是布尔值，则启用默认的显示方式。
+
+      // 处理 showValueInHandle 配置，支持布尔值和对象两种形式。如果传入的是对象，则使用对象的属性；如果是布尔值，则启用默认的显示方式。
       if (typeof showValueInHandle === "boolean") {
         valueDisplayConfig = {
           enabled: showValueInHandle,
@@ -808,7 +800,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
           style: showValueInHandle?.style || {},
         };
       }
-        
 
       // 计算手柄样式
       const handleStyleObj: React.CSSProperties = {
