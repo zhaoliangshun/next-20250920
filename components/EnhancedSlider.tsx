@@ -94,9 +94,6 @@ export interface EnhancedSliderProps {
   railColor?: string;
   handleColor?: string;
 
-  // 动画配置
-  animation?: boolean;
-  animationDuration?: number;
 
   // 其他配置
   className?: string;
@@ -149,10 +146,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   segmentedTrack = false,
   segmentedTrackColor,
   hideRailWhenDragging = false,
-
-  // 动画配置
-  animation = true,
-  animationDuration = 200,
 
   // 其他配置
   className = "",
@@ -217,7 +210,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   const sliderRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
-  const animationFrameRef = useRef<number | null>(null);
   const moveHandlerRef = useRef<((e: MouseEvent | TouchEvent) => void) | null>(
     null
   );
@@ -523,10 +515,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   // 清理事件监听器
   useEffect(() => {
     return () => {
-      // 清理动画帧
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
       // 清理事件监听器
       if (moveHandlerRef.current) {
         document.removeEventListener("mousemove", moveHandlerRef.current);
@@ -695,7 +683,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
         left: `${startPercent}%`,
         width: `${endPercent - startPercent}%`,
         backgroundColor,
-        transition: animation ? `all ${animationDuration}ms` : "none",
       };
     } else {
       const percent = getPercentage(currentValue[0]);
@@ -714,7 +701,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       return {
         width: `${percent}%`,
         backgroundColor,
-        transition: animation ? `all ${animationDuration}ms` : "none",
       };
     }
   }, [
@@ -723,8 +709,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
     getPercentage,
     trackColor,
     ranges,
-    animation,
-    animationDuration,
   ]);
 
   // 计算轨道背景样式
@@ -734,7 +718,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       backgroundImage: (segmentedTrack || segmentedTrackColor) ? segmentedTrackGradient : undefined,
       backgroundSize: "100% 100%",
       backgroundRepeat: "no-repeat",
-      transition: animation ? `all ${animationDuration}ms` : "none",
       // opacity: hideRailWhenDragging && isDragging ? 0 : 1
     };
   }, [
@@ -742,8 +725,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
     segmentedTrack,
     segmentedTrackColor,
     segmentedTrackGradient,
-    animation,
-    animationDuration,
     hideRailWhenDragging,
     isDragging,
   ]);
@@ -828,8 +809,6 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       const handleStyleObj: React.CSSProperties = {
         left: `${percent}%`,
         backgroundColor: handleColor,
-        transition:
-          animation && !isDragging ? `all ${animationDuration}ms` : "none",
       };
 
       // 计算工具提示内容
@@ -924,12 +903,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
     <div
       ref={sliderRef}
       className={sliderClassName}
-      style={
-        {
-          ...style,
-          "--slider-animation-duration": `${animationDuration}ms`,
-        } as React.CSSProperties
-      }
+      style={style}
       id={id}
       {...props}
     >
