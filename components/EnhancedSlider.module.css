@@ -1,12 +1,6 @@
 /* EnhancedSlider 组件样式 */
 
 :root {
-  /* 默认主题变量 */
-  --slider-primary-color: #1890ff;
-  --slider-success-color: #52c41a;
-  --slider-warning-color: #faad14;
-  --slider-danger-color: #f5222d;
-  
   --slider-track-color: #1890ff;
   --slider-rail-color: #f5f5f5;
   --slider-handle-color: #fff;
@@ -14,14 +8,14 @@
   --slider-handle-active-color: #1890ff;
   --slider-handle-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   --slider-handle-active-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
-  
+
   --slider-mark-color: #e8e8e8;
   --slider-mark-active-color: #1890ff;
-  
+
   --slider-tooltip-bg: rgba(0, 0, 0, 0.75);
   --slider-tooltip-color: #fff;
   --slider-tooltip-arrow-size: 4px;
-  
+
   --slider-animation-duration: 200ms;
 }
 
@@ -29,17 +23,15 @@
 .slider {
   position: relative;
   width: 100%;
-  height: 26px;
-  padding: 10px 0;
+  height: 28px;
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
   touch-action: none;
   box-sizing: border-box;
-}
-
-.sliderDisabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* 轨道样式 */
@@ -49,7 +41,6 @@
   height: 8px;
   background: transparent;
   border-radius: 4px;
-  margin: 9px 0;
   z-index: 1;
 }
 
@@ -84,32 +75,14 @@
   z-index: 2;
 }
 
-/* 轨道填充样式 */
-.trackFill {
-  position: absolute;
-  height: 100%;
-  background-color: var(--slider-track-color);
-  transition: all var(--slider-animation-duration) ease;
-  will-change: left, width;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  contain: layout style paint;
-  z-index: 2;
-}
-
-
-
 /* 拖拽手柄样式 */
 .handle {
   position: absolute;
   top: 50%;
-  width: 20px;
-  height: 20px;
-  background: #fff;
-  border: 2px solid var(--slider-handle-border-color);
+  width: 28px;
+  height: 28px;
+  background: var(--slider-handle-border-color);
+  border: 2px solid #fff;
   border-radius: 50%;
   cursor: grab;
   transform: translate(-50%, -50%);
@@ -127,60 +100,42 @@
   pointer-events: auto;
 }
 
-.handle::before {
-  content: '';
-  position: absolute;
-  width: 6px;
-  height: 6px;
+/* 带值显示的拖拽手柄样式 */
+.handleWithValue {
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  padding: 0;
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
+  text-align: center;
+  line-height: 1;
   background: var(--slider-handle-border-color);
-  border-radius: 50%;
-  opacity: 0.8;
-  transition: all var(--slider-animation-duration) ease;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 4px 4px 0px #00000026;
 }
 
-.handle:hover,
-.handleHover {
-  border-color: var(--slider-handle-active-color);
-  box-shadow: var(--slider-handle-active-shadow);
-  transform: translate(-50%, -50%) scale(1.05);
-}
-
-.handle:hover::before,
-.handleHover::before {
-  background: var(--slider-handle-active-color);
-  opacity: 1;
-}
-
-.handle:active,
-.handleActive {
-  cursor: grabbing;
-  border-color: var(--slider-handle-active-color);
-  box-shadow: var(--slider-handle-active-shadow);
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.handle:active::before,
-.handleActive::before {
-  background: var(--slider-handle-active-color);
-  opacity: 1;
-}
-
-.handleDisabled {
-  cursor: not-allowed;
-  border-color: #d9d9d9;
-  background: #f5f5f5;
-  box-shadow: none;
-}
-
-.handleDisabled::before {
-  background: #d9d9d9;
-  opacity: 0.5;
-}
-
-.handleDisabled:hover {
-  border-color: #d9d9d9;
-  box-shadow: none;
-  transform: translate(-50%, -50%);
+/* 手柄内值显示样式 */
+.handleValue {
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  text-align: center;
+  display: block;
+  width: 100%;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 16px;
+  line-height: 21px;
 }
 
 /* 工具提示样式 */
@@ -234,7 +189,7 @@
 }
 
 .tooltip::after {
-  content: '';
+  content: "";
   position: absolute;
   border: var(--slider-tooltip-arrow-size) solid transparent;
 }
@@ -275,7 +230,6 @@
 /* 标记样式 */
 .mark {
   position: absolute;
-  top: 19px;
   transform: translate(-50%, -50%);
   width: 8px;
   height: 8px;
@@ -301,39 +255,32 @@
   white-space: nowrap;
 }
 
-/* 主题样式 */
-.themeDefault .trackFill {
-  background-color: var(--slider-primary-color);
-}
-
-.themePrimary .trackFill {
-  background-color: var(--slider-primary-color);
-}
-
-.themeSuccess .trackFill {
-  background-color: var(--slider-success-color);
-}
-
-.themeWarning .trackFill {
-  background-color: var(--slider-warning-color);
-}
-
-.themeDanger .trackFill {
-  background-color: var(--slider-danger-color);
-}
-
 /* 响应式设计 */
 @media (max-width: 768px) {
   .slider {
     height: 32px;
     padding: 14px 0;
   }
-  
+
   .handle {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
   }
-  
+
+  .handleWithValue {
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    padding: 0;
+    font-size: 11px;
+    background: var(--slider-handle-border-color);
+    border: 2px solid #fff;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .track {
     height: 10px;
     margin: 11px 0;
@@ -348,16 +295,6 @@
   .mark {
     transition: none !important;
   }
-}
-
-/* 焦点样式 */
-.handle:focus {
-  outline: 2px solid var(--slider-primary-color);
-  outline-offset: 2px;
-}
-
-.handle:focus:not(:focus-visible) {
-  outline: none;
 }
 
 /* 拖拽时的性能优化 */

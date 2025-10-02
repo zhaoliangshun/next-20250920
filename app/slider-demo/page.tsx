@@ -9,6 +9,8 @@ export default function SliderDemo() {
   const [value2, setValue2] = useState<number[]>([20, 80]);
   const [value3, setValue3] = useState<number>(30);
   const [value4, setValue4] = useState<number>(60);
+  const [value5, setValue5] = useState<number>(75);
+  const [value6, setValue6] = useState<number[]>([25, 75]);
 
   return (
     <div className={styles.container}>
@@ -119,7 +121,94 @@ export default function SliderDemo() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>更多示例</h2>
+        <h2 className={styles.sectionTitle}>Handle中显示值 - 基础滑块</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider 
+            value={value5} 
+            onChange={(val) => {
+              if (typeof val === 'number') {
+                setValue5(val);
+              }
+            }}
+            showValueInHandle={true}
+            tooltip={false}
+            segmentedTrack={{
+              segments: 4,
+              startColor: '#f0f9ff',
+              endColor: '#0077cc'
+            }}
+            marks={{
+              0: '0%',
+              25: '25%',
+              50: '50%',
+              75: '75%',
+              100: '100%'
+            }}
+          />
+          <div className={styles.value}>当前值: {value5}</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Handle中显示值 - 范围滑块</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider 
+            range={true}
+            value={value6} 
+            onChange={(val) => {
+              if (Array.isArray(val)) {
+                setValue6(val);
+              }
+            }}
+            showValueInHandle={{
+              formatter: (val) => `${val}%`,
+              style: { fontWeight: 'bold' }
+            }}
+            tooltip={false}
+            marks={{
+              0: '0%',
+              25: '25%',
+              50: '50%',
+              75: '75%',
+              100: '100%'
+            }}
+          />
+          <div className={styles.value}>当前值: [{value6.join(', ')}]</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Handle中显示值 + 分段背景色</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider 
+            value={value5} 
+            onChange={(val) => {
+              if (typeof val === 'number') {
+                setValue5(val);
+              }
+            }}
+            showValueInHandle={true}
+            tooltip={false}
+            segmentedTrack={{
+              segments: 5,
+              startColor: '#f0f9ff',
+              endColor: '#0077cc'
+            }}
+            hideRailWhenDragging={true}
+            marks={{
+              0: '0%',
+              25: '25%',
+              50: '50%',
+              75: '75%',
+              100: '100%'
+            }}
+          />
+          <div className={styles.value}>当前值: {value5}</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>传统工具提示模式</h2>
         <div className={styles.sliderContainer}>
           <EnhancedSlider 
             value={value1} 
