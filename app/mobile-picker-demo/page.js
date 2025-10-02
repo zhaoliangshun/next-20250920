@@ -35,6 +35,14 @@ export default function MobilePickerDemo() {
     { label: "沈阳", value: "shenyang" },
   ];
 
+  const levelOptions = [
+    { label: "A+", value: "A+" },
+    { label: "A", value: "A" },
+    { label: "A-", value: "A-" },
+    { label: "B+", value: "B+" },
+    { label: "B", value: "B" },
+  ];
+
   // 年份选项 (2000-2049)
   const yearOptions = Array.from({ length: 50 }, (_, i) => {
     const year = 2000 + i;
@@ -279,7 +287,9 @@ export default function MobilePickerDemo() {
         {/* 示例8: 自定义每项样式 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>🎨 自定义每项样式</h2>
-          <p style={{ color: "#666", marginBottom: "20px", textAlign: "center" }}>
+          <p
+            style={{ color: "#666", marginBottom: "20px", textAlign: "center" }}
+          >
             可以单独设置每一项的颜色、字体大小和其他样式，无需计算渐变
           </p>
           <div className={styles.compareGroup}>
@@ -317,31 +327,31 @@ export default function MobilePickerDemo() {
               <h3 className={styles.compareTitle}>混合自定义</h3>
               <MobilePicker
                 options={[
-                  { 
-                    label: "重要", 
-                    value: "important", 
+                  {
+                    label: "重要",
+                    value: "important",
                     color: "#ff0000",
                     fontSize: "18px",
-                    customStyle: { fontWeight: 700 }
+                    customStyle: { fontWeight: 700 },
                   },
-                  { 
-                    label: "普通", 
-                    value: "normal", 
+                  {
+                    label: "普通",
+                    value: "normal",
                     color: "#333333",
-                    fontSize: "16px"
+                    fontSize: "16px",
                   },
-                  { 
-                    label: "次要", 
-                    value: "secondary", 
+                  {
+                    label: "次要",
+                    value: "secondary",
                     color: "#999999",
-                    fontSize: "14px"
+                    fontSize: "14px",
                   },
-                  { 
-                    label: "禁用", 
-                    value: "disabled", 
+                  {
+                    label: "禁用",
+                    value: "disabled",
                     color: "#cccccc",
                     fontSize: "14px",
-                    customStyle: { textDecoration: "line-through" }
+                    customStyle: { textDecoration: "line-through" },
                   },
                 ]}
                 visibleCount={5}
@@ -351,11 +361,12 @@ export default function MobilePickerDemo() {
             </div>
           </div>
         </section>
-
         {/* 示例9: 对称样式配置 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>⚖️ 对称样式配置</h2>
-          <p style={{ color: "#666", marginBottom: "20px", textAlign: "center" }}>
+          <p
+            style={{ color: "#666", marginBottom: "20px", textAlign: "center" }}
+          >
             以选中项为中心，上下对称位置的项目具有相同的颜色和字体大小
           </p>
           <div className={styles.compareGroup}>
@@ -367,13 +378,44 @@ export default function MobilePickerDemo() {
                 itemHeight={44}
                 defaultValue="beijing"
                 symmetricStyles={[
-                  { distance: 0, color: "#000000", fontSize: "18px", fontWeight: 600, opacity: 1 },
-                  { distance: 1, color: "#333333", fontSize: "16px", fontWeight: 500, opacity: 0.9 },
-                  { distance: 2, color: "#666666", fontSize: "14px", fontWeight: 400, opacity: 0.7 },
-                  { distance: 3, color: "#999999", fontSize: "12px", fontWeight: 400, opacity: 0.5 },
+                  {
+                    distance: 0,
+                    color: "#000000",
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    opacity: 1,
+                  },
+                  {
+                    distance: 1,
+                    color: "#333333",
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    opacity: 0.9,
+                  },
+                  {
+                    distance: 2,
+                    color: "#666666",
+                    fontSize: "14px",
+                    fontWeight: 400,
+                    opacity: 0.7,
+                  },
+                  {
+                    distance: 3,
+                    color: "#999999",
+                    fontSize: "12px",
+                    fontWeight: 400,
+                    opacity: 0.5,
+                  },
                 ]}
               />
-              <div style={{ marginTop: "10px", fontSize: "12px", color: "#999", textAlign: "center" }}>
+              <div
+                style={{
+                  marginTop: "10px",
+                  fontSize: "12px",
+                  color: "#999",
+                  textAlign: "center",
+                }}
+              >
                 距离0: 黑18px | 距离1: 灰16px | 距离2: 浅灰14px
               </div>
             </div>
@@ -385,36 +427,96 @@ export default function MobilePickerDemo() {
                 itemHeight={48}
                 defaultValue={fruitOptions[2]?.value}
                 symmetricStyles={[
-                  { distance: 0, color: "#ff0000", fontSize: "20px", fontWeight: 700, scale: 1.1 },
-                  { distance: 1, color: "#ff6600", fontSize: "18px", fontWeight: 600, scale: 1.05 },
-                  { distance: 2, color: "#0088ff", fontSize: "16px", fontWeight: 400, scale: 1 },
+                  {
+                    distance: 0,
+                    color: "#ff0000",
+                    fontSize: "20px",
+                    fontWeight: 700,
+                    scale: 1.1,
+                  },
+                  {
+                    distance: 1,
+                    color: "#ff6600",
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    scale: 1.05,
+                  },
+                  {
+                    distance: 2,
+                    color: "#0088ff",
+                    fontSize: "16px",
+                    fontWeight: 400,
+                    scale: 1,
+                  },
                 ]}
               />
-              <div style={{ marginTop: "10px", fontSize: "12px", color: "#999", textAlign: "center" }}>
+              <div
+                style={{
+                  marginTop: "10px",
+                  fontSize: "12px",
+                  color: "#999",
+                  textAlign: "center",
+                }}
+              >
                 距离0: 红色20px | 距离1: 橙色18px | 距离2: 蓝色16px
               </div>
             </div>
             <div className={styles.compareItem}>
               <h3 className={styles.compareTitle}>简约对称样式</h3>
               <MobilePicker
-                options={yearOptions.slice(20, 30)}
-                visibleCount={7}
-                itemHeight={40}
-                defaultValue={2024}
+                options={levelOptions}
+                visibleCountAbove={1}
+                visibleCountBelow={4}
+                itemHeight={37}
+                defaultValue={"A+"}
+                labelWidth={14}
+                labelAlign="left"
                 symmetricStyles={[
-                  { distance: 0, color: "#1890ff", fontSize: "20px", fontWeight: 700 },
-                  { distance: 1, color: "#40a9ff", fontSize: "16px", fontWeight: 500 },
-                  { distance: 2, color: "#69c0ff", fontSize: "14px", fontWeight: 400 },
-                  { distance: 3, color: "#91d5ff", fontSize: "13px", fontWeight: 400, opacity: 0.8 },
+                  {
+                    distance: 0,
+                    color: "#000000",
+                    fontSize: "21px",
+                    fontWeight: 700,
+                  },
+                  {
+                    distance: 1,
+                    color: "#8B8B8B",
+                    fontSize: "21px",
+                    fontWeight: 500,
+                  },
+                  {
+                    distance: 2,
+                    color: "#8B8B8B",
+                    fontSize: "18px",
+                    fontWeight: 500,
+                  },
+                  {
+                    distance: 3,
+                    color: "#CCCCCC",
+                    fontSize: "16px",
+                    fontWeight: 400,
+                  },
+                  {
+                    distance: 4,
+                    color: "#CCCCCC",
+                    fontSize: "16px",
+                    fontWeight: 400,
+                  },
                 ]}
               />
-              <div style={{ marginTop: "10px", fontSize: "12px", color: "#999", textAlign: "center" }}>
+              <div
+                style={{
+                  marginTop: "10px",
+                  fontSize: "12px",
+                  color: "#999",
+                  textAlign: "center",
+                }}
+              >
                 蓝色渐变：选中项最深，距离越远颜色越浅
               </div>
             </div>
           </div>
         </section>
-
         {/* 示例10: 禁用状态 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>🚫 禁用状态</h2>

@@ -7,8 +7,12 @@
   background-color: #fff;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: pan-y;
+  touch-action: none;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: contain;
+  -webkit-overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .pickerDisabled {
@@ -22,6 +26,8 @@
   width: 100%;
   will-change: transform;
   cursor: grab;
+  touch-action: none;
+  overscroll-behavior: contain;
 }
 
 .pickerList:active {
@@ -41,11 +47,12 @@
   text-overflow: ellipsis;
   cursor: pointer;
   will-change: opacity, transform;
+  font-weight: 500;
 }
 
 .pickerItemSelected {
   color: #000;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* 占位符 */
@@ -63,11 +70,15 @@
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 1px solid #e0e0e0;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: rgba(0, 0, 0, 0.02);
+  /* border-top: 1px solid #e0e0e0; */
+  /* border-bottom: 1px solid #e0e0e0; */
+  /* background-color: rgba(0, 0, 0, 0.02); */
+  background-color: #f0f0f0;
   pointer-events: none;
-  z-index: 1;
+  margin: 0 6px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  /* z-index: 1; */
 }
 
 /* 响应式设计 */

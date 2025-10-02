@@ -22,6 +22,8 @@ const MobilePicker = ({
   disabled = false,
   placeholder = "请选择",
   symmetricStyles, // 对称样式配置
+  labelWidth,
+  labelAlign = "center", // left, center, right
 }) => {
   // 当前选中的索引
   const [selectedIndex, setSelectedIndex] = useState(() => {
@@ -59,8 +61,6 @@ const MobilePicker = ({
   // 计算容器高度
   const containerHeight = totalVisible * itemHeight;
   
-  // 计算中心位置（选中项的位置）
-  const centerIndex = countAbove;
 
   // 更新外部受控值
   useEffect(() => {
@@ -292,7 +292,7 @@ const MobilePicker = ({
     }
 
     const scale = distance === 0 ? 1 : Math.max(0.92, 1 - distance * 0.04);
-    const fontWeight = distance < 0.5 ? 600 : 400;
+    const fontWeight = distance < 0.5 ? 700 : 500;
     const color = distance < 0.5 ? "#000000" : "#666666";
 
     return {
@@ -322,7 +322,7 @@ const MobilePicker = ({
           lineHeight: `${itemHeight}px`,
           color: option.color,
           fontSize: option.fontSize,
-          fontWeight: isSelected ? 600 : 400,
+          fontWeight: isSelected ? 700 : 500,
           ...option.customStyle,
         };
       } else {
@@ -342,7 +342,9 @@ const MobilePicker = ({
           style={finalStyle}
           onClick={() => !disabled && scrollToIndex(index)}
         >
-          {option.label}
+            <span style={{width: labelWidth ? labelWidth : null, display: 'inline-block', textAlign: labelAlign}}>
+                {option.label}
+            </span>
         </div>
       );
     });
