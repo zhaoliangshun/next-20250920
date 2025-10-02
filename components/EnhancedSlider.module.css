@@ -231,10 +231,11 @@
 .mark {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 8px;
-  height: 8px;
-  background: var(--slider-mark-color);
-  border-radius: 50%;
+  width: 0px;
+  height: 6px;
+  opacity: 1;
+  border: 2px solid #fff;
+  border-radius: 2px;
   transition: all var(--slider-animation-duration) ease;
   z-index: 2;
 }

@@ -49,7 +49,14 @@ export interface EnhancedSliderProps {
         colors?: string[];
         startColor?: string;
         endColor?: string;
+        // 基础颜色（用于透明度渐变）
+        baseColor?: string;
+        // 是否使用透明度渐变（从0到1等分）
+        useOpacityGradient?: boolean;
       };
+
+  // 分段轨道颜色数组（直接传递颜色，无需计算）
+  segmentedTrackColor?: string[];
 
   // 拖动时隐藏rail
   hideRailWhenDragging?: boolean;
@@ -134,6 +141,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
 
   // 分段背景色配置
   segmentedTrack = false,
+  segmentedTrackColor,
   hideRailWhenDragging = false,
 
   // 动画配置
@@ -532,6 +540,27 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
 
   // 计算分段背景色渐变
   const segmentedTrackGradient = useMemo(() => {
+    if (!segmentedTrack && !segmentedTrackColor) return null;
+
+    // 优先使用 segmentedTrackColor（直接传递的颜色数组）
+    if (segmentedTrackColor && segmentedTrackColor.length > 0) {
+      const gradientStops: string[] = [];
+      const segmentPercentage = 100 / segmentedTrackColor.length;
+
+      for (let i = 0; i < segmentedTrackColor.length; i++) {
+        const start = i * segmentPercentage;
+        const end = (i + 1) * segmentPercentage;
+        const color = segmentedTrackColor[i];
+
+        // 添加两个相同的色标位置，形成硬边效果
+        gradientStops.push(`${color} ${start}%`);
+        gradientStops.push(`${color} ${end}%`);
+      }
+
+      return `linear-gradient(to right, ${gradientStops.join(", ")})`;
+    }
+
+    // 使用 segmentedTrack 配置（需要计算）
     if (!segmentedTrack) return null;
 
     // 解析分段配置
@@ -543,38 +572,82 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
             startColor: segmentedTrack.startColor || "#e6f7ff",
             endColor: segmentedTrack.endColor || "#1890ff",
             colors: segmentedTrack.colors,
+            baseColor: segmentedTrack.baseColor,
+            useOpacityGradient: segmentedTrack.useOpacityGradient || false,
           };
 
     // 生成分段颜色
-    const segmentColors =
-      segmentConfig.colors ||
-      Array(segmentConfig.segments)
+    let segmentColors: string[];
+
+    // 优先使用透明度渐变模式
+    if (segmentConfig.useOpacityGradient && segmentConfig.baseColor) {
+      segmentColors = Array(segmentConfig.segments)
         .fill(0)
         .map((_, index) => {
-          const ratio = index / (segmentConfig.segments - 1);
+          // 透明度从 1/segments 到 1 等分（避免从0开始）
+          const opacity = (index + 1) / segmentConfig.segments;
+          
+          // 解析基础颜色
+          const baseColor = segmentConfig.baseColor!;
+          let r: number, g: number, b: number;
 
-          // 解析颜色
-          const startRGB = {
-            r: parseInt(segmentConfig.startColor.slice(1, 3), 16),
-            g: parseInt(segmentConfig.startColor.slice(3, 5), 16),
-            b: parseInt(segmentConfig.startColor.slice(5, 7), 16),
-          };
+          // 支持 # 开头的十六进制颜色
+          if (baseColor.startsWith('#')) {
+            r = parseInt(baseColor.slice(1, 3), 16);
+            g = parseInt(baseColor.slice(3, 5), 16);
+            b = parseInt(baseColor.slice(5, 7), 16);
+          } 
+          // 支持 rgb() 格式
+          else if (baseColor.startsWith('rgb')) {
+            const matches = baseColor.match(/\d+/g);
+            if (matches && matches.length >= 3) {
+              r = parseInt(matches[0]);
+              g = parseInt(matches[1]);
+              b = parseInt(matches[2]);
+            } else {
+              // 默认颜色
+              r = g = b = 0;
+            }
+          } else {
+            // 默认颜色
+            r = g = b = 0;
+          }
 
-          const endRGB = {
-            r: parseInt(segmentConfig.endColor.slice(1, 3), 16),
-            g: parseInt(segmentConfig.endColor.slice(3, 5), 16),
-            b: parseInt(segmentConfig.endColor.slice(5, 7), 16),
-          };
-
-          // 计算渐变色
-          const r = Math.round(startRGB.r + (endRGB.r - startRGB.r) * ratio);
-          const g = Math.round(startRGB.g + (endRGB.g - startRGB.g) * ratio);
-          const b = Math.round(startRGB.b + (endRGB.b - startRGB.b) * ratio);
-
-          return `#${r.toString(16).padStart(2, "0")}${g
-            .toString(16)
-            .padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+          return `rgba(${r}, ${g}, ${b}, ${opacity.toFixed(2)})`;
         });
+    }
+    // 使用自定义颜色数组或颜色渐变
+    else {
+      segmentColors =
+        segmentConfig.colors ||
+        Array(segmentConfig.segments)
+          .fill(0)
+          .map((_, index) => {
+            const ratio = index / (segmentConfig.segments - 1);
+
+            // 解析颜色
+            const startRGB = {
+              r: parseInt(segmentConfig.startColor.slice(1, 3), 16),
+              g: parseInt(segmentConfig.startColor.slice(3, 5), 16),
+              b: parseInt(segmentConfig.startColor.slice(5, 7), 16),
+            };
+
+            const endRGB = {
+              r: parseInt(segmentConfig.endColor.slice(1, 3), 16),
+              g: parseInt(segmentConfig.endColor.slice(3, 5), 16),
+              b: parseInt(segmentConfig.endColor.slice(5, 7), 16),
+            };
+
+            // 计算渐变色
+            const r = Math.round(startRGB.r + (endRGB.r - startRGB.r) * ratio);
+            const g = Math.round(startRGB.g + (endRGB.g - startRGB.g) * ratio);
+            const b = Math.round(startRGB.b + (endRGB.b - startRGB.b) * ratio);
+
+            return `#${r.toString(16).padStart(2, "0")}${g
+              .toString(16)
+              .padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+          });
+    }
 
     // 生成渐变色标
     const gradientStops: string[] = [];
@@ -591,7 +664,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
     }
 
     return `linear-gradient(to right, ${gradientStops.join(", ")})`;
-  }, [segmentedTrack]);
+  }, [segmentedTrack, segmentedTrackColor]);
 
   // 计算轨道样式
   const trackStyle = useMemo(() => {
@@ -652,7 +725,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   const railStyle = useMemo(() => {
     return {
       backgroundColor: railColor,
-      backgroundImage: segmentedTrack ? segmentedTrackGradient : undefined,
+      backgroundImage: (segmentedTrack || segmentedTrackColor) ? segmentedTrackGradient : undefined,
       backgroundSize: "100% 100%",
       backgroundRepeat: "no-repeat",
       transition: animation ? `all ${animationDuration}ms` : "none",
@@ -661,6 +734,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   }, [
     railColor,
     segmentedTrack,
+    segmentedTrackColor,
     segmentedTrackGradient,
     animation,
     animationDuration,
@@ -849,7 +923,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
     >
       <div ref={trackRef} className={styles.track} onClick={handleTrackClick}>
         <div className={styles.rail} style={railStyle} />
-        {!segmentedTrack && (
+        {!segmentedTrack && !segmentedTrackColor && (
           <div className={styles.trackFill} style={trackStyle} />
         )}
       </div>
