@@ -144,6 +144,7 @@ export default function SliderDemo() {
               5.0: "50%",
               7.5: "75%",
             }}
+            showMarkLabels={false} // 全局关闭，优先级最高
           />
           <div className={styles.value}>当前值: {value5}</div>
         </div>

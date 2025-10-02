@@ -31,7 +31,11 @@ export interface EnhancedSliderProps {
   // 标记配置
   marks?: Record<
     number | string,
-    React.ReactNode | { label: React.ReactNode; style?: React.CSSProperties }
+    React.ReactNode | { 
+      label?: React.ReactNode; 
+      style?: React.CSSProperties;
+      showLabel?: boolean;
+    }
   >;
 
   // 区间颜色配置
@@ -75,6 +79,7 @@ export interface EnhancedSliderProps {
         visible?: boolean;
       };
   showMarks?: boolean;
+  showMarkLabels?: boolean; // 全局控制所有 mark label 的显示
 
   // 值显示配置
   showValueInHandle?:
@@ -130,6 +135,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   disabled = false,
   tooltip = true,
   showMarks = true,
+  showMarkLabels = true,
 
   // 值显示配置
   showValueInHandle = false,
@@ -756,6 +762,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       // 处理标记标签
       let label: React.ReactNode;
       let markStyle: React.CSSProperties = {};
+      let showLabel = true; // 默认显示 label
 
       if (
         markLabel &&
@@ -764,14 +771,19 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
         "label" in markLabel
       ) {
         const markObj = markLabel as {
-          label: React.ReactNode;
+          label?: React.ReactNode;
           style?: React.CSSProperties;
+          showLabel?: boolean;
         };
         label = markObj.label;
         markStyle = markObj.style || {};
+        showLabel = markObj.showLabel !== undefined ? markObj.showLabel : true;
       } else {
         label = markLabel as React.ReactNode;
       }
+
+      // 全局开关优先级最高，如果 showMarkLabels 为 false，则不显示任何 label
+      const shouldShowLabel = showMarkLabels && showLabel;
 
       return (
         <div
@@ -783,7 +795,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
             ...markStyle,
           }}
         >
-          <span className={styles.markLabel}>{label}</span>
+          {shouldShowLabel && <span className={styles.markLabel}>{label}</span>}
         </div>
       );
     });
