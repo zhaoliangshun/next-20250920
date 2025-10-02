@@ -1,0 +1,109 @@
+/* MobilePicker 组件样式 */
+
+.pickerContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pickerDisabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 选项列表 */
+.pickerList {
+  position: relative;
+  width: 100%;
+  will-change: transform;
+  cursor: grab;
+}
+
+.pickerList:active {
+  cursor: grabbing;
+}
+
+/* 单个选项 */
+.pickerItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-size: 16px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  will-change: opacity, transform;
+}
+
+.pickerItemSelected {
+  color: #000;
+  font-weight: 600;
+}
+
+/* 占位符 */
+.pickerPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: #999;
+  font-size: 16px;
+}
+
+/* 选中指示器 */
+.pickerIndicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: rgba(0, 0, 0, 0.02);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 遮罩层 - 上 */
+.pickerMaskTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 遮罩层 - 下 */
+.pickerMaskBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .pickerItem {
+    font-size: 15px;
+  }
+}
