@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import EnhancedSlider from "../../components/EnhancedSlider";
+import EnhancedSlider from "../../components/EnhancedSlider.jsx";
 import styles from "./page.module.css";
 
 export default function SliderDemo() {
