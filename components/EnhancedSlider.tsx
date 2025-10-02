@@ -717,16 +717,13 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       backgroundColor: railColor,
       backgroundImage: (segmentedTrack || segmentedTrackColor) ? segmentedTrackGradient : undefined,
       backgroundSize: "100% 100%",
-      backgroundRepeat: "no-repeat",
-      // opacity: hideRailWhenDragging && isDragging ? 0 : 1
+      backgroundRepeat: "no-repeat"
     };
   }, [
     railColor,
     segmentedTrack,
     segmentedTrackColor,
     segmentedTrackGradient,
-    hideRailWhenDragging,
-    isDragging,
   ]);
 
   // 渲染标记
@@ -790,20 +787,28 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       const isHover = hoverHandle === index;
 
       // 计算值显示配置
-      const valueDisplayConfig = useMemo(() => {
-        if (typeof showValueInHandle === "boolean") {
-          return {
-            enabled: showValueInHandle,
-            formatter: undefined,
-            style: {},
-          };
-        }
-        return {
+
+      let valueDisplayConfig: {
+        enabled: boolean;
+        formatter?: (value: number) => React.ReactNode;
+        style: React.CSSProperties;
+      } = { enabled: false, formatter: undefined, style: {} };
+        
+        // 处理 showValueInHandle 配置，支持布尔值和对象两种形式。如果传入的是对象，则使用对象的属性；如果是布尔值，则启用默认的显示方式。
+      if (typeof showValueInHandle === "boolean") {
+        valueDisplayConfig = {
+          enabled: showValueInHandle,
+          formatter: undefined,
+          style: {},
+        };
+      } else {
+        valueDisplayConfig = {
           enabled: true,
           formatter: showValueInHandle?.formatter,
           style: showValueInHandle?.style || {},
         };
-      }, [showValueInHandle]);
+      }
+        
 
       // 计算手柄样式
       const handleStyleObj: React.CSSProperties = {
