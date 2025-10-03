@@ -46,7 +46,8 @@ const EnhancedSlider = ({
   trackColor = "#1B3B8C",
   railColor = "#f5f5f5",
   handleColor = "#1B3B8C",
-  passedColor = "#d9d9d9",
+  passedColor = "#E0E0E0",
+  passedOverlay = true,
 
   // 分段背景色配置
   segmentedTrack = false,
@@ -621,6 +622,7 @@ const EnhancedSlider = ({
 
   // 计算分段模式下的已过遮罩样式
   const passedMasks = useMemo(() => {
+    if (!passedOverlay) return null;
     if (!(segmentedTrack || segmentedTrackColor)) return null;
 
     if (rangeConfig.enabled && currentValue.length >= 2) {
@@ -648,7 +650,7 @@ const EnhancedSlider = ({
         />
       );
     }
-  }, [segmentedTrack, segmentedTrackColor, rangeConfig.enabled, currentValue, getPercentage, passedColor]);
+  }, [passedOverlay, segmentedTrack, segmentedTrackColor, rangeConfig.enabled, currentValue, getPercentage, passedColor]);
 
   // 渲染标记
   const renderMarks = () => {
@@ -916,6 +918,7 @@ EnhancedSlider.propTypes = {
   railColor: PropTypes.string,
   handleColor: PropTypes.string,
   passedColor: PropTypes.string,
+  passedOverlay: PropTypes.bool,
 
   // 其他配置
   className: PropTypes.string,
