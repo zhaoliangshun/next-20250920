@@ -1,0 +1,64 @@
+/* Button 组件样式 */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* padding: 9px 24px; */
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  -webkit-user-select: none;
+  user-select: none;
+  outline: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+/* Filled 样式：有色背景，无边框 */
+.buttonFilled {
+  background-color: var(--theme-color);
+  color: var(--text-color, #ffffff);
+  border-color: var(--theme-color);
+}
+
+.buttonFilled:hover:not(.buttonDisabled) {
+  background-color: var(--hover-color);
+  border-color: var(--hover-color);
+}
+
+.buttonFilled:active:not(.buttonDisabled) {
+  background-color: var(--active-color);
+  border-color: var(--active-color);
+}
+
+/* Outlined 样式：白色背景，有色边框 */
+.buttonOutlined {
+  background-color: #ffffff;
+  color: var(--text-color, var(--theme-color));
+  border-color: var(--theme-color);
+}
+
+.buttonOutlined:hover:not(.buttonDisabled) {
+  background-color: #f5f5f5;
+  color: var(--text-color, var(--theme-color));
+  border-color: var(--hover-color);
+}
+
+.buttonOutlined:active:not(.buttonDisabled) {
+  background-color: #f0f0f0;
+  color: var(--text-color, var(--theme-color));
+  border-color: var(--active-color);
+}
+
+/* 禁用状态 */
+.buttonDisabled {
+  background-color: #cccccc;
+  color: #8b8b8b;
+  cursor: not-allowed;
+  pointer-events: none;
+  border-color: #cccccc;
+}

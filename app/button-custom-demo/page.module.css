@@ -1,0 +1,314 @@
+/* Button Custom Demo 页面样式 */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  color: white;
+  margin-bottom: 40px;
+  padding: 20px;
+}
+
+.header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.subtitle {
+  font-size: 16px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* 区块样式 */
+.section {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+  padding-bottom: 16px;
+  border-bottom: 3px solid #f0f0f0;
+}
+
+.description {
+  color: #666;
+  font-size: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* 按钮组布局 */
+.buttonGroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.buttonItem {
+  text-align: center;
+}
+
+.itemTitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* 颜色演示 */
+.colorDemo {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.colorGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groupTitle {
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* 尺寸演示 */
+.sizeDemo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 40px;
+}
+
+.sizeGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 应用演示 */
+.appDemo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card h3 {
+  font-size: 20px;
+  color: #333;
+  margin: 0 0 16px 0;
+  font-weight: 600;
+}
+
+.card p {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 20px 0;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 14px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: #1890ff;
+}
+
+.formButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* 组合样式演示 */
+.combinedDemo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 页脚 */
+.footer {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  margin-top: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 24px 0;
+}
+
+.usage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.usageItem {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.usageItem h4 {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.usageItem pre {
+  background: #282c34;
+  color: #abb2bf;
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .sizeDemo {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .section {
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .sectionTitle {
+    font-size: 22px;
+  }
+
+  .buttonGroup {
+    grid-template-columns: 1fr;
+  }
+
+  .buttonRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .appDemo {
+    grid-template-columns: 1fr;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+  }
+
+  .formButtons {
+    flex-direction: column;
+  }
+
+  .combinedDemo {
+    flex-direction: column;
+  }
+
+  .usage {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .sectionTitle {
+    font-size: 20px;
+  }
+}
