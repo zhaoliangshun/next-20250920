@@ -22,6 +22,8 @@ const Button = ({
   style = {},
   type = "button",
   textColor,
+  icon, // 新增：图标元素
+  iconPosition = "left", // 新增：图标位置，left 或 right
   ...rest
 }) => {
   // 计算 hover 和 active 颜色（如果未提供）
@@ -88,6 +90,7 @@ const Button = ({
     styles.button,
     variant === "filled" ? styles.buttonFilled : styles.buttonOutlined,
     disabled ? styles.buttonDisabled : "",
+    icon ? styles.withIcon : "",
     className,
   ]
     .filter(Boolean)
@@ -109,7 +112,13 @@ const Button = ({
       disabled={disabled}
       {...rest}
     >
-      {children}
+      {icon && iconPosition === "left" && (
+        <span className={styles.iconLeft}>{icon}</span>
+      )}
+      <span className={styles.buttonContent}>{children}</span>
+      {icon && iconPosition === "right" && (
+        <span className={styles.iconRight}>{icon}</span>
+      )}
     </button>
   );
 };
@@ -153,6 +162,12 @@ Button.propTypes = {
 
   // 按钮类型
   type: PropTypes.oneOf(["button", "submit", "reset"]),
+
+  // 图标元素
+  icon: PropTypes.node,
+
+  // 图标位置
+  iconPosition: PropTypes.oneOf(["left", "right"]),
 };
 
 export default Button;

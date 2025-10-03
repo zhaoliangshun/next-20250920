@@ -1,9 +1,9 @@
 /* Button Custom Demo 页面样式 */
 
 .container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .header {
@@ -36,8 +36,13 @@
   background: white;
   border-radius: 16px;
   padding: 40px;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  margin-bottom: 15px;
+  color: #333;
 }
 
 .sectionTitle {
@@ -58,9 +63,14 @@
 
 /* 按钮组布局 */
 .buttonGroup {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.buttonGroup > * {
+  margin-bottom: 10px;
 }
 
 .buttonItem {
