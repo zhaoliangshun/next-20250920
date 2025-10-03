@@ -10,7 +10,8 @@ const Tour = ({
     onStepChange,
     maskClosable = true,
     showProgress = true,
-    showSkip = true
+    showSkip = true,
+    allowPrev = true
 }) => {
     const [activeStep, setActiveStep] = useState(currentStep);
     const [targetRect, setTargetRect] = useState(null);
@@ -58,7 +59,15 @@ const Tour = ({
         }
     }, [isOpen, activeStep, steps, updateTargetPosition]);
 
-    
+    // Sync internal step with external control when reopened or currentStep changes
+    useEffect(() => {
+        if (isOpen) {
+            setActiveStep(currentStep || 0);
+        } else {
+            // When closed, reset to provided currentStep so next open starts correctly
+            setActiveStep(currentStep || 0);
+        }
+    }, [isOpen, currentStep]);
 
     const calculateTooltipPosition = (targetRect, tooltipRect, placement = 'bottom') => {
         const margin = 12;
@@ -113,6 +122,7 @@ const Tour = ({
     };
 
     const handlePrev = () => {
+        if (!allowPrev) return;
         if (activeStep > 0) {
             const newStep = activeStep - 1;
             setActiveStep(newStep);
@@ -205,7 +215,7 @@ const Tour = ({
                         )}
                         
                         <div className={styles.navigationButtons}>
-                            {activeStep > 0 && (
+                            {activeStep > 0 && allowPrev && (
                                 <button
                                     className={styles.prevButton}
                                     onClick={handlePrev}
