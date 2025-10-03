@@ -46,6 +46,7 @@ const EnhancedSlider = ({
   trackColor = "#1B3B8C",
   railColor = "#f5f5f5",
   handleColor = "#1B3B8C",
+  passedColor = "#d9d9d9",
 
   // 分段背景色配置
   segmentedTrack = false,
@@ -618,6 +619,37 @@ const EnhancedSlider = ({
     };
   }, [railColor, segmentedTrack, segmentedTrackColor, segmentedTrackGradient]);
 
+  // 计算分段模式下的已过遮罩样式
+  const passedMasks = useMemo(() => {
+    if (!(segmentedTrack || segmentedTrackColor)) return null;
+
+    if (rangeConfig.enabled && currentValue.length >= 2) {
+      const startPercent = getPercentage(currentValue[0]);
+      const endPercent = getPercentage(currentValue[currentValue.length - 1]);
+
+      return (
+        <>
+          <div
+            className={styles.passedMask}
+            style={{ left: 0, width: `${startPercent}%`, backgroundColor: passedColor }}
+          />
+          <div
+            className={styles.passedMask}
+            style={{ left: `${endPercent}%`, width: `${100 - endPercent}%`, backgroundColor: passedColor }}
+          />
+        </>
+      );
+    } else {
+      const percent = getPercentage(currentValue[0]);
+      return (
+        <div
+          className={styles.passedMask}
+          style={{ left: 0, width: `${percent}%`, backgroundColor: passedColor }}
+        />
+      );
+    }
+  }, [segmentedTrack, segmentedTrackColor, rangeConfig.enabled, currentValue, getPercentage, passedColor]);
+
   // 渲染标记
   const renderMarks = () => {
     if (!showMarks || Object.keys(marks).length === 0) return null;
@@ -798,6 +830,7 @@ const EnhancedSlider = ({
         {!segmentedTrack && !segmentedTrackColor && (
           <div className={styles.trackFill} style={trackStyle} />
         )}
+        {(segmentedTrack || segmentedTrackColor) && passedMasks}
       </div>
 
       {renderMarks()}
@@ -882,6 +915,7 @@ EnhancedSlider.propTypes = {
   trackColor: PropTypes.string,
   railColor: PropTypes.string,
   handleColor: PropTypes.string,
+  passedColor: PropTypes.string,
 
   // 其他配置
   className: PropTypes.string,
