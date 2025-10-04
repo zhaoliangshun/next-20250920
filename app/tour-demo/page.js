@@ -21,6 +21,7 @@ export default function TourDemoPage() {
       title: "欢迎使用 Tour 漫游引导",
       content: "点击下一步，按照指引逐步了解页面关键区域。",
       placement: "bottom",
+      arrowOptions: {},
     },
     {
       target: "#tour-actions",
@@ -32,13 +33,13 @@ export default function TourDemoPage() {
       target: "#tour-card-1",
       title: "数据概览卡片",
       content: "展示关键指标与趋势，支持点击查看详情。",
-      placement: "top",
+      placement: "left",
     },
     {
       target: "#tour-card-2",
       title: "近期活动",
       content: "实时显示最近的变更与提醒。",
-      placement: "top",
+      placement: "left",
     },
   ];
 
