@@ -32,13 +32,13 @@ export default function TourDemoPage() {
       target: "#tour-card-1",
       title: "数据概览卡片",
       content: "展示关键指标与趋势，支持点击查看详情。",
-      placement: "right",
+      placement: "top",
     },
     {
       target: "#tour-card-2",
       title: "近期活动",
       content: "实时显示最近的变更与提醒。",
-      placement: "left",
+      placement: "top",
     },
   ];
 
@@ -48,8 +48,12 @@ export default function TourDemoPage() {
         <h1 className={styles.title}>Tour 漫游式引导 Demo</h1>
         <p className={styles.subtitle}>一步一步引导用户熟悉页面功能</p>
         <div className={styles.actions} id="tour-actions">
-          <button className={styles.primaryBtn} onClick={startTour}>开始引导</button>
-          <button className={styles.ghostBtn} onClick={() => setOpen(false)}>关闭</button>
+          <button className={styles.primaryBtn} onClick={startTour}>
+            开始引导
+          </button>
+          <button className={styles.ghostBtn} onClick={() => setOpen(false)}>
+            关闭
+          </button>
           <label className={styles.toggle}>
             <input
               type="checkbox"
@@ -98,6 +102,3 @@ export default function TourDemoPage() {
     </div>
   );
 }
-
-
-
