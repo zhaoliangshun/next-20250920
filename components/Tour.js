@@ -121,6 +121,9 @@ const Tour = ({
       top = viewportHeight - tooltipRect.height - margin;
     }
 
+    if (steps[activeStep].tooltipLeft) {
+      left = steps[activeStep].tooltipLeft;
+    }
     return { top: top + window.scrollY, left };
   };
 
@@ -202,7 +205,11 @@ const Tour = ({
         }}
         data-placement={currentPlacement}
       >
-        <div className={styles.arrow} aria-hidden="true" />
+        <div
+          style={{ left: steps[activeStep].arrowLeft }}
+          className={styles.arrow}
+          aria-hidden="true"
+        />
         <div className={styles.tooltipContent}>
           {currentStepData.title && (
             <h3 className={styles.tooltipTitle}>{currentStepData.title}</h3>
@@ -221,20 +228,20 @@ const Tour = ({
         <div className={styles.tooltipFooter}>
           <div className={styles.tooltipActions}>
             {showSkip && (
-              <button className={styles.skipButton} onClick={handleSkip}>
+              <div className={styles.skipButton} onClick={handleSkip}>
                 跳过
-              </button>
+              </div>
             )}
 
             <div className={styles.navigationButtons}>
-              {activeStep > 0 && allowPrev && (
-                <button className={styles.prevButton} onClick={handlePrev}>
+              {/* {activeStep > 0 && allowPrev && (
+                <div className={styles.prevButton} onClick={handlePrev}>
                   上一步
-                </button>
-              )}
-              <button className={styles.nextButton} onClick={handleNext}>
+                </div>
+              )} */}
+              <div className={styles.nextButton} onClick={handleNext}>
                 {activeStep === steps.length - 1 ? "完成" : "下一步"}
-              </button>
+              </div>
             </div>
           </div>
 

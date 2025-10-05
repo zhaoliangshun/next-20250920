@@ -1,7 +1,7 @@
 .switch {
   /* Theming variables (can be overridden via inline style) */
   --switch-off-bg: #bfbfbf;
-  --switch-on-bg: #1677ff; /* blue */
+  --switch-on-bg: #173E96; /* blue */
   --switch-hover-shadow: rgba(22, 119, 255, 0.26);
   --switch-focus-on: rgba(22, 119, 255, 0.35);
   --switch-focus-off: rgba(0, 0, 0, 0.2);
@@ -15,7 +15,8 @@
   border-radius: 9999px;
   background: var(--switch-off-bg);
   cursor: pointer;
-  transition: background-color 180ms ease, box-shadow 180ms ease, width 180ms ease, transform 180ms ease;
+  transition: background-color 180ms ease, box-shadow 180ms ease,
+    width 180ms ease, transform 180ms ease;
   outline: none;
   padding: 0 2px;
   width: 56px;
@@ -30,7 +31,7 @@
   align-items: center;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   justify-content: flex-end;
-  transform: translateX(0)
+  transform: translateX(0);
 }
 
 .text {
@@ -65,9 +66,10 @@
   min-width: 20px;
   min-height: 20px;
   border-radius: 9999px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease;
+  background: #f0f0f0;
+  box-shadow: #00000040;
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 180ms ease;
   position: relative;
   will-change: transform;
 }
@@ -107,7 +109,11 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 60%);
+  background: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.08) 0%,
+    rgba(0, 0, 0, 0) 60%
+  );
   opacity: 0;
   transform: scale(0.6);
   transition: opacity 180ms ease, transform 180ms ease;

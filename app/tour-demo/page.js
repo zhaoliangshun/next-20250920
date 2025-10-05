@@ -18,16 +18,19 @@ export default function TourDemoPage() {
   const steps = [
     {
       target: "#tour-hero",
-      title: "欢迎使用 Tour 漫游引导",
+      // title: "欢迎使用 Tour 漫游引导",
       content: "点击下一步，按照指引逐步了解页面关键区域。",
       placement: "bottom",
-      arrowOptions: {},
+      arrowLeft: "20%",
+      tooltipLeft: "40px",
     },
     {
       target: "#tour-actions",
       title: "常用操作",
       content: "这里包含创建、导入等高频操作，支持快捷键。",
       placement: "bottom",
+      arrowLeft: "80%",
+      tooltipLeft: "70%",
     },
     {
       target: "#tour-card-1",

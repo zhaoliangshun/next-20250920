@@ -24,13 +24,15 @@
 
 .tooltip {
   position: absolute;
-  background: white;
+  /* background: white; */
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   max-width: 320px;
   min-width: 280px;
   z-index: 10000;
   animation: fadeInUp 0.3s ease-out;
+  background-color: #1b3b8c;
+  color: white;
 }
 
 .arrow {
@@ -46,7 +48,7 @@
   transform: translateX(-50%);
   bottom: -8px;
   border-width: 9px 9px 0 9px;
-  border-color: white transparent transparent transparent;
+  border-color: #1b3b8c transparent transparent transparent;
   /* filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08)); */
 }
 
@@ -56,7 +58,7 @@
   transform: translateX(-50%);
   top: -8px;
   border-width: 0 9px 9px 9px;
-  border-color: transparent transparent white transparent;
+  border-color: transparent transparent #1b3b8c transparent;
   /* filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08)); */
 }
 
@@ -66,7 +68,7 @@
   transform: translateY(-50%);
   right: -8px;
   border-width: 9px 0 9px 9px;
-  border-color: transparent transparent transparent white;
+  border-color: transparent transparent transparent #1b3b8c;
   /* filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08)); */
 }
 
@@ -76,7 +78,7 @@
   transform: translateY(-50%);
   left: -8px;
   border-width: 9px 9px 9px 0;
-  border-color: transparent white transparent transparent;
+  border-color: transparent #1b3b8c transparent transparent;
   /* filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08)); */
 }
 
@@ -92,22 +94,21 @@
 }
 
 .tooltipContent {
-  padding: 20px;
+  padding: 12px 12px 8px;
 }
 
 .tooltipTitle {
   margin: 0 0 12px 0;
   font-size: 16px;
   font-weight: 600;
-  color: #262626;
   line-height: 1.4;
 }
 
 .tooltipDescription {
   margin: 0;
-  font-size: 14px;
-  color: #595959;
-  line-height: 1.6;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 .tooltipDescription p {
@@ -119,15 +120,13 @@
 }
 
 .tooltipFooter {
-  padding: 16px 20px 20px;
-  border-top: 1px solid #f0f0f0;
+  padding: 0 12px 12px;
 }
 
 .tooltipActions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  margin-bottom: 12px;
 }
 
 .skipButton {
@@ -153,13 +152,14 @@
 
 .prevButton,
 .nextButton {
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
+  /* padding: 6px 16px; */
+  /* border-radius: 6px; */
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid;
+  line-height: 1.2;
+  /* transition: all 0.2s ease; */
+  /* border: 1px solid; */
 }
 
 .prevButton {
@@ -174,15 +174,15 @@
 }
 
 .nextButton {
-  background: #1890ff;
+  /* background: #1890ff; */
   color: white;
-  border-color: #1890ff;
+  /* border-color: #1890ff; */
 }
 
-.nextButton:hover {
+/* .nextButton:hover {
   background: #40a9ff;
   border-color: #40a9ff;
-}
+} */
 
 .progress {
   display: flex;
