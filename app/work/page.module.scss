@@ -1,0 +1,43 @@
+.KeyFactors {
+  margin: 12px;
+  display: flex;
+  gap: 4px;
+  flex-direction: column;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: center;
+    .editIconContainer, .titleContainer {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .title {
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 21px;
+      color: #333333;
+    }
+    .icon {
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      background-image: url("./keyFactors.svg");
+      cursor: pointer;
+    }
+    .editIcon {
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      background-image: url("./EditIcon.svg");
+      cursor: pointer;
+    }
+  }
+  .text {
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
+    color: #000000;
+  }
+}
