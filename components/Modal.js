@@ -88,29 +88,30 @@ export default function Modal({
       document.addEventListener('keydown', handleKeyDown);
 
       return () => {
-        // 恢复滚动
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.style.overflow = '';
-        // 恢复原有内联 padding-right
-        document.body.style.paddingRight = previousPaddingRightInline;
-        // 移除补位元素
-        const existSpacer = document.querySelector('[data-modal-scrollbar-spacer]');
-        if (existSpacer && existSpacer.parentNode) {
-          existSpacer.parentNode.removeChild(existSpacer);
-        }
-        window.scrollTo({
-          top: scrollY,
-          left: 0,
-          behavior: "instant",
-        });
+        
+
+        setTimeout(() => {
+          // 恢复滚动
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.width = '';
+          document.body.style.overflow = '';
+          // 恢复原有内联 padding-right
+          document.body.style.paddingRight = previousPaddingRightInline;
+          // 移除补位元素
+          const existSpacer = document.querySelector('[data-modal-scrollbar-spacer]');
+          if (existSpacer && existSpacer.parentNode) {
+            existSpacer.parentNode.removeChild(existSpacer);
+          }
+          window.scrollTo({
+            top: scrollY,
+            left: 0,
+            behavior: "instant",
+          });
+        }, 300);
         
         // 移除键盘事件监听
         document.removeEventListener('keydown', handleKeyDown);
-        setTimeout(() => {
-          setIsVisible(false);
-        }, 300);
       };
     } else {
       setIsAnimating(false);
