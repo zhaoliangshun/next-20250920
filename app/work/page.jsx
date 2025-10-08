@@ -1,7 +1,13 @@
-import React from "react";
+"use client"
+
+import React, { useState } from "react";
 import style from "./page.module.scss";
+import Modal from "../../components/Modal";
 
 const Description = ({ title, text, hasEditIcon }) => {
+
+  const [isEditOpen, setIsEditOpen] = useState(false)
+
   return (
     <div className={style.KeyFactors}>
       <div className={style.header}>
@@ -9,7 +15,7 @@ const Description = ({ title, text, hasEditIcon }) => {
           <span className={style.title}>{title}</span>
           <span className={style.icon}></span>
         </div>
-        {hasEditIcon &&  <div className={style.editIconContainer}>
+        {hasEditIcon &&  <div onClick={(() => {setIsEditOpen(!isEditOpen)})} className={style.editIconContainer}>
           <span className={style.editIcon}></span>
           <span className={style.editText}>
             Edit1111
@@ -17,8 +23,26 @@ const Description = ({ title, text, hasEditIcon }) => {
         </div>
         }
       </div>
-
       <span className={style.text}>{text}</span>
+      <Modal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        title="居中弹窗"
+        size="medium"
+      >
+        <div>
+          <h3>欢迎使用居中弹窗组件！</h3>
+          <p>这是一个功能完整的居中弹窗组件，具有以下特性：</p>
+          <ul>
+            <li>居中显示的弹窗效果</li>
+            <li>缩放和淡入淡出动画</li>
+            <li>多种尺寸选择（小、中、大）</li>
+            <li>键盘 ESC 键关闭支持</li>
+            <li>点击背景关闭功能</li>
+            <li>响应式设计，适配各种屏幕</li>
+          </ul>
+        </div>
+      </Modal>
     </div>
   );
 };
