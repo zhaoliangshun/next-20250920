@@ -12,7 +12,7 @@ const Description = ({ title, text, hasEditIcon }) => {
         {hasEditIcon &&  <div className={style.editIconContainer}>
           <span className={style.editIcon}></span>
           <span className={style.editText}>
-            Edit
+            Edit1111
           </span>
         </div>
         }
