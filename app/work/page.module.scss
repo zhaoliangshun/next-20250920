@@ -8,7 +8,8 @@
     justify-content: space-between;
     gap: 8px;
     align-items: center;
-    .editIconContainer, .titleContainer {
+    .editIconContainer,
+    .titleContainer {
       display: flex;
       align-items: center;
       gap: 4px;
@@ -40,5 +41,35 @@
     font-size: 15px;
     line-height: 18px;
     color: #000000;
+  }
+
+  .listContainer {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 24px;
+    .item {
+      display: flex;
+      flex-direction: column;
+      padding: 12px 24px;
+      gap: 4px;
+      border-bottom: 1px solid #E0E0E0;
+      .itemTitle {
+        font-weight: 700;
+        font-style: Bold;
+        font-size: 16px;
+        line-height: 21px;
+        height: 20px;
+        letter-spacing: 0%;
+        color: #333333;
+      }
+      .itemText {
+        font-family: Font Family;
+        font-weight: 400;
+        font-size: 13px;
+        line-height: 18px; /* 138.462% */
+        letter-spacing: 0%;
+        color: #333333;
+      }
+    }
   }
 }
