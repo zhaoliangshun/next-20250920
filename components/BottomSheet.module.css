@@ -53,7 +53,7 @@
   width: 40px;
   height: 4px;
   background-color: #d1d5db;
-  border-radius: 2px;
+  
   margin: 12px auto 8px;
   cursor: grab;
 }
@@ -66,10 +66,17 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 20px 16px;
-  border-bottom: 1px solid #f3f4f6;
-  min-height: 60px;
+  margin: auto 12px;
+  border-bottom: 1px solid #E0E0E0;
+  min-height: 48px;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 18px; 
+  line-height: 23px;
+  text-align: center;
+  color: #000000;
+  background:  #FFFFFF;
+  border-radius: 16px 16px 0 0;
 }
 
 .title {
@@ -81,128 +88,25 @@
 }
 
 .closeButton {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #6b7280;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  transition: background-color 0.2s ease;
+  width: 48px;
+  height: 48px;
+  background-image: url("./CloseButton.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  position: absolute;
+  right: 0;
 }
 
-.closeButton:hover {
-  background-color: #f3f4f6;
-  color: #374151;
-}
-
-.closeButton:active {
-  background-color: #e5e7eb;
-}
 
 /* 内容区域 */
 .content {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  /* -webkit-overflow-scrolling: touch; */
 }
 
-/* 移动端优化 */
-@media (max-width: 768px) {
-  .bottomSheet {
-    border-radius: 16px 16px 0 0;
-    max-height: 85vh;
-  }
-  
-  .header {
-    padding: 0 16px 12px;
-    min-height: 56px;
-  }
-  
-  .title {
-    font-size: 16px;
-  }
-  
-  .content {
-    padding: 16px;
-  }
-}
 
-/* 小屏幕优化 */
-@media (max-width: 480px) {
-  .bottomSheet {
-    border-radius: 12px 12px 0 0;
-    max-height: 80vh;
-  }
-  
-  .header {
-    padding: 0 12px 8px;
-    min-height: 48px;
-  }
-  
-  .title {
-    font-size: 15px;
-  }
-  
-  .content {
-    padding: 12px;
-  }
-}
 
-/* 防止内容溢出 */
-.content::-webkit-scrollbar {
-  width: 4px;
-}
 
-.content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.content::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 2px;
-}
-
-.content::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* 触摸优化 */
-.bottomSheet {
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* 键盘导航支持 */
-.closeButton:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* 动画优化 */
-@media (prefers-reduced-motion: reduce) {
-  .backdrop,
-  .bottomSheet {
-    transition: none;
-  }
-}
-
-/* 高性能动画 */
-.bottomSheet {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-}
-
-/* 防止在动画期间出现闪烁 */
-.backdrop {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}

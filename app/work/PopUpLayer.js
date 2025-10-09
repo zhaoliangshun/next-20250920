@@ -5,17 +5,17 @@ import Modal from "../../components/Modal";
 import BottomSheet from "../../components/BottomSheet";
 import { isMobileDevice } from "../../src/util";
 
-export default function PopUpLayer({ children, isOpen, setIsOpen }) {
+export default function PopUpLayer({ children, isOpen, setIsOpen, ...rest }) {
     
     if (isMobileDevice()) {
         return (
-        <BottomSheet isOpen={isOpen} onClose={() => {setIsOpen(false)}}>
+        <BottomSheet {...rest} isOpen={isOpen} onClose={() => {setIsOpen(false)}}>
             {children}
         </BottomSheet>
         );
     } else {
         return (
-        <Modal isOpen={isOpen} onClose={() => {setIsOpen(false)}}>
+        <Modal {...rest} isOpen={isOpen} onClose={() => {setIsOpen(false)}}>
             {children}
         </Modal>
         );

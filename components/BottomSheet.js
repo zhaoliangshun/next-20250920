@@ -94,20 +94,16 @@ export default function BottomSheet({
         className={`${styles.bottomSheet} ${isAnimating ? styles.bottomSheetOpen : styles.bottomSheetClosed}`}
         onClick={handleContentClick}
       >
-        {/* 拖拽指示器 */}
-        <div className={styles.dragIndicator}></div>
-        
         {/* 头部 */}
         <div className={styles.header}>
           <h3 className={styles.title}>{title}</h3>
           {showCloseButton && (
-            <button 
+            <div 
               className={styles.closeButton}
               onClick={handleClose}
               aria-label="关闭"
             >
-              ✕
-            </button>
+            </div>
           )}
         </div>
         

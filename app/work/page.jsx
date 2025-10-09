@@ -37,9 +37,9 @@ const Description = ({ title, text, hasEditIcon }) => {
           </ul>
         </div>
       </PopUpLayer>
-      <PopUpLayer isOpen={isImportanceOpen} setIsOpen={setIsImportanceOpen}>
+      <PopUpLayer title={'Importance'} isOpen={isImportanceOpen} setIsOpen={setIsImportanceOpen}>
         <div>
-          <h3>欢迎使用居中弹窗组件！</h3>
+          <h3>Importance</h3>
           <p>这是一个功能完整的居中弹窗组件，具有以下特性：</p>
           <ul>
             <li>居中显示的弹窗效果</li>

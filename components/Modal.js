@@ -11,7 +11,7 @@ export default function Modal({
   showCloseButton = true,
   size = "medium", // small, medium, large
   showBackdrop = true,
-  closeOnBackdropClick = true
+  closeOnBackdropClick = false
 }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -154,13 +154,11 @@ export default function Modal({
         <div className={styles.header}>
           <h3 className={styles.title}>{title}</h3>
           {showCloseButton && (
-            <button 
+            <div 
               className={styles.closeButton}
               onClick={handleClose}
               aria-label="关闭"
-            >
-              ✕
-            </button>
+            ></div>
           )}
         </div>
         
