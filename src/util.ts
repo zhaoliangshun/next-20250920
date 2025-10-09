@@ -41,3 +41,42 @@ export function getDirectionStyle(direction: Direction, value: number, min: numb
 export function getIndex<T>(value: T | T[], index: number) {
   return Array.isArray(value) ? value[index] : value;
 }
+
+// 判断是否为浏览器环境
+function isBrowser() {
+  return typeof window !== 'undefined' && typeof navigator !== 'undefined';
+}
+
+// 判断是否为移动端设备（SSR 安全）
+export function isMobileDevice(options?: {
+  userAgent?: string;
+  maxMobileWidth?: number; // 视口宽度阈值兜底
+}): boolean {
+  const ua = options?.userAgent ?? (isBrowser() ? navigator.userAgent : '');
+  const maxMobileWidth = options?.maxMobileWidth ?? 1024;
+
+  // 基于 UA 的主要判断
+  const uaLower = ua.toLowerCase();
+  const uaMobile = /(android|iphone|ipod|ipad|windows phone|mobile|blackberry|bb10|silk|opera mini|opera mobi|kindle|fennec)/i.test(uaLower);
+
+  if (uaMobile) return true;
+
+  // iPadOS 13+ 在 UA 上可能伪装为 macOS，使用触控点数兜底
+  if (isBrowser()) {
+    const isIpadOSLike =
+      navigator.platform === 'MacIntel' && (navigator as any).maxTouchPoints > 1;
+    if (isIpadOSLike) return true;
+
+    // 视口宽度兜底（可选）
+    if (window.innerWidth && window.innerWidth <= maxMobileWidth) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// 获取设备类型：'mobile' 或 'pc'
+export function getDeviceType(options?: { userAgent?: string; maxMobileWidth?: number }): 'mobile' | 'pc' {
+  return isMobileDevice(options) ? 'mobile' : 'pc';
+}

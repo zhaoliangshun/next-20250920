@@ -62,7 +62,7 @@ export default function BottomSheet({
       // 等待动画完成后再隐藏元素
       setTimeout(() => {
         setIsVisible(false);
-      }, 300);
+      }, 200);
     }
   }, [isOpen, onClose]);
 

@@ -2,12 +2,10 @@
 
 import React, { useState } from "react";
 import style from "./page.module.scss";
-import Modal from "../../components/Modal";
+import PopUpLayer from "./PopUpLayer";
 
 const Description = ({ title, text, hasEditIcon }) => {
-
-  const [isEditOpen, setIsEditOpen] = useState(false)
-
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className={style.KeyFactors}>
       <div className={style.header}>
@@ -15,21 +13,16 @@ const Description = ({ title, text, hasEditIcon }) => {
           <span className={style.title}>{title}</span>
           <span className={style.icon}></span>
         </div>
-        {hasEditIcon &&  <div onClick={(() => {setIsEditOpen(!isEditOpen)})} className={style.editIconContainer}>
+        {hasEditIcon && <div onClick={(() => {setIsOpen(true)})} className={style.editIconContainer}>
           <span className={style.editIcon}></span>
           <span className={style.editText}>
-            Edit1111
+            Edit
           </span>
         </div>
         }
       </div>
       <span className={style.text}>{text}</span>
-      <Modal
-        isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
-        title="居中弹窗"
-        size="medium"
-      >
+      <PopUpLayer isOpen={isOpen} setIsOpen={setIsOpen}>
         <div>
           <h3>欢迎使用居中弹窗组件！</h3>
           <p>这是一个功能完整的居中弹窗组件，具有以下特性：</p>
@@ -42,7 +35,7 @@ const Description = ({ title, text, hasEditIcon }) => {
             <li>响应式设计，适配各种屏幕</li>
           </ul>
         </div>
-      </Modal>
+      </PopUpLayer>
     </div>
   );
 };
