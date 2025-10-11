@@ -27,47 +27,75 @@ const ButtonCustomDemo = () => {
   return (
     <div className={styles.container}>
       <h1>Button 组件图标功能演示</h1>
-      
+
       <div className={styles.section}>
         <h2>基础图标按钮</h2>
         <div className={styles.buttonGroup}>
           <Button icon={<SearchIcon />}>搜索</Button>
-          <Button icon={<HeartIcon />} variant="outlined">喜欢</Button>
-          <Button icon={<StarIcon />} themeColor="#FFA500">评分</Button>
+          <Button icon={<HeartIcon />} variant="outlined">
+            喜欢
+          </Button>
+          <Button icon={<StarIcon />} themeColor="#FFA500">
+            评分
+          </Button>
         </div>
       </div>
-      
+
       <div className={styles.section}>
         <h2>图标位置</h2>
         <div className={styles.buttonGroup}>
-          <Button icon={<SearchIcon />} iconPosition="left">左侧图标</Button>
-          <Button icon={<SearchIcon />} iconPosition="right">右侧图标</Button>
+          <Button icon={<SearchIcon />} iconPosition="left">
+            左侧图标
+          </Button>
+          <Button icon={<SearchIcon />} iconPosition="right">
+            右侧图标
+          </Button>
         </div>
       </div>
-      
+
       <div className={styles.section}>
         <h2>仅图标按钮</h2>
         <div className={styles.buttonGroup}>
           <Button icon={<SearchIcon />} width={40} height={40} />
-          <Button icon={<HeartIcon />} variant="outlined" width={40} height={40} />
-          <Button icon={<StarIcon />} themeColor="#FFA500" width={40} height={40} />
+          <Button
+            icon={<HeartIcon />}
+            variant="outlined"
+            width={40}
+            height={40}
+          />
+          <Button
+            icon={<StarIcon />}
+            themeColor="#FFA500"
+            width={40}
+            height={40}
+          />
         </div>
       </div>
-      
+
       <div className={styles.section}>
         <h2>不同尺寸的图标按钮</h2>
         <div className={styles.buttonGroup}>
-          <Button icon={<SearchIcon />} width={120} height={30} textSize="small">小号按钮</Button>
-          <Button icon={<SearchIcon />} width={160} height={40}>默认按钮</Button>
-          <Button icon={<SearchIcon />} width={200} height={50} textSize="large">大号按钮</Button>
+          <Button icon={<SearchIcon />} width={120} height={30}>
+            小号按钮
+          </Button>
+          <Button icon={<SearchIcon />} width={160} height={40}>
+            默认按钮
+          </Button>
+          <Button icon={<SearchIcon />} width={200} height={50}>
+            大号按钮
+          </Button>
         </div>
       </div>
-      
+
       <div className={styles.section}>
         <h2>禁用状态的图标按钮</h2>
         <div className={styles.buttonGroup}>
-          <Button icon={<SearchIcon />} disabled>禁用按钮</Button>
-          <Button icon={<HeartIcon />} variant="outlined" disabled>禁用按钮</Button>
+          <Button icon={<SearchIcon />} disabled>
+            禁用按钮
+          </Button>
+          <Button icon={<HeartIcon />} variant="outlined" disabled>
+            禁用按钮
+          </Button>
         </div>
       </div>
     </div>
