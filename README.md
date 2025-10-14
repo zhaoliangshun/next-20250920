@@ -1,2 +1,16 @@
-https://www.figma.com/design/aJx7jdSIZATeB1pUxBH2NL/Race-Simulator_to-IT?node-id=52-27153&t=jxjsBSjbMwgeB6dI-0
-https://www.figma.com/design/aJx7jdSIZATeB1pUxBH2NL/Race-Simulator_to-IT?node-id=52-18986&t=E26rfckgus9No5HK-1
+function getVisibleHeight(element) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      // visibleHeight 是元素在视口中的可见高度
+      const visibleHeight = entry.intersectionRect.height;
+      console.log('可见高度:', visibleHeight);
+    });
+  });
+  
+  observer.observe(element);
+  return observer;
+}
+
+// 使用示例
+const targetElement = document.getElementById('myElement');
+getVisibleHeight(targetElement);
