@@ -1,0 +1,197 @@
+/* SegmentedSlider 组件样式 */
+
+.slider {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+    box-sizing: border-box;
+    padding: 15px 0;
+}
+
+.sliderDisabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.sliderRange {
+    height: 50px;
+    padding: 20px 0;
+}
+
+/* 轨道样式 */
+.track {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    border-radius: 3px;
+    z-index: 1;
+}
+
+.rail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    border-radius: 3px;
+    z-index: 1;
+}
+
+/* 选中区间样式 */
+.selectedRange {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background-color: rgba(24, 144, 255, 0.2);
+    border-radius: 3px;
+    z-index: 2;
+}
+
+/* 区间样式 */
+.segment {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 3px;
+    z-index: 1;
+}
+
+/* 区间标记点样式 */
+.point {
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    border: 2px solid #d9d9d9;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    transition: all 0.2s ease;
+}
+
+.pointActive {
+    border-color: #1890ff;
+    background-color: #1890ff;
+    width: 14px;
+    height: 14px;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* 拖拽手柄样式 */
+.handle {
+    position: absolute;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border: 2px solid #1890ff;
+    border-radius: 50%;
+    cursor: grab;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.handle:hover {
+    border-color: #40a9ff;
+    box-shadow: 0 4px 10px rgba(24, 144, 255, 0.3);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.handleActive {
+    cursor: grabbing;
+    border-color: #096dd9;
+    box-shadow: 0 6px 12px rgba(24, 144, 255, 0.4);
+    transform: translate(-50%, -50%) scale(1.15);
+}
+
+.handleDisabled {
+    cursor: not-allowed;
+    border-color: #d9d9d9;
+    background-color: #f5f5f5;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.handle:focus {
+    outline: 2px solid #1890ff;
+    outline-offset: 2px;
+}
+
+.handle:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* 区间模式下的手柄 */
+.sliderRange .handle {
+    width: 24px;
+    height: 24px;
+}
+
+.sliderRange .point {
+    width: 14px;
+    height: 14px;
+}
+
+.sliderRange .pointActive {
+    width: 16px;
+    height: 16px;
+}
+
+/* 拖拽时的性能优化 */
+.sliderDragging {
+    pointer-events: none;
+}
+
+.sliderDragging .handle {
+    pointer-events: auto;
+    transition: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .slider {
+        height: 45px;
+        padding: 18px 0;
+    }
+
+    .sliderRange {
+        height: 55px;
+        padding: 22px 0;
+    }
+
+    .handle {
+        width: 24px;
+        height: 24px;
+    }
+
+    .point {
+        width: 14px;
+        height: 14px;
+    }
+
+    .pointActive {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+
+    .handle,
+    .point {
+        transition: none;
+    }
+
+    .handle:hover,
+    .handleActive {
+        transform: translate(-50%, -50%);
+    }
+}
