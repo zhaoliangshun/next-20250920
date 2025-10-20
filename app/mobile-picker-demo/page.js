@@ -95,6 +95,23 @@ export default function MobilePickerDemo() {
       </div>
 
       <div className={styles.content}>
+        {/* 测试页面链接 */}
+        <section className={styles.section} style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <a
+            href="/mobile-picker-demo/test-page"
+            style={{
+              display: 'inline-block',
+              padding: '10px 20px',
+              backgroundColor: '#1890ff',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px',
+              fontWeight: 'bold'
+            }}
+          >
+            前往拖动点击测试页面
+          </a>
+        </section>
         {/* 示例1: 城市选择 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>🏙️ 城市选择</h2>
@@ -465,7 +482,7 @@ export default function MobilePickerDemo() {
               <h3 className={styles.compareTitle}>简约对称样式</h3>
               <MobilePicker
                 options={levelOptions}
-                visibleCountAbove={1}
+                visibleCountAbove={0}
                 visibleCountBelow={4}
                 itemHeight={37}
                 defaultValue={"A+"}

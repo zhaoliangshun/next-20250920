@@ -40,7 +40,7 @@ const MobilePicker = ({
 
   // 滚动偏移量
   const [scrollOffset, setScrollOffset] = useState(0);
-  
+
   // 是否正在拖动
   const [isDragging, setIsDragging] = useState(false);
 
@@ -52,15 +52,17 @@ const MobilePicker = ({
   const lastMoveTimeRef = useRef(0);
   const lastMoveYRef = useRef(0);
   const animationFrameRef = useRef(null);
+  const isClickRef = useRef(true); // 添加这个引用来跟踪是否是点击事件
+  const moveThreshold = 5; // 移动阈值，超过此值认为是拖动
 
   // 计算上下显示数量
   const countAbove = visibleCountAbove !== undefined ? visibleCountAbove : Math.floor(visibleCount / 2);
   const countBelow = visibleCountBelow !== undefined ? visibleCountBelow : Math.floor(visibleCount / 2);
   const totalVisible = countAbove + 1 + countBelow; // 上面 + 选中项 + 下面
-  
+
   // 计算容器高度
   const containerHeight = totalVisible * itemHeight;
-  
+
 
   // 更新外部受控值
   useEffect(() => {
@@ -89,7 +91,7 @@ const MobilePicker = ({
         const animate = () => {
           const elapsed = Date.now() - startTime;
           const progress = Math.min(elapsed / duration, 1);
-          
+
           // 使用缓动函数
           const easeOut = 1 - Math.pow(1 - progress, 3);
           const currentOffset = startOffset + distance * easeOut;
@@ -124,6 +126,7 @@ const MobilePicker = ({
       if (disabled) return;
 
       setIsDragging(true);
+      isClickRef.current = true; // 开始时认为是点击事件
       startYRef.current = clientY;
       startOffsetRef.current = scrollOffset;
       velocityRef.current = 0;
@@ -143,6 +146,10 @@ const MobilePicker = ({
       if (!isDragging) return;
 
       const deltaY = clientY - startYRef.current;
+      // 如果移动距离超过一定阈值，则认为是拖动而不是点击
+      if (Math.abs(deltaY) > moveThreshold) {
+        isClickRef.current = false;
+      }
       const newOffset = startOffsetRef.current + deltaY;
 
       // 计算速度
@@ -175,6 +182,11 @@ const MobilePicker = ({
     if (!isDragging) return;
 
     setIsDragging(false);
+    // 不再这里重置 isClickRef，而是在下一个事件循环中重置
+    // 这样可以确保 onClick 事件能正确读取到 isClickRef 的值
+    setTimeout(() => {
+      isClickRef.current = true;
+    }, 0);
 
     // 计算最终位置（考虑惯性）
     const momentum = velocityRef.current * 200;
@@ -256,14 +268,14 @@ const MobilePicker = ({
   const getItemStyle = (index) => {
     const currentPosition = scrollOffset / itemHeight;
     const distance = Math.abs(index + currentPosition);
-    
+
     // 如果有对称样式配置，使用它
     if (symmetricStyles && symmetricStyles.length > 0) {
       const distanceLevel = Math.round(distance);
-      
+
       // 查找匹配的样式配置
       const styleConfig = symmetricStyles.find(s => s.distance === distanceLevel);
-      
+
       if (styleConfig) {
         return {
           color: styleConfig.color || "#000000",
@@ -273,7 +285,7 @@ const MobilePicker = ({
           transform: styleConfig.scale ? `scale(${styleConfig.scale})` : "scale(1)",
         };
       }
-      
+
       // 如果没有找到匹配的，使用最后一个样式（默认样式）
       const defaultStyle = symmetricStyles[symmetricStyles.length - 1];
       return {
@@ -284,7 +296,7 @@ const MobilePicker = ({
         transform: defaultStyle.scale ? `scale(${defaultStyle.scale})` : "scale(0.92)",
       };
     }
-    
+
     // 默认样式（没有对称配置时）
     let opacity = 1;
     if (distance > 0) {
@@ -307,12 +319,12 @@ const MobilePicker = ({
   const renderOptions = () => {
     return options.map((option, index) => {
       const isSelected = index === selectedIndex && !isDragging;
-      
+
       // 检查是否有自定义样式配置
       const hasCustomStyle = option.customStyle !== undefined;
       const hasCustomColor = option.color !== undefined;
       const hasCustomFontSize = option.fontSize !== undefined;
-      
+
       // 如果有任何自定义配置，则不应用默认的渐变效果
       let finalStyle;
       if (hasCustomStyle || hasCustomColor || hasCustomFontSize) {
@@ -340,11 +352,11 @@ const MobilePicker = ({
           key={option.value}
           className={`${styles.pickerItem} ${isSelected ? styles.pickerItemSelected : ""}`}
           style={finalStyle}
-          onClick={() => !disabled && scrollToIndex(index)}
+          onClick={() => !disabled && isClickRef.current && scrollToIndex(index)}
         >
-            <span style={{width: labelWidth ? labelWidth : null, display: 'inline-block', textAlign: labelAlign}}>
-                {option.label}
-            </span>
+          <span style={{ width: labelWidth ? labelWidth : null, display: 'inline-block', textAlign: labelAlign }}>
+            {option.label}
+          </span>
         </div>
       );
     });
@@ -395,7 +407,7 @@ MobilePicker.propTypes = {
       customStyle: PropTypes.object,
     })
   ).isRequired,
-  
+
   // 对称样式配置：以选中项为中心，上下对称位置具有相同样式
   symmetricStyles: PropTypes.arrayOf(
     PropTypes.shape({
@@ -407,37 +419,37 @@ MobilePicker.propTypes = {
       scale: PropTypes.number,
     })
   ),
-  
+
   // 当前值（受控）
   value: PropTypes.any,
-  
+
   // 默认值（非受控）
   defaultValue: PropTypes.any,
-  
+
   // 值变化回调
   onChange: PropTypes.func,
-  
+
   // 可见项数量（默认模式，上下对称）
   visibleCount: PropTypes.number,
-  
+
   // 上方显示的项数
   visibleCountAbove: PropTypes.number,
-  
+
   // 下方显示的项数
   visibleCountBelow: PropTypes.number,
-  
+
   // 每项高度
   itemHeight: PropTypes.number,
-  
+
   // 自定义类名
   className: PropTypes.string,
-  
+
   // 自定义样式
   style: PropTypes.object,
-  
+
   // 是否禁用
   disabled: PropTypes.bool,
-  
+
   // 占位符
   placeholder: PropTypes.string,
 };
