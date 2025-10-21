@@ -68,6 +68,27 @@
     transform: translate(-50%, -50%);
     z-index: 3;
     transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* 使用伪元素扩大点击区域 */
+.point::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+/* 悬停效果 */
+.point:hover {
+    border-color: #40a9ff;
+    background-color: #e6f7ff;
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.25);
 }
 
 .pointActive {
@@ -76,6 +97,23 @@
     width: 16px;
     height: 16px;
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.pointActive:hover {
+    transform: translate(-50%, -50%) scale(1.15);
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.3);
+}
+
+.pointDisabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.pointDisabled:hover {
+    border-color: #d9d9d9;
+    background-color: #fff;
+    transform: translate(-50%, -50%);
+    box-shadow: none;
 }
 
 /* 拖拽手柄样式 */

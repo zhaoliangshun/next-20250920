@@ -81,7 +81,7 @@ const SegmentedSlider = ({
             );
 
             if (isValidStart && isValidEnd && startVal <= endVal &&
-                (startVal !== currentValue[0] || endVal !== currentValue[1])) {
+                (startVal !== currentValue[0] || endVal !== currentValue[1])) { 
                 setCurrentValue([startVal, endVal]);
             }
         }
@@ -93,8 +93,8 @@ const SegmentedSlider = ({
         return ((val - min) / (max - min)) * 100;
     }, [min, max]);
 
-    // 获取鼠标位置对应的值
-    const getValueFromPosition = useCallback((clientX) => {
+    // 获取鼠标位置对应的值（优化版，增加智能吸附）
+    const getValueFromPosition = useCallback((clientX, snapThreshold = 0.15) => {
         if (!sliderRef.current) return min;
 
         const rect = sliderRef.current.getBoundingClientRect();
@@ -105,28 +105,39 @@ const SegmentedSlider = ({
         const percentage = Math.max(0, Math.min(1, (position - offset) / size));
         const rawValue = min + percentage * (max - min);
 
-        // 找到最近的有效位置（区间的起点或终点）
-        let closestValue = currentValue[0];
+        // 收集所有有效的点位置
+        const validPoints = [];
+        segments.forEach(segment => {
+            validPoints.push(segment.start);
+            validPoints.push(segment.end);
+        });
+
+        // 去重并排序
+        const uniquePoints = [...new Set(validPoints)].sort((a, b) => a - b);
+
+        // 找到最近的有效位置
+        let closestValue = uniquePoints[0] || min;
         let minDistance = Infinity;
 
-        segments.forEach(segment => {
-            // 检查起点
-            const startDistance = Math.abs(rawValue - segment.start);
-            if (startDistance < minDistance) {
-                minDistance = startDistance;
-                closestValue = segment.start;
-            }
-
-            // 检查终点
-            const endDistance = Math.abs(rawValue - segment.end);
-            if (endDistance < minDistance) {
-                minDistance = endDistance;
-                closestValue = segment.end;
+        uniquePoints.forEach(point => {
+            const distance = Math.abs(rawValue - point);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestValue = point;
             }
         });
 
+        // 增加智能吸附：如果距离最近点的百分比距离小于阈值，则吸附到该点
+        const valueRange = max - min;
+        const distanceThreshold = valueRange * snapThreshold;
+        
+        if (minDistance <= distanceThreshold) {
+            return closestValue;
+        }
+
+        // 如果没有在吸附范围内，返回最近的点
         return closestValue;
-    }, [min, max, segments, currentValue]);
+    }, [min, max, segments]);
 
     // 处理鼠标按下
     const handleMouseDown = useCallback((e, handleIndex = 0) => {
@@ -190,24 +201,31 @@ const SegmentedSlider = ({
         document.addEventListener("touchend", upHandler);
     }, [disabled, currentValue, getValueFromPosition, onChange]);
 
-    // 处理轨道点击
+    // 处理轨道点击（优化版，更大的容错范围）
     const handleTrackClick = useCallback((e) => {
         if (disabled || isDragging) return;
 
-        const newValue = getValueFromPosition(e.clientX);
+        // 使用更大的吸附阈值，使点击更容易选中点
+        const newValue = getValueFromPosition(e.clientX, 0.2);
 
         // 在区间模式下，找到最近的手柄
         const distanceToStart = Math.abs(newValue - currentValue[0]);
         const distanceToEnd = Math.abs(newValue - currentValue[1]);
 
-        if (distanceToStart < distanceToEnd) {
+        if (distanceToStart <= distanceToEnd) {
             const newValues = [newValue, currentValue[1]];
-            setCurrentValue(newValues);
-            onChange?.(newValues);
+            // 确保区间有效
+            if (newValues[0] <= newValues[1]) {
+                setCurrentValue(newValues);
+                onChange?.(newValues);
+            }
         } else {
             const newValues = [currentValue[0], newValue];
-            setCurrentValue(newValues);
-            onChange?.(newValues);
+            // 确保区间有效
+            if (newValues[0] <= newValues[1]) {
+                setCurrentValue(newValues);
+                onChange?.(newValues);
+            }
         }
     }, [disabled, isDragging, currentValue, getValueFromPosition, onChange]);
 
@@ -324,7 +342,34 @@ const SegmentedSlider = ({
         });
     };
 
-    // 渲染区间标记点
+    // 处理点的点击事件
+    const handlePointClick = useCallback((e, pointValue) => {
+        if (disabled) return;
+        
+        e.stopPropagation();
+        
+        // 找到最近的手柄并移动到该点
+        const distanceToStart = Math.abs(pointValue - currentValue[0]);
+        const distanceToEnd = Math.abs(pointValue - currentValue[1]);
+
+        if (distanceToStart <= distanceToEnd) {
+            const newValues = [pointValue, currentValue[1]];
+            // 确保区间有效
+            if (newValues[0] <= newValues[1]) {
+                setCurrentValue(newValues);
+                onChange?.(newValues);
+            }
+        } else {
+            const newValues = [currentValue[0], pointValue];
+            // 确保区间有效
+            if (newValues[0] <= newValues[1]) {
+                setCurrentValue(newValues);
+                onChange?.(newValues);
+            }
+        }
+    }, [disabled, currentValue, onChange]);
+
+    // 渲染区间标记点（优化版，增加可点击性）
     const renderSegmentPoints = () => {
         const points = [];
         const renderedPoints = new Set();
@@ -377,10 +422,18 @@ const SegmentedSlider = ({
             points.push(
                 <div
                     key={`point-${currentPoint.value}`}
-                    className={`${styles.point} ${isActive ? styles.pointActive : ''}`}
+                    className={`${styles.point} ${isActive ? styles.pointActive : ''} ${disabled ? styles.pointDisabled : ''}`}
                     style={{
                         left: `${position}%`,
                     }}
+                    onClick={(e) => handlePointClick(e, currentPoint.value)}
+                    onTouchStart={(e) => {
+                        e.stopPropagation();
+                        handlePointClick(e, currentPoint.value);
+                    }}
+                    role="button"
+                    tabIndex={disabled ? -1 : 0}
+                    aria-label={`跳转到值 ${currentPoint.value}`}
                 />
             );
 
