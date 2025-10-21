@@ -10,13 +10,13 @@ import styles from './SegmentedSlider.module.css';
  */
 const SegmentedSlider = ({
     // 区间配置：每个区间包含 start, end, color
-    segments = [],
+    segments: realSegments = [],
     // 默认值（区间）
     defaultValue = [0, 100],
     // 受控值（区间）
     value,
     // 值变化回调
-    onChange,
+    onChange: realChange,
     // 是否禁用
     disabled = false,
     // 自定义类名
@@ -32,6 +32,38 @@ const SegmentedSlider = ({
     // 引用
     const sliderRef = useRef(null);
     const isDraggingRef = useRef(false);
+
+    const segments = useMemo(() => {
+        let total = 0;
+        realSegments.forEach((segment) => {
+            total = total + (segment.end - segment.start)
+        })
+        let add = 0
+        return realSegments.map((segment) => {
+            const start = add
+            const end = Math.round((add/100 + (segment.end - segment.start)/total) * 100)
+            add = end
+            segment.mapStart = start
+            segment.mapEnd = end
+            return {...segment, start, end}
+        })
+    }, [realSegments]);
+    
+    const onChange = useCallback((value) => {
+        let realValue = []
+        realSegments.forEach((segment) => {
+            if(segment.mapStart === value[0]) {
+                realValue[0] = segment.start
+            }
+            if(segment.mapEnd === value[1]) {
+                realValue[1] = segment.end
+            }
+        })
+        if (typeof realChange === 'function') {
+            console.log(realValue)
+            realChange(realValue)
+        }
+    }, [realChange, realSegments]); 
 
     // 计算最小值和最大值
     const min = useMemo(() => {
@@ -152,7 +184,6 @@ const SegmentedSlider = ({
             e.preventDefault();
             const { clientX } = getEventPosition(e);
             const newValue = getValueFromPosition(clientX);
-            // console.log(newValue)
 
             if(handleIndex === 0 && newValue >= currentValue[1]) {
                 return false
@@ -171,11 +202,9 @@ const SegmentedSlider = ({
             // } else if (handleIndex === 1 && newValues[1] < newValues[0]) {
             //     newValues[1] = newValues[0];
             // }
-            console.log(newValues, currentValue)
 
             // 只有当值发生变化时才更新
             // if (newValues[0] !== currentValue[0] || newValues[1] !== currentValue[1]) {
-                console.log(`只有当值发生变化时才更新`)
                 setCurrentValue(newValues);
                 onChange?.(newValues);
             // }

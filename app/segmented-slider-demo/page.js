@@ -9,11 +9,12 @@ const SegmentedSliderDemo = () => {
 
   // 定义区间配置 - 明确展示间隙点
   const segments = [
-    { start: 0, end: 10, color: "#52c41a" }, // 区间1: 0-20
-    { start: 10, end: 55, color: "#1890ff" }, // 区间2: 25-50 (与区间1有5个单位的间隙)
-    { start: 55, end: 80, color: "#faad14" }, // 区间3: 55-75 (与区间2有5个单位的间隙)
-    { start: 80, end: 100, color: "#f5222d" }, // 区间4: 80-100 (与区间3有5个单位的间隙)
+    { start: 1000, end: 1200, color: "#52c41a" }, // 区间1: 0-20
+    { start: 1400, end: 1800, color: "#1890ff" }, // 区间2: 25-50 (与区间1有5个单位的间隙)
+    { start: 1900, end: 2100, color: "#faad14" }, // 区间3: 55-75 (与区间2有5个单位的间隙)
+    { start: 2200, end: 2400, color: "#f5222d" }, // 区间4: 80-100 (与区间3有5个单位的间隙)
   ];
+
 
   return (
     <div className={styles.container}>
