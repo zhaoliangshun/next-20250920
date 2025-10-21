@@ -309,15 +309,20 @@ const SegmentedSlider = ({
             const startPercent = getPercentage(segment.start);
             const endPercent = getPercentage(segment.end);
             const widthPercent = endPercent - startPercent;
+            
+            // 判断当前区间是否在选中范围内
+            const isPartiallySelected = (
+                (segment.start >= currentValue[0] && segment.end <= currentValue[1])
+            );
 
             return (
                 <div
                     key={index}
-                    className={styles.segment}
+                    className={`${styles.segment} ${!isPartiallySelected ? styles.segmentGray : ''}`}
                     style={{
                         left: `${startPercent}%`,
                         width: `${widthPercent}%`,
-                        backgroundColor: segment.color || '#1890ff',
+                        backgroundColor: isPartiallySelected ? (segment.color || '#1890ff') : undefined,
                     }}
                 />
             );
