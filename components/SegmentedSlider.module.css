@@ -3,22 +3,17 @@
 .slider {
     position: relative;
     width: 100%;
-    height: 40px;
+    height: 50px;
     cursor: pointer;
     user-select: none;
     touch-action: none;
     box-sizing: border-box;
-    padding: 15px 0;
+    padding: 20px 0;
 }
 
 .sliderDisabled {
     cursor: not-allowed;
     opacity: 0.6;
-}
-
-.sliderRange {
-    height: 50px;
-    padding: 20px 0;
 }
 
 /* 轨道样式 */
@@ -65,8 +60,8 @@
 .point {
     position: absolute;
     top: 50%;
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     background-color: #fff;
     border: 2px solid #d9d9d9;
     border-radius: 50%;
@@ -78,8 +73,8 @@
 .pointActive {
     border-color: #1890ff;
     background-color: #1890ff;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
 }
 
@@ -87,8 +82,8 @@
 .handle {
     position: absolute;
     top: 50%;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     background-color: #fff;
     border: 2px solid #1890ff;
     border-radius: 50%;
@@ -128,22 +123,6 @@
     outline: none;
 }
 
-/* 区间模式下的手柄 */
-.sliderRange .handle {
-    width: 24px;
-    height: 24px;
-}
-
-.sliderRange .point {
-    width: 14px;
-    height: 14px;
-}
-
-.sliderRange .pointActive {
-    width: 16px;
-    height: 16px;
-}
-
 /* 拖拽时的性能优化 */
 .sliderDragging {
     pointer-events: none;
@@ -157,11 +136,6 @@
 /* 响应式设计 */
 @media (max-width: 768px) {
     .slider {
-        height: 45px;
-        padding: 18px 0;
-    }
-
-    .sliderRange {
         height: 55px;
         padding: 22px 0;
     }

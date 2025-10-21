@@ -4,19 +4,17 @@ import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react'
 import styles from './SegmentedSlider.module.css';
 
 /**
- * 分段式滑块组件
+ * 分段式滑块组件（仅支持区间选择）
  * 每个区间有不同的背景颜色，只能在区间的起点和终点选中
- * 支持区间选择（多个拖动点）
+ * 支持两个拖动点来选择一个区间
  */
 const SegmentedSlider = ({
-    // 区间配置：每个区间包含 start, end, color, gapBefore, gapAfter
+    // 区间配置：每个区间包含 start, end, color
     segments = [],
-    // 默认值（单值或区间）
-    defaultValue = 0,
-    // 受控值（单值或区间）
+    // 默认值（区间）
+    defaultValue = [0, 100],
+    // 受控值（区间）
     value,
-    // 是否为区间选择模式
-    range = false,
     // 值变化回调
     onChange,
     // 是否禁用
@@ -46,76 +44,48 @@ const SegmentedSlider = ({
         return Math.max(...segments.map(seg => seg.end));
     }, [segments]);
 
-    // 计算当前值
+    // 计算当前值（始终为区间）
     const [currentValue, setCurrentValue] = useState(() => {
-        // 区间模式
-        if (range) {
-            // 检查默认值是否为有效区间
-            if (Array.isArray(defaultValue) && defaultValue.length >= 2) {
-                const [startVal, endVal] = defaultValue;
-                const isValidStart = segments.some(seg =>
-                    startVal === seg.start || startVal === seg.end
-                );
-                const isValidEnd = segments.some(seg =>
-                    endVal === seg.start || endVal === seg.end
-                );
-
-                if (isValidStart && isValidEnd && startVal <= endVal) {
-                    return [startVal, endVal];
-                }
-            }
-
-            // 如果默认值无效，使用第一个区间的起点和最后一个区间的终点
-            if (segments.length > 0) {
-                return [segments[0].start, segments[segments.length - 1].end];
-            }
-            return [0, 100];
-        }
-        // 单值模式
-        else {
-            // 检查默认值是否在有效区间内
-            const validSegments = segments.filter(seg =>
-                defaultValue === seg.start || defaultValue === seg.end
+        // 检查默认值是否为有效区间
+        if (Array.isArray(defaultValue) && defaultValue.length >= 2) {
+            const [startVal, endVal] = defaultValue;
+            const isValidStart = segments.some(seg =>
+                startVal === seg.start || startVal === seg.end
+            );
+            const isValidEnd = segments.some(seg =>
+                endVal === seg.start || endVal === seg.end
             );
 
-            if (validSegments.length > 0) {
-                return defaultValue;
+            if (isValidStart && isValidEnd && startVal <= endVal) {
+                return [startVal, endVal];
             }
-
-            // 如果默认值不在有效位置，使用第一个区间的起点
-            return segments.length > 0 ? segments[0].start : 0;
         }
+
+        // 如果默认值无效，使用第一个区间的起点和最后一个区间的终点
+        if (segments.length > 0) {
+            return [segments[0].start, segments[segments.length - 1].end];
+        }
+        return [0, 100];
     });
 
     // 更新外部受控值
     useEffect(() => {
-        if (value !== undefined) {
-            if (range && Array.isArray(value) && value.length >= 2) {
-                // 检查区间值是否有效
-                const [startVal, endVal] = value;
-                const isValidStart = segments.some(seg =>
-                    startVal === seg.start || startVal === seg.end
-                );
-                const isValidEnd = segments.some(seg =>
-                    endVal === seg.start || endVal === seg.end
-                );
+        if (value !== undefined && Array.isArray(value) && value.length >= 2) {
+            // 检查区间值是否有效
+            const [startVal, endVal] = value;
+            const isValidStart = segments.some(seg =>
+                startVal === seg.start || startVal === seg.end
+            );
+            const isValidEnd = segments.some(seg =>
+                endVal === seg.start || endVal === seg.end
+            );
 
-                if (isValidStart && isValidEnd && startVal <= endVal &&
-                    (startVal !== currentValue[0] || endVal !== currentValue[1])) {
-                    setCurrentValue([startVal, endVal]);
-                }
-            } else if (!range && value !== currentValue) {
-                // 检查单值是否在有效位置
-                const isValid = segments.some(seg =>
-                    value === seg.start || value === seg.end
-                );
-
-                if (isValid) {
-                    setCurrentValue(value);
-                }
+            if (isValidStart && isValidEnd && startVal <= endVal &&
+                (startVal !== currentValue[0] || endVal !== currentValue[1])) {
+                setCurrentValue([startVal, endVal]);
             }
         }
-    }, [value, range, segments, currentValue]);
+    }, [value, segments, currentValue]);
 
     // 计算百分比
     const getPercentage = useCallback((val) => {
@@ -136,7 +106,7 @@ const SegmentedSlider = ({
         const rawValue = min + percentage * (max - min);
 
         // 找到最近的有效位置（区间的起点或终点）
-        let closestValue = range ? currentValue[0] : currentValue;
+        let closestValue = currentValue[0];
         let minDistance = Infinity;
 
         segments.forEach(segment => {
@@ -156,7 +126,7 @@ const SegmentedSlider = ({
         });
 
         return closestValue;
-    }, [min, max, segments, range, currentValue]);
+    }, [min, max, segments, currentValue]);
 
     // 处理鼠标按下
     const handleMouseDown = useCallback((e, handleIndex = 0) => {
@@ -183,27 +153,20 @@ const SegmentedSlider = ({
             const { clientX } = getEventPosition(e);
             const newValue = getValueFromPosition(clientX);
 
-            if (range) {
-                const newValues = [...currentValue];
-                newValues[handleIndex] = newValue;
+            const newValues = [...currentValue];
+            newValues[handleIndex] = newValue;
 
-                // 确保区间值的顺序正确
-                if (handleIndex === 0 && newValues[0] > newValues[1]) {
-                    newValues[0] = newValues[1];
-                } else if (handleIndex === 1 && newValues[1] < newValues[0]) {
-                    newValues[1] = newValues[0];
-                }
+            // 确保区间值的顺序正确
+            if (handleIndex === 0 && newValues[0] > newValues[1]) {
+                newValues[0] = newValues[1];
+            } else if (handleIndex === 1 && newValues[1] < newValues[0]) {
+                newValues[1] = newValues[0];
+            }
 
-                // 只有当值发生变化时才更新
-                if (newValues[0] !== currentValue[0] || newValues[1] !== currentValue[1]) {
-                    setCurrentValue(newValues);
-                    onChange?.(newValues);
-                }
-            } else {
-                if (newValue !== currentValue) {
-                    setCurrentValue(newValue);
-                    onChange?.(newValue);
-                }
+            // 只有当值发生变化时才更新
+            if (newValues[0] !== currentValue[0] || newValues[1] !== currentValue[1]) {
+                setCurrentValue(newValues);
+                onChange?.(newValues);
             }
         };
 
@@ -225,7 +188,7 @@ const SegmentedSlider = ({
         document.addEventListener("mouseup", upHandler);
         document.addEventListener("touchmove", moveHandler, { passive: false });
         document.addEventListener("touchend", upHandler);
-    }, [disabled, range, currentValue, getValueFromPosition, onChange]);
+    }, [disabled, currentValue, getValueFromPosition, onChange]);
 
     // 处理轨道点击
     const handleTrackClick = useCallback((e) => {
@@ -233,25 +196,20 @@ const SegmentedSlider = ({
 
         const newValue = getValueFromPosition(e.clientX);
 
-        if (range) {
-            // 在区间模式下，找到最近的手柄
-            const distanceToStart = Math.abs(newValue - currentValue[0]);
-            const distanceToEnd = Math.abs(newValue - currentValue[1]);
+        // 在区间模式下，找到最近的手柄
+        const distanceToStart = Math.abs(newValue - currentValue[0]);
+        const distanceToEnd = Math.abs(newValue - currentValue[1]);
 
-            if (distanceToStart < distanceToEnd) {
-                const newValues = [newValue, currentValue[1]];
-                setCurrentValue(newValues);
-                onChange?.(newValues);
-            } else {
-                const newValues = [currentValue[0], newValue];
-                setCurrentValue(newValues);
-                onChange?.(newValues);
-            }
+        if (distanceToStart < distanceToEnd) {
+            const newValues = [newValue, currentValue[1]];
+            setCurrentValue(newValues);
+            onChange?.(newValues);
         } else {
-            setCurrentValue(newValue);
-            onChange?.(newValue);
+            const newValues = [currentValue[0], newValue];
+            setCurrentValue(newValues);
+            onChange?.(newValues);
         }
-    }, [disabled, isDragging, range, currentValue, getValueFromPosition, onChange]);
+    }, [disabled, isDragging, currentValue, getValueFromPosition, onChange]);
 
     // 处理键盘事件
     const handleKeyDown = useCallback((e, handleIndex = 0) => {
@@ -260,7 +218,7 @@ const SegmentedSlider = ({
         let newValue;
         let foundNewValue = false;
 
-        const currentValueToUse = range ? currentValue[handleIndex] : currentValue;
+        const currentValueToUse = currentValue[handleIndex];
 
         switch (e.key) {
             case "ArrowLeft":
@@ -310,30 +268,23 @@ const SegmentedSlider = ({
         }
 
         if (foundNewValue) {
-            if (range) {
-                const newValues = [...currentValue];
-                newValues[handleIndex] = newValue;
+            const newValues = [...currentValue];
+            newValues[handleIndex] = newValue;
 
-                // 确保区间值的顺序正确
-                if (handleIndex === 0 && newValues[0] > newValues[1]) {
-                    newValues[0] = newValues[1];
-                } else if (handleIndex === 1 && newValues[1] < newValues[0]) {
-                    newValues[1] = newValues[0];
-                }
+            // 确保区间值的顺序正确
+            if (handleIndex === 0 && newValues[0] > newValues[1]) {
+                newValues[0] = newValues[1];
+            } else if (handleIndex === 1 && newValues[1] < newValues[0]) {
+                newValues[1] = newValues[0];
+            }
 
-                // 只有当值发生变化时才更新
-                if (newValues[0] !== currentValue[0] || newValues[1] !== currentValue[1]) {
-                    setCurrentValue(newValues);
-                    onChange?.(newValues);
-                }
-            } else {
-                if (newValue !== currentValue) {
-                    setCurrentValue(newValue);
-                    onChange?.(newValue);
-                }
+            // 只有当值发生变化时才更新
+            if (newValues[0] !== currentValue[0] || newValues[1] !== currentValue[1]) {
+                setCurrentValue(newValues);
+                onChange?.(newValues);
             }
         }
-    }, [disabled, range, currentValue, segments, min, max, onChange]);
+    }, [disabled, currentValue, segments, min, max, onChange]);
 
     // 清理事件监听器
     useEffect(() => {
@@ -349,12 +300,8 @@ const SegmentedSlider = ({
 
     // 计算手柄位置
     const handlePositions = useMemo(() => {
-        if (range) {
-            return currentValue.map(val => getPercentage(val));
-        } else {
-            return [getPercentage(currentValue)];
-        }
-    }, [range, currentValue, getPercentage]);
+        return currentValue.map(val => getPercentage(val));
+    }, [currentValue, getPercentage]);
 
     // 渲染区间
     const renderSegments = () => {
@@ -380,55 +327,74 @@ const SegmentedSlider = ({
     // 渲染区间标记点
     const renderSegmentPoints = () => {
         const points = [];
-        const pointValues = new Set();
+        const renderedPoints = new Set();
 
+        // 创建一个包含所有点的数组
+        const allPoints = [];
+
+        // 添加每个区间的起点和终点
         segments.forEach((segment, index) => {
-            // 添加起点
-            if (!pointValues.has(segment.start)) {
-                pointValues.add(segment.start);
-                const position = getPercentage(segment.start);
-                const isActive = range
-                    ? (currentValue[0] === segment.start || currentValue[1] === segment.start)
-                    : (currentValue === segment.start);
+            allPoints.push({
+                value: segment.start,
+                type: 'start',
+                segmentIndex: index,
+                segment
+            });
 
-                points.push(
-                    <div
-                        key={`start-${index}`}
-                        className={`${styles.point} ${isActive ? styles.pointActive : ''}`}
-                        style={{
-                            left: `${position}%`,
-                        }}
-                    />
-                );
-            }
-
-            // 添加终点
-            if (!pointValues.has(segment.end)) {
-                pointValues.add(segment.end);
-                const position = getPercentage(segment.end);
-                const isActive = range
-                    ? (currentValue[0] === segment.end || currentValue[1] === segment.end)
-                    : (currentValue === segment.end);
-
-                points.push(
-                    <div
-                        key={`end-${index}`}
-                        className={`${styles.point} ${isActive ? styles.pointActive : ''}`}
-                        style={{
-                            left: `${position}%`,
-                        }}
-                    />
-                );
-            }
+            allPoints.push({
+                value: segment.end,
+                type: 'end',
+                segmentIndex: index,
+                segment
+            });
         });
+
+        // 按值排序
+        allPoints.sort((a, b) => a.value - b.value);
+
+        // 处理点的渲染，确保间隙点只显示一个
+        for (let i = 0; i < allPoints.length; i++) {
+            const currentPoint = allPoints[i];
+            const pointKey = currentPoint.value;
+
+            // 如果这个点已经渲染过，跳过
+            if (renderedPoints.has(pointKey)) {
+                continue;
+            }
+
+            // 查找所有具有相同值的点
+            const sameValuePoints = [currentPoint];
+            let j = i + 1;
+            while (j < allPoints.length && allPoints[j].value === currentPoint.value) {
+                sameValuePoints.push(allPoints[j]);
+                j++;
+            }
+
+            // 对于相同值的点，我们只渲染一个
+            const position = getPercentage(currentPoint.value);
+            const isActive = (currentValue[0] === currentPoint.value || currentValue[1] === currentPoint.value);
+
+            points.push(
+                <div
+                    key={`point-${currentPoint.value}`}
+                    className={`${styles.point} ${isActive ? styles.pointActive : ''}`}
+                    style={{
+                        left: `${position}%`,
+                    }}
+                />
+            );
+
+            renderedPoints.add(pointKey);
+
+            // 跳过已处理的相同值点
+            i = j - 1;
+        }
 
         return points;
     };
 
-    // 渲染选中区间（仅在区间模式下）
+    // 渲染选中区间
     const renderSelectedRange = () => {
-        if (!range) return null;
-
         const startPercent = getPercentage(currentValue[0]);
         const endPercent = getPercentage(currentValue[1]);
 
@@ -460,9 +426,9 @@ const SegmentedSlider = ({
                 role="slider"
                 aria-valuemin={min}
                 aria-valuemax={max}
-                aria-valuenow={range ? currentValue[index] : currentValue}
+                aria-valuenow={currentValue[index]}
                 aria-disabled={disabled}
-                aria-label={range ? (index === 0 ? "最小值" : "最大值") : "滑块值"}
+                aria-label={index === 0 ? "最小值" : "最大值"}
             />
         ));
     };
@@ -470,8 +436,8 @@ const SegmentedSlider = ({
     // 计算滑块类名
     const sliderClassName = useMemo(() => {
         return `${styles.slider} ${disabled ? styles.sliderDisabled : ''} ${isDragging ? styles.sliderDragging : ''
-            } ${range ? styles.sliderRange : ''} ${className}`;
-    }, [disabled, isDragging, range, className]);
+            } ${styles.sliderRange} ${className}`;
+    }, [disabled, isDragging, className]);
 
     return (
         <div
