@@ -60,7 +60,6 @@ const SegmentedSlider = ({
             }
         })
         if (typeof realChange === 'function') {
-            console.log(realValue)
             realChange(realValue)
         }
     }, [realChange, realSegments]); 
@@ -105,19 +104,28 @@ const SegmentedSlider = ({
         if (value !== undefined && Array.isArray(value) && value.length >= 2) {
             // 检查区间值是否有效
             const [startVal, endVal] = value;
-            const isValidStart = segments.some(seg =>
-                startVal === seg.start || startVal === seg.end
+            const newValue = [];
+            realSegments.forEach(seg => {
+                if(startVal === seg.start ) {
+                    newValue[0] = seg.mapStart
+                }
+            }
+                
             );
-            const isValidEnd = segments.some(seg =>
-                endVal === seg.start || endVal === seg.end
-            );
+            realSegments.forEach(seg => {
+                if(endVal === seg.end ) {
+                    newValue[1] = seg.mapEnd
+                }
+            });
 
-            if (isValidStart && isValidEnd && startVal <= endVal &&
-                (startVal !== currentValue[0] || endVal !== currentValue[1])) { 
-                setCurrentValue([startVal, endVal]);
+            console.log(newValue)
+
+            if(newValue[0] && newValue[1] && (newValue[0] < newValue[1])&&
+                (newValue[0] !== currentValue[0] || newValue[1] !== currentValue[1])) {
+                setCurrentValue(newValue);
             }
         }
-    }, [value, segments, currentValue]);
+    }, [value, realSegments, currentValue]);
 
     // 计算百分比
     const getPercentage = useCallback((val) => {
