@@ -64,6 +64,18 @@
     border-radius: 2px;
 }
 
+/* 使用伪元素扩大点击区域 */
+.point::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
 
 
 
