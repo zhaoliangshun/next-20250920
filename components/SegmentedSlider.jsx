@@ -395,7 +395,7 @@ const SegmentedSlider = ({
         allPoints.sort((a, b) => a.value - b.value);
 
         // 处理点的渲染，确保间隙点只显示一个
-        for (let i = 0; i < allPoints.length; i++) {
+        for (let i = 1; i < allPoints.length - 1; i++) {
             const currentPoint = allPoints[i];
             const pointKey = currentPoint.value;
 
@@ -436,20 +436,6 @@ const SegmentedSlider = ({
     };
 
     // 渲染选中区间
-    const renderSelectedRange = () => {
-        const startPercent = getPercentage(currentValue[0]);
-        const endPercent = getPercentage(currentValue[1]);
-
-        return (
-            <div
-                className={styles.selectedRange}
-                style={{
-                    left: `${startPercent}%`,
-                    width: `${endPercent - startPercent}%`,
-                }}
-            />
-        );
-    };
 
     // 渲染拖动点
     const renderHandles = () => {
@@ -491,7 +477,6 @@ const SegmentedSlider = ({
             <div className={styles.track} onClick={handleTrackClick}>
                 <div className={styles.rail} />
                 {renderSegments()}
-                {renderSelectedRange()}
                 {renderSegmentPoints()}
             </div>
 
