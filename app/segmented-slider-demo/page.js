@@ -22,7 +22,7 @@ const SegmentedSliderDemo = () => {
   const formatTemperature = (value) => `${value}°C`;
 
   // 自定义格式化函数 - 显示波长
-  const formatWavelength = (value) => `${value}nm`;
+  const formatWavelength = (value) => `${value}m`;
 
   // 自定义格式化函数 - 显示价格
   const formatPrice = (value) => `¥${value.toLocaleString()}`;
@@ -43,9 +43,7 @@ const SegmentedSliderDemo = () => {
         <p>
           当前区间: {rangeValue1[0]} - {rangeValue1[1]}
         </p>
-        <p className={styles.description}>
-          💡 拖动滑块手柄时会显示 tooltip
-        </p>
+        <p className={styles.description}>💡 拖动滑块手柄时会显示 tooltip</p>
       </div>
 
       <div className={styles.sliderContainer}>
@@ -58,7 +56,8 @@ const SegmentedSliderDemo = () => {
           tooltipVisible="hover"
         />
         <p>
-          当前温度范围: {formatTemperature(rangeValue2[0])} - {formatTemperature(rangeValue2[1])}
+          当前温度范围: {formatTemperature(rangeValue2[0])} -{" "}
+          {formatTemperature(rangeValue2[1])}
         </p>
         <p className={styles.description}>
           💡 鼠标悬停或拖动时显示温度格式的 tooltip
@@ -75,11 +74,10 @@ const SegmentedSliderDemo = () => {
           tooltipVisible="always"
         />
         <p>
-          当前波长范围: {formatWavelength(rangeValue3[0])} - {formatWavelength(rangeValue3[1])}
+          当前波长范围: {formatWavelength(rangeValue3[0])} -{" "}
+          {formatWavelength(rangeValue3[1])}
         </p>
-        <p className={styles.description}>
-          💡 tooltip 始终显示，展示波长单位
-        </p>
+        <p className={styles.description}>💡 tooltip 始终显示，展示波长单位</p>
       </div>
 
       <div className={styles.sliderContainer}>
@@ -92,11 +90,10 @@ const SegmentedSliderDemo = () => {
           tooltipVisible="drag"
         />
         <p>
-          当前价格范围: {formatPrice(rangeValue4[0])} - {formatPrice(rangeValue4[1])}
+          当前价格范围: {formatPrice(rangeValue4[0])} -{" "}
+          {formatPrice(rangeValue4[1])}
         </p>
-        <p className={styles.description}>
-          💡 使用货币格式化，千位分隔符
-        </p>
+        <p className={styles.description}>💡 使用货币格式化，千位分隔符</p>
       </div>
 
       <div className={styles.sliderContainer}>
@@ -110,9 +107,7 @@ const SegmentedSliderDemo = () => {
         <p>
           当前区间: {rangeValue1[0]} - {rangeValue1[1]}
         </p>
-        <p className={styles.description}>
-          💡 完全不显示 tooltip
-        </p>
+        <p className={styles.description}>💡 完全不显示 tooltip</p>
       </div>
     </div>
   );

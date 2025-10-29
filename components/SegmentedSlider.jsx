@@ -505,7 +505,7 @@ const SegmentedSlider = ({
                         aria-label={index === 0 ? "最小值" : "最大值"}
                     />
                     {showCurrentTooltip && (
-                        <div className={`${styles.tooltip} ${activeHandle === index ? styles.tooltipActive : ''}`}>
+                        <div className={`${styles.tooltip} ${index === 0 ? styles.tooltip0 : ''} ${activeHandle === index ? styles.tooltipActive : ''}`}>
                             <div className={styles.tooltipContent}>
                                 {formatTooltip(realValue)}
                             </div>
