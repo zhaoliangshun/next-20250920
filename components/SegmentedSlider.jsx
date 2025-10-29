@@ -23,11 +23,18 @@ const SegmentedSlider = ({
     className = '',
     // 自定义样式
     style = {},
+    // 是否显示 tooltip
+    showTooltip = true,
+    // 自定义 tooltip 格式化函数
+    formatTooltip = (value) => value,
+    // tooltip 显示策略：'always' | 'hover' | 'drag'
+    tooltipVisible = 'drag',
     ...props
 }) => {
     // 状态管理
     const [isDragging, setIsDragging] = useState(false);
     const [activeHandle, setActiveHandle] = useState(null);
+    const [hoveredHandle, setHoveredHandle] = useState(null);
 
     // 引用
     const sliderRef = useRef(null);
@@ -437,28 +444,77 @@ const SegmentedSlider = ({
 
     // 渲染选中区间
 
+    // 判断是否显示 tooltip
+    const shouldShowTooltip = useCallback((handleIndex) => {
+        if (!showTooltip) return false;
+        
+        switch (tooltipVisible) {
+            case 'always':
+                return true;
+            case 'hover':
+                return hoveredHandle === handleIndex || activeHandle === handleIndex;
+            case 'drag':
+                return activeHandle === handleIndex;
+            default:
+                return activeHandle === handleIndex;
+        }
+    }, [showTooltip, tooltipVisible, hoveredHandle, activeHandle]);
+
+    // 获取真实值用于显示
+    const getRealValue = useCallback((mappedValue) => {
+        let realValue = null;
+        realSegments.forEach((segment) => {
+            if (segment.mapStart === mappedValue) {
+                realValue = segment.start;
+            }
+            if (segment.mapEnd === mappedValue) {
+                realValue = segment.end;
+            }
+        });
+        return realValue !== null ? realValue : mappedValue;
+    }, [realSegments]);
+
     // 渲染拖动点
     const renderHandles = () => {
-        return handlePositions.map((position, index) => (
-            <div
-                key={index}
-                className={`${styles.handle} ${activeHandle === index ? styles.handleActive : ''} ${disabled ? styles.handleDisabled : ''
-                    }`}
-                style={{
-                    left: `${position}%`,
-                }}
-                onMouseDown={(e) => handleMouseDown(e, index)}
-                onTouchStart={(e) => handleMouseDown(e, index)}
-                onKeyDown={(e) => handleKeyDown(e, index)}
-                tabIndex={disabled ? -1 : 0}
-                role="slider"
-                aria-valuemin={min}
-                aria-valuemax={max}
-                aria-valuenow={currentValue[index]}
-                aria-disabled={disabled}
-                aria-label={index === 0 ? "最小值" : "最大值"}
-            />
-        ));
+        return handlePositions.map((position, index) => {
+            const showCurrentTooltip = shouldShowTooltip(index);
+            const realValue = getRealValue(currentValue[index]);
+            
+            return (
+                <div
+                    key={index}
+                    className={`${styles.handleWrapper}`}
+                    style={{
+                        left: `${position}%`,
+                    }}
+                >
+                    <div
+                        className={`${styles.handle} ${activeHandle === index ? styles.handleActive : ''} ${disabled ? styles.handleDisabled : ''
+                            }`}
+                        onMouseDown={(e) => handleMouseDown(e, index)}
+                        onTouchStart={(e) => handleMouseDown(e, index)}
+                        onKeyDown={(e) => handleKeyDown(e, index)}
+                        onMouseEnter={() => setHoveredHandle(index)}
+                        onMouseLeave={() => setHoveredHandle(null)}
+                        tabIndex={disabled ? -1 : 0}
+                        role="slider"
+                        aria-valuemin={min}
+                        aria-valuemax={max}
+                        aria-valuenow={realValue}
+                        aria-disabled={disabled}
+                        aria-label={index === 0 ? "最小值" : "最大值"}
+                    />
+                    {showCurrentTooltip && (
+                        <div className={`${styles.tooltip} ${activeHandle === index ? styles.tooltipActive : ''}`}>
+                            <div className={styles.tooltipContent}>
+                                {formatTooltip(realValue)}
+                            </div>
+                            <div className={styles.tooltipArrow} />
+                        </div>
+                    )}
+                </div>
+            );
+        });
     };
 
     // 计算滑块类名

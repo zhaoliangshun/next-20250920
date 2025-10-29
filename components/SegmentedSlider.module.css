@@ -80,18 +80,93 @@
 
 
 
-/* 拖拽手柄样式 */
-.handle {
+/* 手柄容器样式 */
+.handleWrapper {
     position: absolute;
     top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+}
+
+/* 拖拽手柄样式 */
+.handle {
     width: 20px;
     height: 20px;
     background-color: #122C68;
-    /* border: 2px solid #1890ff; */
     border-radius: 50%;
     cursor: grab;
-    transform: translate(-50%, -50%);
-    z-index: 4;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.handle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(18, 44, 104, 0.3);
+}
+
+.handleActive {
+    cursor: grabbing;
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(18, 44, 104, 0.4);
+}
+
+.handleDisabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Tooltip 样式 */
+.tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    margin-bottom: 8px;
+    pointer-events: none;
+    animation: tooltipFadeIn 0.2s ease-out;
+    z-index: 10;
+}
+
+.tooltipContent {
+    background-color: #122C68;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    line-height: 1.5;
+}
+
+.tooltipArrow {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #122C68;
+}
+
+.tooltipActive .tooltipContent {
+    background-color: #173E96;
+}
+
+.tooltipActive .tooltipArrow {
+    border-top-color: #173E96;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-8px);
+    }
 }
 
 /* 拖拽时的性能优化 */
@@ -102,4 +177,8 @@
 .sliderDragging .handle {
     pointer-events: auto;
     transition: none;
+}
+
+.sliderDragging .handleWrapper {
+    pointer-events: auto;
 }
