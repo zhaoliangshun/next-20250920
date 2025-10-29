@@ -49,12 +49,12 @@ const EnhancedSlider = ({
   // Handle 大小配置
   handleSize = 28,
 
-  // 颜色配置
   trackColor = "#1B3B8C",
   railColor = "#f5f5f5",
-  handleColor = "#1B3B8C",
+  handleColor = "#122C68",
+  handleBorder,
   passedColor = "#E0E0E0",
-  passedOverlay = true,
+  passedOverlay = false,
 
   // 分段背景色配置
   segmentedTrack = false,
@@ -756,6 +756,7 @@ const EnhancedSlider = ({
         backgroundColor: handleColor,
         width: `${handleStyleConfig.width}px`,
         height: `${handleStyleConfig.height}px`,
+        border: handleBorder,
       };
 
       // 计算工具提示内容（支持 formatTooltip）
