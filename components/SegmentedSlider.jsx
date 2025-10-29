@@ -255,7 +255,7 @@ const SegmentedSlider = ({
         const distanceToStart = Math.abs(newValue - currentValue[0]);
         const distanceToEnd = Math.abs(newValue - currentValue[1]);
 
-        if (distanceToStart < distanceToEnd) {
+        if (distanceToStart <= distanceToEnd) {
             const newValues = [newValue, currentValue[1]];
             setCurrentValue(newValues);
             onChange?.(newValues);
