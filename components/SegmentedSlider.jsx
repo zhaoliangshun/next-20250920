@@ -462,13 +462,13 @@ const SegmentedSlider = ({
 
     // 获取真实值用于显示
     const getRealValue = useCallback((mappedValue) => {
-        let realValue = null;
+        let realValue = [];
         realSegments.forEach((segment) => {
-            if (segment.mapStart === mappedValue) {
-                realValue = segment.start;
+            if (segment.mapStart === mappedValue[0]) {
+                realValue[0] = segment.start;
             }
-            if (segment.mapEnd === mappedValue) {
-                realValue = segment.end;
+            if (segment.mapEnd === mappedValue[1]) {
+                realValue[1] = segment.end;
             }
         });
         return realValue !== null ? realValue : mappedValue;
@@ -478,7 +478,7 @@ const SegmentedSlider = ({
     const renderHandles = () => {
         return handlePositions.map((position, index) => {
             const showCurrentTooltip = shouldShowTooltip(index);
-            const realValue = getRealValue(currentValue[index]);
+            const realValue = getRealValue(currentValue);
             
             // 判断 tooltip 的对齐方式
             // 左端：位置 <= 10%，右端：位置 >= 90%
@@ -509,14 +509,14 @@ const SegmentedSlider = ({
                         role="slider"
                         aria-valuemin={min}
                         aria-valuemax={max}
-                        aria-valuenow={realValue}
+                        aria-valuenow={realValue[index]}
                         aria-disabled={disabled}
                         aria-label={index === 0 ? "最小值" : "最大值"}
                     />
                     {showCurrentTooltip && (
                         <div className={`${styles.tooltip} ${tooltipAlignClass} ${index === 0 ? styles.tooltip0 : ''} ${activeHandle === index ? styles.tooltipActive : ''}`}>
                             <div className={styles.tooltipContent}>
-                                {formatTooltip(realValue)}
+                                {formatTooltip(realValue[index])}
                             </div>
                             <div className={styles.tooltipArrow} />
                         </div>

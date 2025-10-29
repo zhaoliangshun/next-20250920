@@ -27,6 +27,7 @@ const SegmentedSliderDemo = () => {
   // 自定义格式化函数 - 显示价格
   const formatPrice = (value) => `¥${value.toLocaleString()}`;
 
+
   return (
     <div className={styles.container}>
       <h1>分段式滑块 Tooltip 演示</h1>
