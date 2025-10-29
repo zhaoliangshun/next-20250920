@@ -11,6 +11,10 @@ export default function SliderDemo() {
   const [value4, setValue4] = useState<number>(60);
   const [value5, setValue5] = useState<number>(5);
   const [value6, setValue6] = useState<number[]>([25, 75]);
+  const [value7, setValue7] = useState<number>(30);
+  const [value8, setValue8] = useState<number>(50);
+  const [value9, setValue9] = useState<number>(70);
+  const [value10, setValue10] = useState<number[]>([20, 80]);
 
   return (
     <div className={styles.container}>
@@ -232,6 +236,85 @@ export default function SliderDemo() {
             }}
           />
           <div className={styles.value}>当前值: {value1}</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>新式 Tooltip - 拖动时显示（默认）</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider
+            value={value7}
+            onChange={(val) => {
+              if (typeof val === "number") {
+                setValue7(val);
+              }
+            }}
+            tooltipVisible="drag"
+          />
+          <div className={styles.value}>当前值: {value7}</div>
+          <div className={styles.description}>💡 拖动手柄时显示 tooltip</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>新式 Tooltip - 悬停时显示</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider
+            value={value8}
+            onChange={(val) => {
+              if (typeof val === "number") {
+                setValue8(val);
+              }
+            }}
+            formatTooltip={(val) => `${val}°C`}
+            tooltipVisible="hover"
+          />
+          <div className={styles.value}>当前温度: {value8}°C</div>
+          <div className={styles.description}>💡 鼠标悬停或拖动时显示，带温度格式</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>新式 Tooltip - 始终显示</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider
+            value={value9}
+            onChange={(val) => {
+              if (typeof val === "number") {
+                setValue9(val);
+              }
+            }}
+            formatTooltip={(val) => `¥${val.toLocaleString()}`}
+            tooltipVisible="always"
+          />
+          <div className={styles.value}>当前价格: ¥{value9.toLocaleString()}</div>
+          <div className={styles.description}>💡 Tooltip 始终显示，价格格式化</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>新式 Tooltip - 范围滑块</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider
+            range={true}
+            value={value10}
+            onChange={(val) => {
+              if (Array.isArray(val)) {
+                setValue10(val);
+              }
+            }}
+            formatTooltip={(val) => `${val}m`}
+            tooltipVisible="always"
+            marks={{
+              0: "0%",
+              25: "25%",
+              50: "50%",
+              75: "75%",
+              100: "100%",
+            }}
+          />
+          <div className={styles.value}>当前范围: {value10[0]}% - {value10[1]}%</div>
+          <div className={styles.description}>💡 范围滑块 + 悬停显示 tooltip，边缘智能对齐</div>
         </div>
       </section>
     </div>

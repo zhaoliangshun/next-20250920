@@ -220,6 +220,75 @@
   visibility: visible;
 }
 
+/* 新的 Tooltip 样式（采用 SegmentedSlider 方案） */
+.tooltipNew {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tooltipContent {
+  background-color: #1b3b8c;
+  color: #ffffff;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tooltipArrow {
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid #1b3b8c;
+}
+
+/* Tooltip 左对齐样式（手柄在左端时） */
+.tooltipLeftAlign {
+  left: 0;
+  transform: translateX(0) translateY(-8px);
+}
+
+.tooltipLeftAlign .tooltipArrow {
+  left: 8px;
+  transform: translateX(0);
+}
+
+/* Tooltip 右对齐样式（手柄在右端时） */
+.tooltipRightAlign {
+  left: auto;
+  right: 0;
+  transform: translateX(0) translateY(-8px);
+}
+
+.tooltipRightAlign .tooltipArrow {
+  left: auto;
+  right: 8px;
+  transform: translateX(0);
+}
+
+/* Tooltip 激活状态 */
+/* .tooltipActive .tooltipContent {
+  background-color: #173E96;
+}
+
+.tooltipActive .tooltipArrow {
+  border-top-color: #173E96;
+} */
+
 /* 标记样式 */
 .mark {
   position: absolute;

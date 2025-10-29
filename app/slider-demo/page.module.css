@@ -45,6 +45,14 @@
   text-align: center;
 }
 
+.description {
+  font-size: 0.85rem;
+  color: #999;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .container {

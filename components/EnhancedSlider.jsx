@@ -38,6 +38,10 @@ const EnhancedSlider = ({
   tooltip = true,
   showMarks = true,
   showMarkLabels = true,
+  
+  // Tooltip 配置（新增，兼容 SegmentedSlider 方案）
+  formatTooltip,
+  tooltipVisible = 'drag',
 
   // 值显示配置
   showValueInHandle = false,
@@ -90,7 +94,7 @@ const EnhancedSlider = ({
   const [isDragging, setIsDragging] = useState(false);
   const [activeHandle, setActiveHandle] = useState(null);
   const [hoverHandle, setHoverHandle] = useState(null);
-  const [tooltipVisible, setTooltipVisible] = useState([]);
+  const [hoveredHandle, setHoveredHandle] = useState(null);
 
   // 计算当前值
   const [currentValue, setCurrentValue] = useState(() => {
@@ -394,24 +398,12 @@ const EnhancedSlider = ({
   // 处理鼠标悬停
   const handleMouseEnter = useCallback((handleIndex) => {
     setHoverHandle(handleIndex);
-
-    // 更新工具提示可见性
-    setTooltipVisible((prev) => {
-      const newVisibility = [...prev];
-      newVisibility[handleIndex] = true;
-      return newVisibility;
-    });
+    setHoveredHandle(handleIndex);
   }, []);
 
   const handleMouseLeave = useCallback((handleIndex) => {
     setHoverHandle(null);
-
-    // 更新工具提示可见性
-    setTooltipVisible((prev) => {
-      const newVisibility = [...prev];
-      newVisibility[handleIndex] = false;
-      return newVisibility;
-    });
+    setHoveredHandle(null);
   }, []);
 
   // 清理事件监听器
@@ -429,10 +421,26 @@ const EnhancedSlider = ({
     };
   }, []);
 
-  // 初始化工具提示可见性
-  useEffect(() => {
-    setTooltipVisible(new Array(currentValue.length).fill(false));
-  }, [currentValue.length]);
+  // 判断是否显示 tooltip（采用 SegmentedSlider 方案）
+  const shouldShowTooltip = useCallback((handleIndex) => {
+    if (!tooltip) return false;
+    
+    // 如果是旧的对象配置方式，处理 visible 属性
+    if (typeof tooltip === 'object' && tooltip.visible !== undefined) {
+      return tooltip.visible;
+    }
+    
+    switch (tooltipVisible) {
+      case 'always':
+        return true;
+      case 'hover':
+        return hoveredHandle === handleIndex || activeHandle === handleIndex;
+      case 'drag':
+        return activeHandle === handleIndex;
+      default:
+        return activeHandle === handleIndex;
+    }
+  }, [tooltip, tooltipVisible, hoveredHandle, activeHandle]);
 
   // 计算分段背景色渐变
   const segmentedTrackGradient = useMemo(() => {
@@ -731,25 +739,30 @@ const EnhancedSlider = ({
         backgroundColor: handleColor,
       };
 
-      // 计算工具提示内容
+      // 计算工具提示内容（支持 formatTooltip）
       let tooltipContent = val;
-      if (tooltip && typeof tooltip === "object" && tooltip.formatter) {
+      if (formatTooltip) {
+        tooltipContent = formatTooltip(val);
+      } else if (tooltip && typeof tooltip === 'object' && tooltip.formatter) {
         tooltipContent = tooltip.formatter(val);
       }
 
       // 计算工具提示位置
       let tooltipPlacement = "top";
-      if (tooltip && typeof tooltip === "object" && tooltip.placement) {
+      if (tooltip && typeof tooltip === 'object' && tooltip.placement) {
         tooltipPlacement = tooltip.placement;
       }
 
-      // 计算工具提示可见性
-      const isTooltipVisible =
-        tooltip &&
-        !valueDisplayConfig.enabled &&
-        (typeof tooltip === "object" && tooltip.visible !== undefined
-          ? tooltip.visible
-          : (isDragging && activeHandle === index) || tooltipVisible[index]);
+      // 计算工具提示可见性（使用新的 shouldShowTooltip）
+      const isTooltipVisible = shouldShowTooltip(index) && !valueDisplayConfig.enabled;
+
+      // 判断 tooltip 的对齐方式（采用 SegmentedSlider 方案）
+      let tooltipAlignClass = '';
+      if (percent <= 10) {
+        tooltipAlignClass = styles.tooltipLeftAlign;
+      } else if (percent >= 90) {
+        tooltipAlignClass = styles.tooltipRightAlign;
+      }
 
       // 计算handle中显示的值
       let handleValueContent = val;
@@ -791,20 +804,12 @@ const EnhancedSlider = ({
             </span>
           )}
 
-          {tooltip && !valueDisplayConfig.enabled && (
-            <div
-              className={`${styles.tooltip} ${
-                isTooltipVisible ? styles.tooltipVisible : ""
-              } ${
-                styles[
-                  `tooltip${
-                    tooltipPlacement.charAt(0).toUpperCase() +
-                    tooltipPlacement.slice(1)
-                  }`
-                ]
-              }`}
-            >
-              {tooltipContent}
+          {tooltip && !valueDisplayConfig.enabled && isTooltipVisible && (
+            <div className={`${styles.tooltipNew} ${tooltipAlignClass} ${activeHandle === index ? styles.tooltipActive : ''}`}>
+              <div className={styles.tooltipContent}>
+                {tooltipContent}
+              </div>
+              <div className={styles.tooltipArrow} />
             </div>
           )}
         </div>
@@ -903,6 +908,10 @@ EnhancedSlider.propTypes = {
   ]),
   showMarks: PropTypes.bool,
   showMarkLabels: PropTypes.bool,
+  
+  // Tooltip 配置（新增）
+  formatTooltip: PropTypes.func,
+  tooltipVisible: PropTypes.oneOf(['always', 'hover', 'drag']),
 
   // 值显示配置
   showValueInHandle: PropTypes.oneOfType([
