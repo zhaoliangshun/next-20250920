@@ -29,6 +29,8 @@ const SegmentedSlider = ({
     formatTooltip = (value) => value,
     // tooltip 显示策略：'always' | 'hover' | 'drag'
     tooltipVisible = 'drag',
+    // 自定义 handle 大小：数字（单位 px）或对象 { width, height }
+    handleSize = 24,
     ...props
 }) => {
     // 状态管理
@@ -474,6 +476,20 @@ const SegmentedSlider = ({
         return realValue !== null ? realValue : mappedValue;
     }, [realSegments]);
 
+    // 计算 handle 样式
+    const handleStyleConfig = useMemo(() => {
+        if (typeof handleSize === 'number') {
+            return {
+                width: handleSize,
+                height: handleSize,
+            };
+        }
+        return {
+            width: handleSize.width || 24,
+            height: handleSize.height || 24,
+        };
+    }, [handleSize]);
+
     // 渲染拖动点
     const renderHandles = () => {
         return handlePositions.map((position, index) => {
@@ -500,6 +516,10 @@ const SegmentedSlider = ({
                     <div
                         className={`${styles.handle} ${activeHandle === index ? styles.handleActive : ''} ${disabled ? styles.handleDisabled : ''
                             }`}
+                        style={{
+                            width: `${handleStyleConfig.width}px`,
+                            height: `${handleStyleConfig.height}px`,
+                        }}
                         onMouseDown={(e) => handleMouseDown(e, index)}
                         onTouchStart={(e) => handleMouseDown(e, index)}
                         onKeyDown={(e) => handleKeyDown(e, index)}

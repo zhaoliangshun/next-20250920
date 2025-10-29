@@ -25,7 +25,7 @@
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
-  touch-action: none;
+  touch-action: pan-y;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -71,7 +71,8 @@
   top: 0;
   height: 100%;
   border-radius: 4px;
-  z-index: 2; /* 覆盖在 rail 之上，低于 handle */
+  z-index: 2;
+  /* 覆盖在 rail 之上，低于 handle */
   pointer-events: none;
 }
 

@@ -9,6 +9,8 @@ const SegmentedSliderDemo = () => {
   const [rangeValue2, setRangeValue2] = useState([1000, 2100]);
   const [rangeValue3, setRangeValue3] = useState([1400, 2400]);
   const [rangeValue4, setRangeValue4] = useState([1000, 1800]);
+  const [rangeValue5, setRangeValue5] = useState([1000, 2100]);
+  const [rangeValue6, setRangeValue6] = useState([1400, 2200]);
 
   // 定义区间配置
   const segments = [
@@ -109,6 +111,38 @@ const SegmentedSliderDemo = () => {
           当前区间: {rangeValue1[0]} - {rangeValue1[1]}
         </p>
         <p className={styles.description}>💡 完全不显示 tooltip</p>
+      </div>
+
+      <div className={styles.sliderContainer}>
+        <h2>6. 大尺寸 Handle（32px）</h2>
+        <SegmentedSlider
+          segments={segments}
+          value={rangeValue5}
+          onChange={setRangeValue5}
+          formatTooltip={formatPrice}
+          tooltipVisible="hover"
+          handleSize={32}
+        />
+        <p>
+          当前价格范围: {formatPrice(rangeValue5[0])} - {formatPrice(rangeValue5[1])}
+        </p>
+        <p className={styles.description}>💡 使用 32px 的大尺寸 handle</p>
+      </div>
+
+      <div className={styles.sliderContainer}>
+        <h2>7. 自定义宽高 Handle</h2>
+        <SegmentedSlider
+          segments={segments}
+          value={rangeValue6}
+          onChange={setRangeValue6}
+          formatTooltip={formatWavelength}
+          tooltipVisible="always"
+          handleSize={{ width: 28, height: 28 }}
+        />
+        <p>
+          当前波长范围: {formatWavelength(rangeValue6[0])} - {formatWavelength(rangeValue6[1])}
+        </p>
+        <p className={styles.description}>💡 自定义 handle 大小为 28x28px</p>
       </div>
     </div>
   );

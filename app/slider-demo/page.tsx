@@ -15,6 +15,8 @@ export default function SliderDemo() {
   const [value8, setValue8] = useState<number>(50);
   const [value9, setValue9] = useState<number>(70);
   const [value10, setValue10] = useState<number[]>([20, 80]);
+  const [value11, setValue11] = useState<number>(40);
+  const [value12, setValue12] = useState<number[]>([30, 70]);
 
   return (
     <div className={styles.container}>
@@ -303,8 +305,8 @@ export default function SliderDemo() {
                 setValue10(val);
               }
             }}
-            formatTooltip={(val) => `${val}m`}
-            tooltipVisible="always"
+            formatTooltip={(val) => `${val}%`}
+            tooltipVisible="hover"
             marks={{
               0: "0%",
               25: "25%",
@@ -314,7 +316,50 @@ export default function SliderDemo() {
             }}
           />
           <div className={styles.value}>当前范围: {value10[0]}% - {value10[1]}%</div>
-          <div className={styles.description}>💡 范围滑块 + 悬停显示 tooltip，边缘智能对齐</div>
+          <div className={styles.description}> 范围滑块 + 悬停显示 tooltip，边缘智能对齐</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>大尺寸 Handle（36px）</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider
+            value={value11}
+            onChange={(val) => {
+              if (typeof val === "number") {
+                setValue11(val);
+              }
+            }}
+            handleSize={36}
+            formatTooltip={(val) => `${val}%`}
+            tooltipVisible="hover"
+          />
+          <div className={styles.value}>当前值: {value11}%</div>
+          <div className={styles.description}> 使用 36px 的大尺寸 handle</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>自定义宽高 Handle + 范围滑块</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider
+            range={true}
+            value={value12}
+            onChange={(val) => {
+              if (Array.isArray(val)) {
+                setValue12(val);
+              }
+            }}
+            handleSize={{ width: 32, height: 32 }}
+            formatTooltip={(val) => `${val}%`}
+            tooltipVisible="always"
+            segmentedTrack={{
+              segments: 5,
+              colors: ["#f3f4f6", "#dbeafe", "#93c5fd", "#60a5fa", "#3b82f6"],
+            }}
+          />
+          <div className={styles.value}>当前范围: {value12[0]}% - {value12[1]}%</div>
+          <div className={styles.description}> 自定义 handle 大小 32x32px + 分段背景色</div>
         </div>
       </section>
     </div>

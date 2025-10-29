@@ -45,6 +45,9 @@ const EnhancedSlider = ({
 
   // 值显示配置
   showValueInHandle = false,
+  
+  // Handle 大小配置
+  handleSize = 28,
 
   // 颜色配置
   trackColor = "#1B3B8C",
@@ -442,6 +445,20 @@ const EnhancedSlider = ({
     }
   }, [tooltip, tooltipVisible, hoveredHandle, activeHandle]);
 
+  // 计算 handle 样式配置
+  const handleStyleConfig = useMemo(() => {
+    if (typeof handleSize === 'number') {
+      return {
+        width: handleSize,
+        height: handleSize,
+      };
+    }
+    return {
+      width: handleSize.width || 28,
+      height: handleSize.height || 28,
+    };
+  }, [handleSize]);
+
   // 计算分段背景色渐变
   const segmentedTrackGradient = useMemo(() => {
     if (!segmentedTrack && !segmentedTrackColor) return null;
@@ -737,6 +754,8 @@ const EnhancedSlider = ({
       const handleStyleObj = {
         left: `${percent}%`,
         backgroundColor: handleColor,
+        width: `${handleStyleConfig.width}px`,
+        height: `${handleStyleConfig.height}px`,
       };
 
       // 计算工具提示内容（支持 formatTooltip）
@@ -919,6 +938,15 @@ EnhancedSlider.propTypes = {
     PropTypes.shape({
       formatter: PropTypes.func,
       style: PropTypes.object,
+    }),
+  ]),
+  
+  // Handle 大小配置
+  handleSize: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.shape({
+      width: PropTypes.number,
+      height: PropTypes.number,
     }),
   ]),
 
