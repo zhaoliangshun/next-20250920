@@ -17,6 +17,8 @@ export default function SliderDemo() {
   const [value10, setValue10] = useState<number[]>([20, 80]);
   const [value11, setValue11] = useState<number>(40);
   const [value12, setValue12] = useState<number[]>([30, 70]);
+  const [value13, setValue13] = useState<number>(1500);
+  const [value14, setValue14] = useState<number[]>([1200, 2000]);
 
   return (
     <div className={styles.container}>
@@ -359,7 +361,66 @@ export default function SliderDemo() {
             }}
           />
           <div className={styles.value}>当前范围: {value12[0]}% - {value12[1]}%</div>
-          <div className={styles.description}> 自定义 handle 大小 32x32px + 分段背景色</div>
+          <div className={styles.description}>💡 自定义 handle 大小 32x32px + 分段背景色</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>按范围大小定义颜色段（单值）</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider
+            min={1000}
+            max={2500}
+            value={value13}
+            onChange={(val) => {
+              if (typeof val === "number") {
+                setValue13(val);
+              }
+            }}
+            segmentedTrackColor={[
+              { start: 1000, end: 1200, color: "#FBBE05" },
+              { start: 1400, end: 1800, color: "#BEE429" },
+              { start: 1900, end: 2100, color: "#67BED0" },
+              { start: 2200, end: 2400, color: "#173E96" },
+            ]}
+            formatTooltip={(val) => `${val}nm`}
+            tooltipVisible="hover"
+          />
+          <div className={styles.value}>当前波长: {value13}nm</div>
+          <div className={styles.description}>💡 使用对象数组格式，按实际范围大小定义颜色段，非等比例</div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>按范围大小定义颜色段（范围）</h2>
+        <div className={styles.sliderContainer}>
+          <EnhancedSlider
+            range={true}
+            min={1000}
+            max={2500}
+            value={value14}
+            onChange={(val) => {
+              if (Array.isArray(val)) {
+                setValue14(val);
+              }
+            }}
+            segmentedTrackColor={[
+              { range: [1000, 1200], color: "#FBBE05" },
+              { range: [1400, 1800], color: "#BEE429" },
+              { range: [1900, 2100], color: "#67BED0" },
+              { range: [2200, 2400], color: "#173E96" },
+            ]}
+            formatTooltip={(val) => `${val}nm`}
+            tooltipVisible="always"
+            marks={{
+              1000: "1000nm",
+              1500: "1500nm",
+              2000: "2000nm",
+              2500: "2500nm",
+            }}
+          />
+          <div className={styles.value}>当前范围: {value14[0]}nm - {value14[1]}nm</div>
+          <div className={styles.description}>💡 使用 range 数组格式，实现不等宽度的颜色分段</div>
         </div>
       </section>
     </div>

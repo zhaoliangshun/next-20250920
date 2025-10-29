@@ -38,14 +38,14 @@ const EnhancedSlider = ({
   tooltip = true,
   showMarks = true,
   showMarkLabels = true,
-  
+
   // Tooltip 配置（新增，兼容 SegmentedSlider 方案）
   formatTooltip,
-  tooltipVisible = 'drag',
+  tooltipVisible = "drag",
 
   // 值显示配置
   showValueInHandle = false,
-  
+
   // Handle 大小配置
   handleSize = 28,
 
@@ -425,29 +425,32 @@ const EnhancedSlider = ({
   }, []);
 
   // 判断是否显示 tooltip（采用 SegmentedSlider 方案）
-  const shouldShowTooltip = useCallback((handleIndex) => {
-    if (!tooltip) return false;
-    
-    // 如果是旧的对象配置方式，处理 visible 属性
-    if (typeof tooltip === 'object' && tooltip.visible !== undefined) {
-      return tooltip.visible;
-    }
-    
-    switch (tooltipVisible) {
-      case 'always':
-        return true;
-      case 'hover':
-        return hoveredHandle === handleIndex || activeHandle === handleIndex;
-      case 'drag':
-        return activeHandle === handleIndex;
-      default:
-        return activeHandle === handleIndex;
-    }
-  }, [tooltip, tooltipVisible, hoveredHandle, activeHandle]);
+  const shouldShowTooltip = useCallback(
+    (handleIndex) => {
+      if (!tooltip) return false;
+
+      // 如果是旧的对象配置方式，处理 visible 属性
+      if (typeof tooltip === "object" && tooltip.visible !== undefined) {
+        return tooltip.visible;
+      }
+
+      switch (tooltipVisible) {
+        case "always":
+          return true;
+        case "hover":
+          return hoveredHandle === handleIndex || activeHandle === handleIndex;
+        case "drag":
+          return activeHandle === handleIndex;
+        default:
+          return activeHandle === handleIndex;
+      }
+    },
+    [tooltip, tooltipVisible, hoveredHandle, activeHandle]
+  );
 
   // 计算 handle 样式配置
   const handleStyleConfig = useMemo(() => {
-    if (typeof handleSize === 'number') {
+    if (typeof handleSize === "number") {
       return {
         width: handleSize,
         height: handleSize,
@@ -466,16 +469,50 @@ const EnhancedSlider = ({
     // 优先使用 segmentedTrackColor（直接传递的颜色数组）
     if (segmentedTrackColor && segmentedTrackColor.length > 0) {
       const gradientStops = [];
-      const segmentPercentage = 100 / segmentedTrackColor.length;
 
-      for (let i = 0; i < segmentedTrackColor.length; i++) {
-        const start = i * segmentPercentage;
-        const end = (i + 1) * segmentPercentage;
-        const color = segmentedTrackColor[i];
+      // 检查是否为对象数组格式（按范围大小定义）
+      const isRangeBased =
+        segmentedTrackColor[0] && typeof segmentedTrackColor[0] === "object";
 
-        // 添加两个相同的色标位置，形成硬边效果
-        gradientStops.push(`${color} ${start}%`);
-        gradientStops.push(`${color} ${end}%`);
+      if (isRangeBased) {
+        // 对象数组格式：[{ start, end, color }, ...] 或 [{ range: [start, end], color }, ...]
+        segmentedTrackColor.forEach((segment) => {
+          let segmentStart, segmentEnd, color;
+
+          if (segment.range && Array.isArray(segment.range)) {
+            // 格式：{ range: [start, end], color }
+            [segmentStart, segmentEnd] = segment.range;
+            color = segment.color;
+          } else if (segment.start !== undefined && segment.end !== undefined) {
+            // 格式：{ start, end, color }
+            segmentStart = segment.start;
+            segmentEnd = segment.end;
+            color = segment.color;
+          } else {
+            return; // 跳过无效的分段
+          }
+
+          // 计算百分比位置
+          const startPercent = ((segmentStart - min) / (max - min)) * 100;
+          const endPercent = ((segmentEnd - min) / (max - min)) * 100;
+
+          // 添加两个相同的色标位置，形成硬边效果
+          gradientStops.push(`${color} ${startPercent}%`);
+          gradientStops.push(`${color} ${endPercent}%`);
+        });
+      } else {
+        // 简单数组格式：["颜色1", "颜蕲2", ...]（等比例分配）
+        const segmentPercentage = 100 / segmentedTrackColor.length;
+
+        for (let i = 0; i < segmentedTrackColor.length; i++) {
+          const start = i * segmentPercentage;
+          const end = (i + 1) * segmentPercentage;
+          const color = segmentedTrackColor[i];
+
+          // 添加两个相同的色标位置，形成硬边效果
+          gradientStops.push(`${color} ${start}%`);
+          gradientStops.push(`${color} ${end}%`);
+        }
       }
 
       return `linear-gradient(to right, ${gradientStops.join(", ")})`;
@@ -658,11 +695,19 @@ const EnhancedSlider = ({
         <>
           <div
             className={styles.passedMask}
-            style={{ left: 0, width: `${startPercent}%`, backgroundColor: passedColor }}
+            style={{
+              left: 0,
+              width: `${startPercent}%`,
+              backgroundColor: passedColor,
+            }}
           />
           <div
             className={styles.passedMask}
-            style={{ left: `${endPercent}%`, width: `${100 - endPercent}%`, backgroundColor: passedColor }}
+            style={{
+              left: `${endPercent}%`,
+              width: `${100 - endPercent}%`,
+              backgroundColor: passedColor,
+            }}
           />
         </>
       );
@@ -671,11 +716,23 @@ const EnhancedSlider = ({
       return (
         <div
           className={styles.passedMask}
-          style={{ left: 0, width: `${percent}%`, backgroundColor: passedColor }}
+          style={{
+            left: 0,
+            width: `${percent}%`,
+            backgroundColor: passedColor,
+          }}
         />
       );
     }
-  }, [passedOverlay, segmentedTrack, segmentedTrackColor, rangeConfig.enabled, currentValue, getPercentage, passedColor]);
+  }, [
+    passedOverlay,
+    segmentedTrack,
+    segmentedTrackColor,
+    rangeConfig.enabled,
+    currentValue,
+    getPercentage,
+    passedColor,
+  ]);
 
   // 渲染标记
   const renderMarks = () => {
@@ -701,7 +758,8 @@ const EnhancedSlider = ({
       ) {
         label = markLabel.label;
         markStyle = markLabel.style || {};
-        showLabel = markLabel.showLabel !== undefined ? markLabel.showLabel : true;
+        showLabel =
+          markLabel.showLabel !== undefined ? markLabel.showLabel : true;
       } else {
         label = markLabel;
       }
@@ -733,7 +791,11 @@ const EnhancedSlider = ({
       const isHover = hoverHandle === index;
 
       // 计算值显示配置
-      let valueDisplayConfig = { enabled: false, formatter: undefined, style: {} };
+      let valueDisplayConfig = {
+        enabled: false,
+        formatter: undefined,
+        style: {},
+      };
 
       // 处理 showValueInHandle 配置，支持布尔值和对象两种形式
       if (typeof showValueInHandle === "boolean") {
@@ -763,24 +825,25 @@ const EnhancedSlider = ({
       let tooltipContent = val;
       if (formatTooltip) {
         tooltipContent = formatTooltip(val);
-      } else if (tooltip && typeof tooltip === 'object' && tooltip.formatter) {
+      } else if (tooltip && typeof tooltip === "object" && tooltip.formatter) {
         tooltipContent = tooltip.formatter(val);
       }
 
       // 计算工具提示位置
       let tooltipPlacement = "top";
-      if (tooltip && typeof tooltip === 'object' && tooltip.placement) {
+      if (tooltip && typeof tooltip === "object" && tooltip.placement) {
         tooltipPlacement = tooltip.placement;
       }
 
       // 计算工具提示可见性（使用新的 shouldShowTooltip）
-      const isTooltipVisible = shouldShowTooltip(index) && !valueDisplayConfig.enabled;
+      const isTooltipVisible =
+        shouldShowTooltip(index) && !valueDisplayConfig.enabled;
 
       // 判断 tooltip 的对齐方式（采用 SegmentedSlider 方案）
-      let tooltipAlignClass = '';
-      if (percent <= 10) {
+      let tooltipAlignClass = "";
+      if (percent <= 2) {
         tooltipAlignClass = styles.tooltipLeftAlign;
-      } else if (percent >= 90) {
+      } else if (percent >= 98) {
         tooltipAlignClass = styles.tooltipRightAlign;
       }
 
@@ -825,10 +888,12 @@ const EnhancedSlider = ({
           )}
 
           {tooltip && !valueDisplayConfig.enabled && isTooltipVisible && (
-            <div className={`${styles.tooltipNew} ${tooltipAlignClass} ${activeHandle === index ? styles.tooltipActive : ''}`}>
-              <div className={styles.tooltipContent}>
-                {tooltipContent}
-              </div>
+            <div
+              className={`${styles.tooltipNew} ${tooltipAlignClass} ${
+                activeHandle === index ? styles.tooltipActive : ""
+              }`}
+            >
+              <div className={styles.tooltipContent}>{tooltipContent}</div>
               <div className={styles.tooltipArrow} />
             </div>
           )}
@@ -872,8 +937,14 @@ EnhancedSlider.propTypes = {
   min: PropTypes.number,
   max: PropTypes.number,
   step: PropTypes.number,
-  value: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
-  defaultValue: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
+  value: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.arrayOf(PropTypes.number),
+  ]),
+  defaultValue: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.arrayOf(PropTypes.number),
+  ]),
   range: PropTypes.oneOfType([
     PropTypes.bool,
     PropTypes.shape({
@@ -909,7 +980,17 @@ EnhancedSlider.propTypes = {
     }),
   ]),
 
-  segmentedTrackColor: PropTypes.arrayOf(PropTypes.string),
+  segmentedTrackColor: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.string),
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        start: PropTypes.number,
+        end: PropTypes.number,
+        range: PropTypes.arrayOf(PropTypes.number),
+        color: PropTypes.string.isRequired,
+      })
+    ),
+  ]),
   hideRailWhenDragging: PropTypes.bool,
 
   // 事件回调
@@ -928,10 +1009,10 @@ EnhancedSlider.propTypes = {
   ]),
   showMarks: PropTypes.bool,
   showMarkLabels: PropTypes.bool,
-  
+
   // Tooltip 配置（新增）
   formatTooltip: PropTypes.func,
-  tooltipVisible: PropTypes.oneOf(['always', 'hover', 'drag']),
+  tooltipVisible: PropTypes.oneOf(["always", "hover", "drag"]),
 
   // 值显示配置
   showValueInHandle: PropTypes.oneOfType([
@@ -941,7 +1022,7 @@ EnhancedSlider.propTypes = {
       style: PropTypes.object,
     }),
   ]),
-  
+
   // Handle 大小配置
   handleSize: PropTypes.oneOfType([
     PropTypes.number,
@@ -964,8 +1045,14 @@ EnhancedSlider.propTypes = {
   id: PropTypes.string,
 
   // 无障碍配置
-  ariaLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-  ariaValueText: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  ariaLabel: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  ariaValueText: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
 };
 
 export default EnhancedSlider;
