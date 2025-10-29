@@ -480,6 +480,15 @@ const SegmentedSlider = ({
             const showCurrentTooltip = shouldShowTooltip(index);
             const realValue = getRealValue(currentValue[index]);
             
+            // 判断 tooltip 的对齐方式
+            // 左端：位置 <= 10%，右端：位置 >= 90%
+            let tooltipAlignClass = '';
+            if (position <= 10) {
+                tooltipAlignClass = styles.tooltipLeft;
+            } else if (position >= 90) {
+                tooltipAlignClass = styles.tooltipRight;
+            }
+            
             return (
                 <div
                     key={index}
@@ -505,7 +514,7 @@ const SegmentedSlider = ({
                         aria-label={index === 0 ? "最小值" : "最大值"}
                     />
                     {showCurrentTooltip && (
-                        <div className={`${styles.tooltip} ${index === 0 ? styles.tooltip0 : ''} ${activeHandle === index ? styles.tooltipActive : ''}`}>
+                        <div className={`${styles.tooltip} ${tooltipAlignClass} ${index === 0 ? styles.tooltip0 : ''} ${activeHandle === index ? styles.tooltipActive : ''}`}>
                             <div className={styles.tooltipContent}>
                                 {formatTooltip(realValue)}
                             </div>

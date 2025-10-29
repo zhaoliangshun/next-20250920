@@ -144,7 +144,29 @@
     border-top: 7px solid #1b3b8c;
 }
 
+/* Tooltip 左对齐样式（手柄在左端时） */
+.tooltipLeft {
+    left: 0;
+    transform: translateX(0) translateY(-8px);
+}
 
+.tooltipLeft .tooltipArrow {
+    left: 8px;
+    transform: translateX(0);
+}
+
+/* Tooltip 右对齐样式（手柄在右端时） */
+.tooltipRight {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(-8px);
+}
+
+.tooltipRight .tooltipArrow {
+    left: auto;
+    right: 8px;
+    transform: translateX(0);
+}
 
 /* 拖拽时的性能优化 */
 .sliderDragging {
