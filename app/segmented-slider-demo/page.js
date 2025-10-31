@@ -11,13 +11,32 @@ const SegmentedSliderDemo = () => {
   const [rangeValue4, setRangeValue4] = useState([1000, 1800]);
   const [rangeValue5, setRangeValue5] = useState([1000, 2100]);
   const [rangeValue6, setRangeValue6] = useState([1400, 2200]);
+  const [rangeValue7, setRangeValue7] = useState([1000, 2500]);
 
-  // 定义区间配置
-  const segments = [
+  // 定义颜色区间配置（用于背景显示）
+  const colorSegments = [
     { start: 1000, end: 1200, color: "#FBBE05" },
     { start: 1400, end: 1800, color: "#BEE429" },
     { start: 1900, end: 2100, color: "#67BED0" },
     { start: 2200, end: 2400, color: "#173E96" },
+  ];
+
+  // 定义可选择的值区间（用于定义拖动点可以停留的位置）
+  const valueSegments = [
+    { start: 1000, end: 1200 },
+    { start: 1400, end: 1800 },
+    { start: 1900, end: 2100 },
+    { start: 2200, end: 2400 },
+  ];
+
+  // 演示独立配置：更多的可选值区间
+  const extendedValueSegments = [
+    { start: 1000, end: 1200 },
+    { start: 1400, end: 1600 },
+    { start: 1700, end: 1800 },
+    { start: 1900, end: 2100 },
+    { start: 2200, end: 2300 },
+    { start: 2400, end: 2500 },
   ];
 
   // 自定义格式化函数 - 显示温度
@@ -38,7 +57,8 @@ const SegmentedSliderDemo = () => {
       <div className={styles.sliderContainer}>
         <h2>1. 默认 Tooltip（拖动时显示）</h2>
         <SegmentedSlider
-          segments={segments}
+          colorSegments={colorSegments}
+          valueSegments={valueSegments}
           value={rangeValue1}
           onChange={setRangeValue1}
           tooltipVisible="drag"
@@ -52,7 +72,8 @@ const SegmentedSliderDemo = () => {
       <div className={styles.sliderContainer}>
         <h2>2. 温度显示格式（悬停时显示）</h2>
         <SegmentedSlider
-          segments={segments}
+          colorSegments={colorSegments}
+          valueSegments={valueSegments}
           value={rangeValue2}
           onChange={setRangeValue2}
           formatTooltip={formatTemperature}
@@ -70,7 +91,8 @@ const SegmentedSliderDemo = () => {
       <div className={styles.sliderContainer}>
         <h2>3. 波长显示格式（始终显示）</h2>
         <SegmentedSlider
-          segments={segments}
+          colorSegments={colorSegments}
+          valueSegments={valueSegments}
           value={rangeValue3}
           onChange={setRangeValue3}
           formatTooltip={formatWavelength}
@@ -86,7 +108,8 @@ const SegmentedSliderDemo = () => {
       <div className={styles.sliderContainer}>
         <h2>4. 价格显示格式（拖动时显示）</h2>
         <SegmentedSlider
-          segments={segments}
+          colorSegments={colorSegments}
+          valueSegments={valueSegments}
           value={rangeValue4}
           onChange={setRangeValue4}
           formatTooltip={formatPrice}
@@ -102,7 +125,8 @@ const SegmentedSliderDemo = () => {
       <div className={styles.sliderContainer}>
         <h2>5. 禁用 Tooltip</h2>
         <SegmentedSlider
-          segments={segments}
+          colorSegments={colorSegments}
+          valueSegments={valueSegments}
           value={rangeValue1}
           onChange={setRangeValue1}
           showTooltip={false}
@@ -116,7 +140,8 @@ const SegmentedSliderDemo = () => {
       <div className={styles.sliderContainer}>
         <h2>6. 大尺寸 Handle（32px）</h2>
         <SegmentedSlider
-          segments={segments}
+          colorSegments={colorSegments}
+          valueSegments={valueSegments}
           value={rangeValue5}
           onChange={setRangeValue5}
           formatTooltip={formatPrice}
@@ -132,7 +157,8 @@ const SegmentedSliderDemo = () => {
       <div className={styles.sliderContainer}>
         <h2>7. 自定义宽高 Handle</h2>
         <SegmentedSlider
-          segments={segments}
+          colorSegments={colorSegments}
+          valueSegments={valueSegments}
           value={rangeValue6}
           onChange={setRangeValue6}
           formatTooltip={formatWavelength}
@@ -143,6 +169,25 @@ const SegmentedSliderDemo = () => {
           当前波长范围: {formatWavelength(rangeValue6[0])} - {formatWavelength(rangeValue6[1])}
         </p>
         <p className={styles.description}>💡 自定义 handle 大小为 28x28px</p>
+      </div>
+
+      <div className={styles.sliderContainer}>
+        <h2>8. 独立配置演示（颜色区间 vs 值区间）</h2>
+        <SegmentedSlider
+          colorSegments={colorSegments}
+          valueSegments={extendedValueSegments}
+          value={rangeValue7}
+          onChange={setRangeValue7}
+          formatTooltip={formatPrice}
+          tooltipVisible="hover"
+        />
+        <p>
+          当前价格范围: {formatPrice(rangeValue7[0])} - {formatPrice(rangeValue7[1])}
+        </p>
+        <p className={styles.description}>
+          💡 颜色区间保持4段，但值区间有6段（更多可选择的位置）。
+          Marks 根据颜色区间生成，不包括头尾。
+        </p>
       </div>
     </div>
   );
