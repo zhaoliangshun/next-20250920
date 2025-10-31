@@ -49,6 +49,16 @@
     /* border-radius: 100px; */
 }
 
+/* 已滑过区域遮罩（变灰处理） */
+.passedMask {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    z-index: 2;
+    /* 覆盖在 segment 之上，低于 handle */
+    pointer-events: none;
+}
+
 /* 区间标记点样式 */
 .point {
     position: absolute;

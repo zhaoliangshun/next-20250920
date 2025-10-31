@@ -24,7 +24,7 @@ const SegmentedSlider = ({
   // 受控值（区间）
   value,
   // 值变化回调
-  onChange: realChange,
+  onChange,
   // 是否禁用
   disabled = false,
   // 自定义类名
@@ -39,6 +39,9 @@ const SegmentedSlider = ({
   tooltipVisible = "drag",
   // 自定义 handle 大小：数字（单位 px）或对象 { width, height }
   handleSize = 24,
+  // 已滑过区域遮罩（用于分段背景色模式）
+  passedOverlay = false,
+  passedColor = "#E0E0E0",
   ...props
 }) => {
   // 状态管理
@@ -50,68 +53,27 @@ const SegmentedSlider = ({
   const sliderRef = useRef(null);
   const isDraggingRef = useRef(false);
 
-  // valueSegments 用于定义可选择的值区间（真实值）
-  const realSegments = valueSegments;
-
-  // segments 用于内部计算（映射到 0-100 的百分比空间）
-  const segments = useMemo(() => {
-    if (realSegments.length === 0) return [];
-
-    let total = 0;
-    realSegments.forEach((segment) => {
-      total = total + (segment.end - segment.start);
-    });
-    let add = 0;
-    return realSegments.map((segment) => {
-      const start = add;
-      const end = Math.round(
-        (add / 100 + (segment.end - segment.start) / total) * 100
-      );
-      add = end;
-      segment.mapStart = start;
-      segment.mapEnd = end;
-      return { ...segment, start, end };
-    });
-  }, [realSegments]);
-
-  const onChange = useCallback(
-    (value) => {
-      let realValue = [];
-      realSegments.forEach((segment) => {
-        if (segment.mapStart === value[0]) {
-          realValue[0] = segment.start;
-        }
-        if (segment.mapEnd === value[1]) {
-          realValue[1] = segment.end;
-        }
-      });
-      if (typeof realChange === "function") {
-        realChange(realValue);
-      }
-    },
-    [realChange, realSegments]
-  );
 
   // 计算最小值和最大值
   const min = useMemo(() => {
-    if (segments.length === 0) return 0;
-    return Math.min(...segments.map((seg) => seg.start));
-  }, [segments]);
+    if (valueSegments.length === 0) return 0;
+    return Math.min(...valueSegments.map((seg) => seg.start));
+  }, [valueSegments]);
 
   const max = useMemo(() => {
-    if (segments.length === 0) return 100;
-    return Math.max(...segments.map((seg) => seg.end));
-  }, [segments]);
+    if (valueSegments.length === 0) return 100;
+    return Math.max(...valueSegments.map((seg) => seg.end));
+  }, [valueSegments]);
 
   // 计算当前值（始终为区间）
   const [currentValue, setCurrentValue] = useState(() => {
     // 检查默认值是否为有效区间
     if (Array.isArray(defaultValue) && defaultValue.length >= 2) {
       const [startVal, endVal] = defaultValue;
-      const isValidStart = segments.some(
+      const isValidStart = valueSegments.some(
         (seg) => startVal === seg.start || startVal === seg.end
       );
-      const isValidEnd = segments.some(
+      const isValidEnd = valueSegments.some(
         (seg) => endVal === seg.start || endVal === seg.end
       );
 
@@ -121,41 +83,11 @@ const SegmentedSlider = ({
     }
 
     // 如果默认值无效，使用第一个区间的起点和最后一个区间的终点
-    if (segments.length > 0) {
-      return [segments[0].start, segments[segments.length - 1].end];
+    if (valueSegments.length > 0) {
+      return [valueSegments[0].start, valueSegments[valueSegments.length - 1].end];
     }
     return [0, 100];
   });
-
-  // 更新外部受控值
-  useEffect(() => {
-    if (value !== undefined && Array.isArray(value) && value.length >= 2) {
-      // 检查区间值是否有效
-      const [startVal, endVal] = value;
-      const newValue = [];
-      realSegments.forEach((seg) => {
-        if (startVal === seg.start) {
-          newValue[0] = seg.mapStart;
-        }
-      });
-      realSegments.forEach((seg) => {
-        if (endVal === seg.end) {
-          newValue[1] = seg.mapEnd;
-        }
-      });
-
-      console.log(newValue);
-
-      if (
-        newValue[0] &&
-        newValue[1] &&
-        newValue[0] < newValue[1] &&
-        (newValue[0] !== currentValue[0] || newValue[1] !== currentValue[1])
-      ) {
-        setCurrentValue(newValue);
-      }
-    }
-  }, [value, realSegments, currentValue]);
 
   // 计算百分比
   const getPercentage = useCallback(
@@ -183,7 +115,7 @@ const SegmentedSlider = ({
       let closestValue = currentValue[0];
       let minDistance = Infinity;
 
-      segments.forEach((segment) => {
+      valueSegments.forEach((segment) => {
         // 检查起点
         const startDistance = Math.abs(rawValue - segment.start);
         if (startDistance < minDistance) {
@@ -201,7 +133,7 @@ const SegmentedSlider = ({
 
       return closestValue;
     },
-    [min, max, segments, currentValue]
+    [min, max, valueSegments, currentValue]
   );
 
   // 处理鼠标按下
@@ -230,23 +162,23 @@ const SegmentedSlider = ({
         const { clientX } = getEventPosition(e);
         const newValue = getValueFromPosition(clientX);
 
-        if (handleIndex === 0 && newValue >= currentValue[1]) {
-          return false;
-        }
+        // if (handleIndex === 0 && newValue >= currentValue[1]) {
+        //   return false;
+        // }
 
-        if (handleIndex === 1 && newValue <= currentValue[0]) {
-          return false;
-        }
+        // if (handleIndex === 1 && newValue <= currentValue[0]) {
+        //   return false;
+        // }
 
         const newValues = [...currentValue];
         newValues[handleIndex] = newValue;
 
         // 确保区间值的顺序正确
-        // if (handleIndex === 0 && newValues[0] > newValues[1]) {
-        //     newValues[0] = newValues[1];
-        // } else if (handleIndex === 1 && newValues[1] < newValues[0]) {
-        //     newValues[1] = newValues[0];
-        // }
+        if (handleIndex === 0 && newValues[0] > newValues[1]) {
+            newValues[0] = newValues[1];
+        } else if (handleIndex === 1 && newValues[1] < newValues[0]) {
+            newValues[1] = newValues[0];
+        }
 
         // 只有当值发生变化时才更新
         // if (newValues[0] !== currentValue[0] || newValues[1] !== currentValue[1]) {
@@ -316,14 +248,14 @@ const SegmentedSlider = ({
         case "ArrowDown":
           e.preventDefault();
           // 找到前一个有效位置
-          for (let i = segments.length - 1; i >= 0; i--) {
-            const segment = segments[i];
+          for (let i = valueSegments.length - 1; i >= 0; i--) {
+            const segment = valueSegments[i];
             if (currentValueToUse === segment.end) {
               newValue = segment.start;
               foundNewValue = true;
               break;
             } else if (currentValueToUse === segment.start && i > 0) {
-              newValue = segments[i - 1].end;
+              newValue = valueSegments[i - 1].end;
               foundNewValue = true;
               break;
             }
@@ -333,17 +265,17 @@ const SegmentedSlider = ({
         case "ArrowUp":
           e.preventDefault();
           // 找到后一个有效位置
-          for (let i = 0; i < segments.length; i++) {
-            const segment = segments[i];
+          for (let i = 0; i < valueSegments.length; i++) {
+            const segment = valueSegments[i];
             if (currentValueToUse === segment.start) {
               newValue = segment.end;
               foundNewValue = true;
               break;
             } else if (
               currentValueToUse === segment.end &&
-              i < segments.length - 1
+              i < valueSegments.length - 1
             ) {
-              newValue = segments[i + 1].start;
+              newValue = valueSegments[i + 1].start;
               foundNewValue = true;
               break;
             }
@@ -351,13 +283,13 @@ const SegmentedSlider = ({
           break;
         case "Home":
           e.preventDefault();
-          newValue = segments.length > 0 ? segments[0].start : min;
+          newValue = valueSegments.length > 0 ? valueSegments[0].start : min;
           foundNewValue = true;
           break;
         case "End":
           e.preventDefault();
           newValue =
-            segments.length > 0 ? segments[segments.length - 1].end : max;
+            valueSegments.length > 0 ? valueSegments[valueSegments.length - 1].end : max;
           foundNewValue = true;
           break;
       }
@@ -383,7 +315,7 @@ const SegmentedSlider = ({
         }
       }
     },
-    [disabled, currentValue, segments, min, max, onChange]
+    [disabled, currentValue, valueSegments, min, max, onChange]
   );
 
   // 计算手柄位置
@@ -466,6 +398,44 @@ const SegmentedSlider = ({
     return points;
   };
 
+  // 计算分段模式下的已过遮罩样式
+  const passedMasks = useMemo(() => {
+    if (!passedOverlay) return null;
+    if (colorSegments.length === 0) return null;
+
+    // 计算 colorSegments 的范围
+    const colorMin = Math.min(...colorSegments.map((seg) => seg.start));
+    const colorMax = Math.max(...colorSegments.map((seg) => seg.end));
+    if (currentValue.length !== 2) return null;
+
+    // 计算选中范围的百分比位置
+    const startPercent =
+      ((currentValue[0] - colorMin) / (colorMax - colorMin)) * 100;
+    const endPercent =
+      ((currentValue[1] - colorMin) / (colorMax - colorMin)) * 100;
+
+    return (
+      <>
+        <div
+          className={styles.passedMask}
+          style={{
+            left: 0,
+            width: `${startPercent}%`,
+            backgroundColor: passedColor,
+          }}
+        />
+        <div
+          className={styles.passedMask}
+          style={{
+            left: `${endPercent}%`,
+            width: `${100 - endPercent}%`,
+            backgroundColor: passedColor,
+          }}
+        />
+      </>
+    );
+  }, [passedOverlay, colorSegments, currentValue, passedColor]);
+
   // 渲染选中区间
 
   // 判断是否显示 tooltip
@@ -487,23 +457,6 @@ const SegmentedSlider = ({
     [showTooltip, tooltipVisible, hoveredHandle, activeHandle]
   );
 
-  // 获取真实值用于显示
-  const getRealValue = useCallback(
-    (mappedValue) => {
-      let realValue = [];
-      realSegments.forEach((segment) => {
-        if (segment.mapStart === mappedValue[0]) {
-          realValue[0] = segment.start;
-        }
-        if (segment.mapEnd === mappedValue[1]) {
-          realValue[1] = segment.end;
-        }
-      });
-      return realValue !== null ? realValue : mappedValue;
-    },
-    [realSegments]
-  );
-
   // 计算 handle 样式
   const handleStyleConfig = useMemo(() => {
     if (typeof handleSize === "number") {
@@ -522,7 +475,6 @@ const SegmentedSlider = ({
   const renderHandles = () => {
     return handlePositions.map((position, index) => {
       const showCurrentTooltip = shouldShowTooltip(index);
-      const realValue = getRealValue(currentValue);
 
       // 判断 tooltip 的对齐方式
       // 左端：位置 <= 10%，右端：位置 >= 90%
@@ -558,7 +510,7 @@ const SegmentedSlider = ({
             role="slider"
             aria-valuemin={min}
             aria-valuemax={max}
-            aria-valuenow={realValue[index]}
+            aria-valuenow={currentValue[index]}
             aria-disabled={disabled}
             aria-label={index === 0 ? "最小值" : "最大值"}
           />
@@ -569,7 +521,7 @@ const SegmentedSlider = ({
               } ${activeHandle === index ? styles.tooltipActive : ""}`}
             >
               <div className={styles.tooltipContent}>
-                {formatTooltip(realValue[index])}
+                {formatTooltip(currentValue[index])}
               </div>
               <div className={styles.tooltipArrow} />
             </div>
@@ -591,9 +543,9 @@ const SegmentedSlider = ({
       <div className={styles.track} onClick={handleTrackClick}>
         <div className={styles.rail} />
         {renderSegments()}
+        {passedMasks}
         {renderSegmentPoints()}
       </div>
-
       {renderHandles()}
     </div>
   );
