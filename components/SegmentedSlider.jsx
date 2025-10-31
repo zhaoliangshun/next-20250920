@@ -89,6 +89,12 @@ const SegmentedSlider = ({
     return [0, 100];
   });
 
+  useEffect(() => {
+    if (value) {
+      setCurrentValue(value);
+    }
+  }, [value]);
+
   // 计算百分比
   const getPercentage = useCallback(
     (val) => {
