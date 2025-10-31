@@ -89,11 +89,15 @@ const SegmentedSlider = ({
     return [0, 100];
   });
 
+  // 更新外部受控值
   useEffect(() => {
-    if (value) {
-      setCurrentValue(value);
+    if (value && Array.isArray(value) && value.length >= 2) {
+      // 只有当值真正改变时才更新
+      if (value[0] !== currentValue[0] || value[1] !== currentValue[1]) {
+        setCurrentValue(value);
+      }
     }
-  }, [value]);
+  }, [value]); // 故意不包含 currentValue，避免循环更新
 
   // 计算百分比
   const getPercentage = useCallback(
@@ -118,7 +122,7 @@ const SegmentedSlider = ({
       const rawValue = min + percentage * (max - min);
 
       // 找到最近的有效位置（区间的起点或终点）
-      let closestValue = currentValue[0];
+      let closestValue = min;
       let minDistance = Infinity;
 
       valueSegments.forEach((segment) => {
@@ -139,7 +143,7 @@ const SegmentedSlider = ({
 
       return closestValue;
     },
-    [min, max, valueSegments, currentValue]
+    [min, max, valueSegments]
   );
 
   // 处理鼠标按下
@@ -168,28 +172,23 @@ const SegmentedSlider = ({
         const { clientX } = getEventPosition(e);
         const newValue = getValueFromPosition(clientX);
 
-        // if (handleIndex === 0 && newValue >= currentValue[1]) {
-        //   return false;
-        // }
-
-        // if (handleIndex === 1 && newValue <= currentValue[0]) {
-        //   return false;
-        // }
-
         const newValues = [...currentValue];
         newValues[handleIndex] = newValue;
 
         // 确保区间值的顺序正确
         if (handleIndex === 0 && newValues[0] > newValues[1]) {
-            newValues[0] = newValues[1];
+          newValues[0] = newValues[1];
         } else if (handleIndex === 1 && newValues[1] < newValues[0]) {
-            newValues[1] = newValues[0];
+          newValues[1] = newValues[0];
         }
 
         // 只有当值发生变化时才更新
-        // if (newValues[0] !== currentValue[0] || newValues[1] !== currentValue[1]) {
-        setCurrentValue(newValues);
-        onChange?.(newValues);
+        // if (
+        //   newValues[0] !== currentValue[0] ||
+        //   newValues[1] !== currentValue[1]
+        // ) {
+          setCurrentValue(newValues);
+          onChange?.(newValues);
         // }
       };
 
@@ -330,7 +329,7 @@ const SegmentedSlider = ({
   }, [currentValue, getPercentage]);
 
   // 渲染区间 - 使用 colorSegments 来显示背景颜色，根据 handle 位置拆分显示
-  const renderSegments = () => {
+  const renderedSegments = useMemo(() => {
     if (colorSegments.length === 0) return null;
 
     // 计算 colorSegments 的范围
@@ -460,14 +459,11 @@ const SegmentedSlider = ({
     });
 
     return allSegments;
-  };
+  }, [colorSegments, currentValue]);
 
   // 渲染区间标记点 - 根据 colorSegments 生成，每个颜色区间显示起点和终点，但排除头和尾
-  const renderSegmentPoints = () => {
+  const renderedSegmentPoints = useMemo(() => {
     if (colorSegments.length === 0) return null;
-
-    const points = [];
-    const renderedPoints = new Set();
 
     // 计算 colorSegments 的范围
     const colorMin = Math.min(...colorSegments.map((seg) => seg.start));
@@ -490,10 +486,10 @@ const SegmentedSlider = ({
     const sortedMarkValues = Array.from(markValues).sort((a, b) => a - b);
 
     // 渲染每个 mark
-    sortedMarkValues.forEach((markValue) => {
+    return sortedMarkValues.map((markValue) => {
       // 计算该 mark 在滑块上的百分比位置
       const position = ((markValue - colorMin) / (colorMax - colorMin)) * 100;
-      points.push(
+      return (
         <div
           key={`point-${markValue}`}
           className={`${styles.point}`}
@@ -503,9 +499,7 @@ const SegmentedSlider = ({
         />
       );
     });
-
-    return points;
-  };
+  }, [colorSegments]);
 
   // 计算分段模式下的已过遮罩样式
   const passedMasks = useMemo(() => {
@@ -581,7 +575,7 @@ const SegmentedSlider = ({
   }, [handleSize]);
 
   // 渲染拖动点
-  const renderHandles = () => {
+  const renderedHandles = useMemo(() => {
     return handlePositions.map((position, index) => {
       const showCurrentTooltip = shouldShowTooltip(index);
 
@@ -638,7 +632,33 @@ const SegmentedSlider = ({
         </div>
       );
     });
-  };
+  }, [
+    handlePositions,
+    shouldShowTooltip,
+    activeHandle,
+    disabled,
+    handleStyleConfig,
+    currentValue,
+    min,
+    max,
+    handleMouseDown,
+    handleKeyDown,
+    formatTooltip,
+  ]);
+
+  // 清理事件监听器
+  useEffect(() => {
+    return () => {
+      // 组件卸载时清理可能残留的事件监听器
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        document.removeEventListener("mousemove", () => {});
+        document.removeEventListener("mouseup", () => {});
+        document.removeEventListener("touchmove", () => {});
+        document.removeEventListener("touchend", () => {});
+      }
+    };
+  }, []);
 
   // 计算滑块类名
   const sliderClassName = useMemo(() => {
@@ -651,11 +671,11 @@ const SegmentedSlider = ({
     <div ref={sliderRef} className={sliderClassName} style={style} {...props}>
       <div className={styles.track} onClick={handleTrackClick}>
         <div className={styles.rail} />
-        {renderSegments()}
+        {renderedSegments}
         {passedMasks}
-        {renderSegmentPoints()}
+        {renderedSegmentPoints}
       </div>
-      {renderHandles()}
+      {renderedHandles}
     </div>
   );
 };
