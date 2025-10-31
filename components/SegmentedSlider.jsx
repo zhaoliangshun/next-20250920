@@ -329,7 +329,7 @@ const SegmentedSlider = ({
     return currentValue.map((val) => getPercentage(val));
   }, [currentValue, getPercentage]);
 
-  // 渲染区间 - 使用 colorSegments 来显示背景颜色
+  // 渲染区间 - 使用 colorSegments 来显示背景颜色，根据 handle 位置拆分显示
   const renderSegments = () => {
     if (colorSegments.length === 0) return null;
 
@@ -337,26 +337,129 @@ const SegmentedSlider = ({
     const colorMin = Math.min(...colorSegments.map((seg) => seg.start));
     const colorMax = Math.max(...colorSegments.map((seg) => seg.end));
 
-    return colorSegments.map((segment, index) => {
-      // 计算该颜色区间在整个范围内的百分比位置
-      const startPercent =
-        ((segment.start - colorMin) / (colorMax - colorMin)) * 100;
-      const endPercent =
-        ((segment.end - colorMin) / (colorMax - colorMin)) * 100;
-      const widthPercent = endPercent - startPercent;
+    // 获取当前选中值（handle 所在的位置）
+    if (currentValue.length !== 2) return null;
 
-      return (
-        <div
-          key={index}
-          className={`${styles.segment}`}
-          style={{
-            left: `${startPercent}%`,
-            width: `${widthPercent}%`,
-            backgroundColor: segment.color,
-          }}
-        />
-      );
+    const selectedStart = currentValue[0];
+    const selectedEnd = currentValue[1];
+
+    const allSegments = [];
+
+    colorSegments.forEach((segment, index) => {
+      const segStart = segment.start;
+      const segEnd = segment.end;
+      const segColor = segment.color || "#1890ff";
+
+      // 情况1：完全不相交（在选中范围之前）
+      if (segEnd <= selectedStart) {
+        const startPercent =
+          ((segStart - colorMin) / (colorMax - colorMin)) * 100;
+        const endPercent = ((segEnd - colorMin) / (colorMax - colorMin)) * 100;
+        allSegments.push(
+          <div
+            key={`${index}-before`}
+            className={`${styles.segment} ${styles.segmentGray}`}
+            style={{
+              left: `${startPercent}%`,
+              width: `${endPercent - startPercent}%`,
+            }}
+          />
+        );
+      }
+      // 情况2：完全不相交（在选中范围之后）
+      else if (segStart >= selectedEnd) {
+        const startPercent =
+          ((segStart - colorMin) / (colorMax - colorMin)) * 100;
+        const endPercent = ((segEnd - colorMin) / (colorMax - colorMin)) * 100;
+        allSegments.push(
+          <div
+            key={`${index}-after`}
+            className={`${styles.segment} ${styles.segmentGray}`}
+            style={{
+              left: `${startPercent}%`,
+              width: `${endPercent - startPercent}%`,
+            }}
+          />
+        );
+      }
+      // 情况3：完全被选中
+      else if (segStart >= selectedStart && segEnd <= selectedEnd) {
+        const startPercent =
+          ((segStart - colorMin) / (colorMax - colorMin)) * 100;
+        const endPercent = ((segEnd - colorMin) / (colorMax - colorMin)) * 100;
+        allSegments.push(
+          <div
+            key={`${index}-selected`}
+            className={styles.segment}
+            style={{
+              left: `${startPercent}%`,
+              width: `${endPercent - startPercent}%`,
+              backgroundColor: segColor,
+            }}
+          />
+        );
+      }
+      // 情况4：部分重叠 - 需要拆分为多个子区间
+      else {
+        // 计算重叠的各个部分
+        const parts = [];
+
+        // 左侧未选中部分（在 selectedStart 之前）
+        if (segStart < selectedStart && selectedStart < segEnd) {
+          parts.push({
+            start: segStart,
+            end: selectedStart,
+            selected: false,
+            key: `${index}-left-gray`,
+          });
+        }
+
+        // 中间选中部分（在 selectedStart 和 selectedEnd 之间）
+        const overlapStart = Math.max(segStart, selectedStart);
+        const overlapEnd = Math.min(segEnd, selectedEnd);
+        if (overlapStart < overlapEnd) {
+          parts.push({
+            start: overlapStart,
+            end: overlapEnd,
+            selected: true,
+            key: `${index}-center-color`,
+          });
+        }
+
+        // 右侧未选中部分（在 selectedEnd 之后）
+        if (selectedEnd < segEnd && segStart < selectedEnd) {
+          parts.push({
+            start: selectedEnd,
+            end: segEnd,
+            selected: false,
+            key: `${index}-right-gray`,
+          });
+        }
+
+        // 渲染各个部分
+        parts.forEach((part) => {
+          const startPercent =
+            ((part.start - colorMin) / (colorMax - colorMin)) * 100;
+          const endPercent =
+            ((part.end - colorMin) / (colorMax - colorMin)) * 100;
+          allSegments.push(
+            <div
+              key={part.key}
+              className={`${styles.segment} ${
+                !part.selected ? styles.segmentGray : ""
+              }`}
+              style={{
+                left: `${startPercent}%`,
+                width: `${endPercent - startPercent}%`,
+                backgroundColor: part.selected ? segColor : undefined,
+              }}
+            />
+          );
+        });
+      }
     });
+
+    return allSegments;
   };
 
   // 渲染区间标记点 - 根据 colorSegments 生成，每个颜色区间显示起点和终点，但排除头和尾
