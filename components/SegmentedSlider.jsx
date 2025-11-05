@@ -53,7 +53,6 @@ const SegmentedSlider = ({
   const sliderRef = useRef(null);
   const isDraggingRef = useRef(false);
 
-
   // 计算最小值和最大值
   const min = useMemo(() => {
     if (valueSegments.length === 0) return 0;
@@ -84,7 +83,10 @@ const SegmentedSlider = ({
 
     // 如果默认值无效，使用第一个区间的起点和最后一个区间的终点
     if (valueSegments.length > 0) {
-      return [valueSegments[0].start, valueSegments[valueSegments.length - 1].end];
+      return [
+        valueSegments[0].start,
+        valueSegments[valueSegments.length - 1].end,
+      ];
     }
     return [0, 100];
   });
@@ -187,8 +189,8 @@ const SegmentedSlider = ({
         //   newValues[0] !== currentValue[0] ||
         //   newValues[1] !== currentValue[1]
         // ) {
-          setCurrentValue(newValues);
-          onChange?.(newValues);
+        setCurrentValue(newValues);
+        onChange?.(newValues);
         // }
       };
 
@@ -225,7 +227,7 @@ const SegmentedSlider = ({
       const distanceToStart = Math.abs(newValue - currentValue[0]);
       const distanceToEnd = Math.abs(newValue - currentValue[1]);
 
-      if (distanceToStart <= distanceToEnd) {
+      if (distanceToStart < distanceToEnd) {
         const newValues = [newValue, currentValue[1]];
         setCurrentValue(newValues);
         onChange?.(newValues);
@@ -294,7 +296,9 @@ const SegmentedSlider = ({
         case "End":
           e.preventDefault();
           newValue =
-            valueSegments.length > 0 ? valueSegments[valueSegments.length - 1].end : max;
+            valueSegments.length > 0
+              ? valueSegments[valueSegments.length - 1].end
+              : max;
           foundNewValue = true;
           break;
       }
