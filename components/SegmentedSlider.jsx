@@ -166,22 +166,35 @@ const SegmentedSlider = ({
         return { clientX: e.clientX };
       };
 
-      // 移动处理函数
+      // 处理鼠标移动
       const moveHandler = (e) => {
         if (!isDraggingRef.current) return;
 
         e.preventDefault();
         const { clientX } = getEventPosition(e);
-        const newValue = getValueFromPosition(clientX);
+        let newValue = getValueFromPosition(clientX);
 
+        // 创建新值数组的副本
         const newValues = [...currentValue];
+
+        // 更新当前handle的值
         newValues[handleIndex] = newValue;
 
-        // 确保区间值的顺序正确
-        if (handleIndex === 0 && newValues[0] > newValues[1]) {
-          newValues[0] = newValues[1];
-        } else if (handleIndex === 1 && newValues[1] < newValues[0]) {
-          newValues[1] = newValues[0];
+        // 检查是否需要交换handle的顺序
+        if (handleIndex === 0 && newValue > newValues[1]) {
+          // 左handle越过右handle，交换它们的值
+          const temp = newValues[1];
+          newValues[1] = newValue;
+          newValues[0] = temp;
+          // 更新活动handle索引
+          setActiveHandle(1);
+        } else if (handleIndex === 1 && newValue < newValues[0]) {
+          // 右handle越过左handle，交换它们的值
+          const temp = newValues[0];
+          newValues[0] = newValue;
+          newValues[1] = temp;
+          // 更新活动handle索引
+          setActiveHandle(0);
         }
 
         // 只有当值发生变化时才更新
@@ -216,25 +229,76 @@ const SegmentedSlider = ({
     [disabled, currentValue, getValueFromPosition, onChange]
   );
 
+    const getPosition = useCallback(
+      (clientX) => {
+        if (!sliderRef.current) return min;
+
+        const rect = sliderRef.current.getBoundingClientRect();
+        const position = clientX;
+        const size = rect.width;
+        const offset = rect.left;
+
+        const percentage = Math.max(0, Math.min(1, (position - offset) / size));
+        const rawValue = min + percentage * (max - min);
+
+        // 找到最近的有效位置（区间的起点或终点）
+        let closestValue = min;
+        let minDistance = Infinity;
+
+        valueSegments.forEach((segment) => {
+          // 检查起点
+          const startDistance = Math.abs(rawValue - segment.start);
+          if (startDistance < minDistance) {
+            minDistance = startDistance;
+            closestValue = segment.start;
+          }
+
+          // 检查终点
+          const endDistance = Math.abs(rawValue - segment.end);
+          if (endDistance < minDistance) {
+            minDistance = endDistance;
+            closestValue = segment.end;
+          }
+        });
+
+        return closestValue;
+      },
+      [min, max, valueSegments]
+    );
+
   // 处理轨道点击
   const handleTrackClick = useCallback(
     (e) => {
       if (disabled || isDragging) return;
 
-      const newValue = getValueFromPosition(e.clientX);
+      const newValue = getPosition(e.clientX);
 
       // 在区间模式下，找到最近的手柄
       const distanceToStart = Math.abs(newValue - currentValue[0]);
       const distanceToEnd = Math.abs(newValue - currentValue[1]);
 
-      if (distanceToStart < distanceToEnd) {
-        const newValues = [newValue, currentValue[1]];
-        setCurrentValue(newValues);
-        onChange?.(newValues);
+      if (currentValue[0] === currentValue[1]) {
+        // 如果两个手柄重合，决定向左还是向右移动
+        if (newValue < currentValue[0]) {
+          const newValues = [newValue, currentValue[1]];
+          setCurrentValue(newValues);
+          onChange?.(newValues);
+        } else {
+          const newValues = [currentValue[0], newValue];
+          setCurrentValue(newValues);
+          onChange?.(newValues);
+        }
+        return;
       } else {
-        const newValues = [currentValue[0], newValue];
-        setCurrentValue(newValues);
-        onChange?.(newValues);
+        if (distanceToStart < distanceToEnd) {
+          const newValues = [newValue, currentValue[1]];
+          setCurrentValue(newValues);
+          onChange?.(newValues);
+        } else {
+          const newValues = [currentValue[0], newValue];
+          setCurrentValue(newValues);
+          onChange?.(newValues);
+        }
       }
     },
     [disabled, isDragging, currentValue, getValueFromPosition, onChange]
