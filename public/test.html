@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <style>
+      :root {
+        --keyboard-height: 0px;
+        --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      .content {
+        padding: 20px;
+        padding-bottom: 100px; /* 为底部固定元素留出空间 */
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+      }
+
+      .fixed-footer {
+        position: fixed;
+        bottom: calc(var(--safe-area-bottom) + var(--keyboard-height));
+        left: 0;
+        right: 0;
+        background: #fff;
+        padding: 15px;
+        border-top: 1px solid #e0e0e0;
+        transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+      }
+
+      .fixed-footer button {
+        width: 100%;
+        padding: 15px;
+        background: #007aff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      /* 键盘激活时的样式 */
+      body.keyboard-active .fixed-footer {
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h2>测试页面</h2>
+      <input type="text" placeholder="普通输入框" />
+      <input type="number" placeholder="数字键盘测试" />
+      <input type="tel" placeholder="电话键盘测试" />
+      <input type="email" placeholder="邮箱输入" />
+    </div>
+
+    <div class="fixed-footer">
+      <button>底部按钮</button>
+    </div>
+
+    <script>
+      class KeyboardManager {
+        constructor() {
+          this.init();
+        }
+
+        init() {
+          if (window.visualViewport) {
+            window.visualViewport.addEventListener(
+              "resize",
+              this.handleResize.bind(this)
+            );
+          }
+
+          window.addEventListener("resize", this.handleResize.bind(this));
+          this.handleResize(); // 初始检测
+        }
+
+        handleResize() {
+          if (window.visualViewport) {
+            const keyboardHeight = Math.max(
+              0,
+              window.innerHeight - window.visualViewport.height
+            );
+            this.updateKeyboardHeight(keyboardHeight);
+          }
+        }
+
+        updateKeyboardHeight(height) {
+          const isKeyboardVisible = height > 100;
+
+          document.body.classList.toggle("keyboard-active", isKeyboardVisible);
+          document.documentElement.style.setProperty(
+            "--keyboard-height",
+            isKeyboardVisible ? `${height}px` : "0px"
+          );
+        }
+      }
+
+      // 初始化
+      new KeyboardManager();
+    </script>
+  </body>
+</html>

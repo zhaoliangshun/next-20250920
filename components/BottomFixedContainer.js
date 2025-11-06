@@ -15,9 +15,10 @@ const BottomFixedContainer = ({
 
     useEffect(() => {
         // 仅在客户端执行
-        if (typeof window === 'undefined') return;
+        if (typeof window === 'undefined' || !window.visualViewport) return;
 
-        let initialViewportHeight = window.visualViewport?.height || window.innerHeight;
+        const viewport = window.visualViewport;
+        let initialViewportHeight = viewport.height;
 
         // 设置初始样式
         const updateContainerStyle = () => {
@@ -37,8 +38,7 @@ const BottomFixedContainer = ({
             }
 
             // 计算键盘是否弹出
-            const currentViewportHeight = window.visualViewport?.height || window.innerHeight;
-            const heightDiff = initialViewportHeight - currentViewportHeight;
+            const heightDiff = initialViewportHeight - viewport.height;
             const isKeyboardOpen = heightDiff > 100; // 阈值为100px
 
             if (isKeyboardOpen) {
@@ -56,27 +56,20 @@ const BottomFixedContainer = ({
         // 初始化样式
         updateContainerStyle();
 
-        // 监听窗口 resize 事件（键盘弹出/收起时会触发）
+        // 监听 visualViewport 的 resize 事件
         const handleResize = () => {
             // 延迟执行以确保获取到正确的值
             setTimeout(updateContainerStyle, 100);
         };
 
-        window.addEventListener('resize', handleResize);
+        viewport.addEventListener('resize', handleResize);
 
-        // 如果支持 visualViewport API，也监听其变化
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', handleResize);
-            // 保存初始视口高度
-            initialViewportHeight = window.visualViewport.height;
-        }
+        // 保存初始视口高度
+        initialViewportHeight = viewport.height;
 
         // 清理事件监听器
         return () => {
-            window.removeEventListener('resize', handleResize);
-            if (window.visualViewport) {
-                window.visualViewport.removeEventListener('resize', handleResize);
-            }
+            viewport.removeEventListener('resize', handleResize);
         };
     }, [adjustForKeyboard]);
 

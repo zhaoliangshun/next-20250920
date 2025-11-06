@@ -44,3 +44,11 @@ a {
     color-scheme: dark;
   }
 }
+
+/* 为所有固定定位元素添加安全区域支持 */
+.fixed-bottom {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 0);
+  left: 0;
+  right: 0;
+}

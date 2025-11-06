@@ -11,7 +11,7 @@
     padding-left: env(safe-area-inset-left, 0);
     padding-right: env(safe-area-inset-right, 0);
     /* 添加过渡动画使布局变化更平滑 */
-    transition: bottom 0.3s ease;
+    transition: bottom 0.3s ease, padding-bottom 0.3s ease;
     /* 确保容器在键盘弹出时不会被覆盖 */
     transform: translateZ(0);
     will-change: bottom;
@@ -22,4 +22,9 @@
     /* 子元素可以正常显示在安全区域内 */
     position: relative;
     z-index: 1;
+}
+
+/* 键盘弹出时的特殊样式 */
+.container.keyboardOpen {
+    /* 当键盘弹出时，可以通过 JavaScript 动态调整 bottom 值 */
 }

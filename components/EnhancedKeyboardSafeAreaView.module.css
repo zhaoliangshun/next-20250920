@@ -1,0 +1,73 @@
+.keyboardSafeContainer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: white;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  
+  /* 确保内容不会被键盘遮挡 */
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+/* 键盘显示时的特殊样式 */
+.keyboardSafeContainer[data-keyboard-visible="true"] {
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 调试信息样式 */
+.debugInfo {
+  position: absolute;
+  top: -30px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+  z-index: 1001;
+  pointer-events: none;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .keyboardSafeContainer {
+    max-height: 40vh;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .keyboardSafeContainer {
+    background-color: #1a1a1a;
+    border-top-color: #333;
+    color: white;
+  }
+  
+  .keyboardSafeContainer[data-keyboard-visible="true"] {
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* 自定义滚动条 */
+.keyboardSafeContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.keyboardSafeContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.keyboardSafeContainer::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.keyboardSafeContainer::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
