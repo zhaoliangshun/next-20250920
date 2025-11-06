@@ -14,14 +14,14 @@ export default function Home() {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTourOpen, setIsTourOpen] = useState(false);
-  
+
   // Slider 状态
   const [sliderValue, setSliderValue] = useState(50);
   const [rangeValue, setRangeValue] = useState([20, 80]);
   const [stepValue, setStepValue] = useState(25);
   const [marksValue, setMarksValue] = useState(60);
   const [rangesValue, setRangesValue] = useState(75);
-  
+
 
   // 示例数据
   const tableData = [
@@ -100,15 +100,15 @@ export default function Home() {
       width: '200px',
       render: (value, rowData) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Image 
-            src={`https://s3.amazonaws.com/my-bucket/profile.png`} 
-            alt={value} 
+          <Image
+            src={`https://s3.amazonaws.com/my-bucket/profile.png`}
+            alt={value}
             width={32}
             height={32}
-            style={{ 
-              borderRadius: '50%', 
-              objectFit: 'cover' 
-            }} 
+            style={{
+              borderRadius: '50%',
+              objectFit: 'cover'
+            }}
           />
           <span style={{ fontWeight: '500', color: '#262626' }}>{value}</span>
         </div>
@@ -135,7 +135,7 @@ export default function Home() {
       title: '状态',
       width: '80px',
       render: (value) => (
-        <span style={{ 
+        <span style={{
           color: value === '在职' ? '#28a745' : '#dc3545',
           fontWeight: 'bold'
         }}>
@@ -153,7 +153,7 @@ export default function Home() {
       title: '绩效',
       width: '80px',
       render: (value) => (
-        <span style={{ 
+        <span style={{
           color: value === '优秀' ? '#28a745' : value === '良好' ? '#ffc107' : '#dc3545',
           fontWeight: 'bold'
         }}>
@@ -246,7 +246,7 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <h1 id="page-title" className={styles.title}>弹窗组件演示</h1>
-        
+
         <div className={styles.demoSection}>
           <h2>底部弹出层功能特点</h2>
           <ul className={styles.featureList}>
@@ -284,6 +284,21 @@ export default function Home() {
         </div>
 
         <div className={styles.demoSection}>
+          <h2>键盘安全区域适配</h2>
+          <ul className={styles.featureList}>
+            <li>✅ 解决 iOS Safari 虚拟键盘覆盖底部内容问题</li>
+            <li>✅ 动态检测键盘弹出状态</li>
+            <li>✅ 自动调整底部固定元素位置</li>
+            <li>✅ 适配各种 iPhone 型号的安全区域</li>
+          </ul>
+          <div className={styles.ctas}>
+            <a className={styles.primary} href="/keyboard-safe-demo">
+              查看键盘安全区域演示
+            </a>
+          </div>
+        </div>
+
+        <div className={styles.demoSection}>
           <h2>滑动输入条功能特点</h2>
           <ul className={styles.featureList}>
             <li>✅ 单值和范围滑块支持</li>
@@ -303,7 +318,7 @@ export default function Home() {
             <h3>带文字</h3>
             <Switch checkedChildren="ON" unCheckedChildren="OFF" />
           </div>
-          
+
         </div>
 
         <div className={styles.ctas}>
@@ -332,7 +347,7 @@ export default function Home() {
         {/* Slider 组件演示 */}
         <div id="slider-demo" className={styles.sliderDemo}>
           <h2>滑动输入条演示</h2>
-          
+
           {/* 基础滑块 */}
           <div className={styles.sliderExample}>
             <h3>基础滑块</h3>
@@ -345,7 +360,7 @@ export default function Home() {
               tooltip={true}
             />
           </div>
-          
+
           {/* 范围滑块 */}
           <div className={styles.sliderExample}>
             <h3>范围滑块</h3>
@@ -359,7 +374,7 @@ export default function Home() {
               tooltip={true}
             />
           </div>
-          
+
           {/* 步长滑块 */}
           <div className={styles.sliderExample}>
             <h3>步长滑块 (步长: 10)</h3>
@@ -373,7 +388,7 @@ export default function Home() {
               tooltip={true}
             />
           </div>
-          
+
           {/* 标记滑块 */}
           <div className={styles.sliderExample}>
             <h3>标记滑块</h3>
@@ -393,7 +408,7 @@ export default function Home() {
               tooltip={true}
             />
           </div>
-          
+
           {/* 区间颜色滑块 */}
           <div className={styles.sliderExample}>
             <h3>区间颜色滑块</h3>
@@ -417,7 +432,7 @@ export default function Home() {
               tooltip={true}
             />
           </div>
-          
+
           {/* 组合功能滑块 */}
           <div className={styles.sliderExample}>
             <h3>组合功能滑块 (范围 + 步长 + 标记 + 区间颜色)</h3>
@@ -451,7 +466,7 @@ export default function Home() {
         <div id="table-demo" className={styles.tableDemo}>
           <h2>固定列表格演示</h2>
           <p>左右滑动表格，当滑动到右边时，左边的固定列会自动缩小为图标，点击图标可以回到左侧。</p>
-          
+
           <FixedColumnTable
             data={tableData}
             columns={tableColumns}
@@ -507,13 +522,13 @@ export default function Home() {
             <li>响应式设计，适配各种屏幕</li>
           </ul>
           <div className={styles.modalActions}>
-            <button 
+            <button
               className={styles.secondary}
               onClick={closeModal}
             >
               取消
             </button>
-            <button 
+            <button
               className={styles.primary}
               onClick={closeModal}
             >

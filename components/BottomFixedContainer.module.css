@@ -1,0 +1,25 @@
+.container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 100;
+    background: white;
+    /* 使用 env() 变量确保适配设备的安全区域 */
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+    /* 添加过渡动画使布局变化更平滑 */
+    transition: bottom 0.3s ease;
+    /* 确保容器在键盘弹出时不会被覆盖 */
+    transform: translateZ(0);
+    will-change: bottom;
+}
+
+/* 确保容器内容不会被安全区域遮挡 */
+.container>* {
+    /* 子元素可以正常显示在安全区域内 */
+    position: relative;
+    z-index: 1;
+}
