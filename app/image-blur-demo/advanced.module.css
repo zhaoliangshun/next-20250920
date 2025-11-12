@@ -1,0 +1,88 @@
+.container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.demoSection {
+  margin-bottom: 40px;
+}
+
+.demoSection h2 {
+  margin-bottom: 15px;
+}
+
+.imageContainer {
+  width: 100%;
+  max-width: 600px;
+  height: 300px;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 方法四：使用模糊滤镜和遮罩 */
+.blurContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.blurredImage {
+  width: 100%;
+  height: 100%;
+  background-image: url('https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  filter: blur(5px);
+}
+
+.sharpImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  
+  /* 使用 clip-path 创建中间清晰区域 */
+  clip-path: polygon(
+    10% 0%,
+    90% 0%,
+    90% 100%,
+    10% 100%
+  );
+}
+
+/* 方法五：使用更精细的渐变 */
+.method5 {
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.2) 5%,
+    rgba(0, 0, 0, 0.8) 10%,
+    rgba(0, 0, 0, 1) 15%,
+    rgba(0, 0, 0, 1) 85%,
+    rgba(0, 0, 0, 0.8) 90%,
+    rgba(0, 0, 0, 0.2) 95%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.2) 5%,
+    rgba(0, 0, 0, 0.8) 10%,
+    rgba(0, 0, 0, 1) 15%,
+    rgba(0, 0, 0, 1) 85%,
+    rgba(0, 0, 0, 0.8) 90%,
+    rgba(0, 0, 0, 0.2) 95%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
