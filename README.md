@@ -1,31 +1,31 @@
-react-mobile-picker
-function isSafari() {
-  const ua = window.navigator.userAgent;
-  const isIOS = /iPad|iPhone|iPod/.test(ua);
-  const isMac = /Macintosh/.test(ua) && 'ontouchend' in document;
-  const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-  
-  return isSafari || isIOS || isMac;
+.image-container {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
 }
 
-// 获取Safari版本号
-function getSafariVersion() {
-  const ua = window.navigator.userAgent;
-  const match = ua.match(/Version\/(\d+)/);
-  return match ? parseInt(match[1], 10) : null;
+.image-container::before,
+.image-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 50px; /* 模糊区域的宽度 */
+  height: 100%;
+  z-index: 1;
 }
 
-// 使用示例
-if (isSafari()) {
-  const version = getSafariVersion();
-  if (version) {
-    console.log(`检测到Safari浏览器，版本: ${version}`);
-    if (version >= 15) {
-      // 针对Safari 15+的特定处理
-    }
-  } else {
-    console.log('检测到Safari浏览器，但无法确定版本号');
-  }
-} else {
-  console.log('当前不是Safari浏览器');
+.image-container::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+}
+
+.image-container::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+}
+
+.image-container img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
