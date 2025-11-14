@@ -1,3 +1,20 @@
+function isiPhoneBrowser() {
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    // 檢測是否包含 'iPhone' 或 'iPod' 關鍵字，並排除模擬器情況（可選）
+    if (/iPhone|iPod/i.test(userAgent)) {
+        // 進一步判斷是否為 iOS 設備（更通用的判斷）
+        var isiOS = !!userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+        
+        // 判斷是否為 Safari 或 App 內建瀏覽器（兩者都使用 WebKit 核心）
+        // iOS 上的所有瀏覽器都必須使用 WebKit 渲染引擎。
+        return isiOS; 
+    } else {
+        return false;
+    }
+}
+
+
 .image-container {
   position: relative;
   display: inline-block;
