@@ -1,0 +1,20 @@
+.container {
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(0);
+  width: 100%;
+}
+
+.hidden {
+  transform: translateY(100%);
+  /* Optional: Uncomment the line below if you want to completely hide the element */
+  /* display: none; */
+}
+
+/* Optional: Add some basic styling for better visibility */
+.container > div {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+}
