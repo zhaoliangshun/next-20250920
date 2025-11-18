@@ -98,6 +98,15 @@ const MessageItem = ({ message, onClose, index = 0 }) => {
             />
           </svg>
         );
+      case "loading":
+        return (
+          <svg className={`${styles.icon} ${styles.loadingIcon}`} viewBox="0 0 1024 1024">
+            <path
+              d="M512 64c247.4 0 448 200.6 448 448s-200.6 448-448 448-448-200.6-448-448 200.6-448 448-448zm0 820c207.7 0 376-168.3 376-376S719.7 136 512 136 136 304.3 136 512s168.3 376 376 376z"
+              fill="currentColor"
+            />
+          </svg>
+        );
       case "info":
       default:
         return (
@@ -120,7 +129,7 @@ const MessageItem = ({ message, onClose, index = 0 }) => {
     >
       <div className={styles.iconWrapper}>{getIcon()}</div>
       <div className={styles.content}>
-        <div className={styles.text}>{message.content}</div>
+        {React.isValidElement(message.content) ? message.content : <div className={styles.text}>{message.content}</div>}
       </div>
       <button
         className={styles.closeButton}
@@ -138,9 +147,9 @@ const MessageItem = ({ message, onClose, index = 0 }) => {
   );
 };
 
-const MessageContainer = ({ messages, onClose }) => {
+const MessageContainer = ({ messages, onClose, position = 'top' }) => {
   return (
-    <div className={styles.messageContainer}>
+    <div className={`${styles.messageContainer} ${styles[position]}`}>
       {messages.map((message, index) => (
         <MessageItem 
           key={message.id} 

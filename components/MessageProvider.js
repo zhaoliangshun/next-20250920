@@ -7,7 +7,7 @@ const MessageContext = createContext();
 
 let messageId = 0;
 
-export const MessageProvider = ({ children, maxCount = null }) => {
+export const MessageProvider = ({ children, maxCount = null, position = 'top' }) => {
   const [messages, setMessages] = useState([]);
 
   const addMessage = useCallback((message) => {
@@ -40,16 +40,16 @@ export const MessageProvider = ({ children, maxCount = null }) => {
   }, []);
 
   const messageApi = {
-    success: (content, duration = 3000) =>
-      addMessage({ type: "success", content, duration }),
-    error: (content, duration = 3000) =>
-      addMessage({ type: "error", content, duration }),
-    warning: (content, duration = 3000) =>
-      addMessage({ type: "warning", content, duration }),
-    info: (content, duration = 3000) =>
-      addMessage({ type: "info", content, duration }),
-    loading: (content, duration = 0) =>
-      addMessage({ type: "loading", content, duration }),
+    success: (content, duration = 3000, options = {}) =>
+      addMessage({ type: "success", content, duration, ...options }),
+    error: (content, duration = 3000, options = {}) =>
+      addMessage({ type: "error", content, duration, ...options }),
+    warning: (content, duration = 3000, options = {}) =>
+      addMessage({ type: "warning", content, duration, ...options }),
+    info: (content, duration = 3000, options = {}) =>
+      addMessage({ type: "info", content, duration, ...options }),
+    loading: (content, duration = 0, options = {}) =>
+      addMessage({ type: "loading", content, duration, ...options }),
     destroy: removeMessage,
     clear: clearMessages,
   };
@@ -57,7 +57,7 @@ export const MessageProvider = ({ children, maxCount = null }) => {
   return (
     <MessageContext.Provider value={messageApi}>
       {children}
-      <MessageContainer messages={messages} onClose={removeMessage} />
+      <MessageContainer messages={messages} onClose={removeMessage} position={position} />
     </MessageContext.Provider>
   );
 };

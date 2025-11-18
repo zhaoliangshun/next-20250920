@@ -83,6 +83,7 @@ message.clear();
 |------|------|--------|------|
 | `maxCount` | number \| null | null | 最大显示消息数量，null 表示无限制 |
 | `children` | ReactNode | - | 子组件 |
+| `position` | string | 'top' | 消息显示位置，支持 'top', 'topLeft', 'topRight', 'bottom', 'bottomLeft', 'bottomRight' |
 
 ### useMessage()
 
@@ -90,24 +91,27 @@ message.clear();
 
 | 方法 | 参数 | 说明 |
 |------|------|------|
-| `success(content, duration?)` | content: string, duration?: number | 显示成功消息 |
-| `error(content, duration?)` | content: string, duration?: number | 显示错误消息 |
-| `warning(content, duration?)` | content: string, duration?: number | 显示警告消息 |
-| `info(content, duration?)` | content: string, duration?: number | 显示信息消息 |
-| `loading(content, duration?)` | content: string, duration?: number | 显示加载消息 |
+| `success(content, duration?, options?)` | content: string \| ReactNode, duration?: number, options?: object | 显示成功消息 |
+| `error(content, duration?, options?)` | content: string \| ReactNode, duration?: number, options?: object | 显示错误消息 |
+| `warning(content, duration?, options?)` | content: string \| ReactNode, duration?: number, options?: object | 显示警告消息 |
+| `info(content, duration?, options?)` | content: string \| ReactNode, duration?: number, options?: object | 显示信息消息 |
+| `loading(content, duration?, options?)` | content: string \| ReactNode, duration?: number, options?: object | 显示加载消息 |
 | `destroy(id)` | id: number | 手动关闭指定消息 |
 | `clear()` | - | 清空所有消息 |
 
 ### 参数说明
 
-- `content`: 消息内容
+- `content`: 消息内容，可以是字符串或 React 元素
 - `duration`: 显示时长，单位为毫秒，默认为 3000ms，设置为 0 则不自动关闭
+- `options`: 可选配置对象
 - `id`: 消息的唯一标识符
 
 ## 特性
 
 - ✨ 支持多种消息类型：success、error、warning、info、loading
+- 🎯 支持多种显示位置：top、topLeft、topRight、bottom、bottomLeft、bottomRight
 - 🎨 完全基于 Ant Design 设计规范
+- 💻 支持自定义 React 内容
 - 📱 响应式设计，支持移动端
 - 🌙 支持深色模式
 - ⚡ 流畅的进入和退出动画

@@ -1,9 +1,6 @@
 /* Message Container */
 .messageContainer {
   position: fixed;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
   z-index: 1010;
   pointer-events: none;
   display: flex;
@@ -12,6 +9,39 @@
   /* 添加硬件加速 */
   will-change: transform;
   backface-visibility: hidden;
+}
+
+/* Message Positions */
+.messageContainer.top {
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.messageContainer.topLeft {
+  top: 24px;
+  left: 24px;
+}
+
+.messageContainer.topRight {
+  top: 24px;
+  right: 24px;
+}
+
+.messageContainer.bottom {
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.messageContainer.bottomLeft {
+  bottom: 24px;
+  left: 24px;
+}
+
+.messageContainer.bottomRight {
+  bottom: 24px;
+  right: 24px;
 }
 
 /* Message Item */
@@ -127,6 +157,19 @@
 .icon {
   width: 16px;
   height: 16px;
+}
+
+.loadingIcon {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Content */
