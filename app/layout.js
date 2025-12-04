@@ -20,10 +20,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes,target-densitydpi=device-dpi,target-densitydpi=device-dpi" /></head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <MessageProvider>
-          {children}
-        </MessageProvider>
+        <MessageProvider>{children}</MessageProvider>
       </body>
     </html>
   );

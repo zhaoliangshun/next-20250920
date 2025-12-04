@@ -284,6 +284,21 @@ export default function Home() {
         </div>
 
         <div className={styles.demoSection}>
+          <h2>CSS 三角形绘制</h2>
+          <ul className={styles.featureList}>
+            <li>✅ 指向左边的等边三角形</li>
+            <li>✅ 带圆角的三角形实现</li>
+            <li>✅ 多种实现方案（border、clip-path、SVG）</li>
+            <li>✅ 不同尺寸和颜色的示例</li>
+          </ul>
+          <div className={styles.ctas}>
+            <a className={styles.primary} href="/triangle-demo">
+              查看三角形演示
+            </a>
+          </div>
+        </div>
+
+        <div className={styles.demoSection}>
           <h2>键盘安全区域适配</h2>
           <ul className={styles.featureList}>
             <li>✅ 解决 iOS Safari 虚拟键盘覆盖底部内容问题</li>

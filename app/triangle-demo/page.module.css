@@ -1,0 +1,123 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+h1 {
+  font-size: 32px;
+  margin-bottom: 40px;
+  text-align: center;
+  color: #262626;
+}
+
+.section {
+  margin-bottom: 60px;
+  padding: 30px;
+  background: #fafafa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #262626;
+}
+
+.demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  min-height: 120px;
+}
+
+.codeBlock {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.codeBlock pre {
+  margin: 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 基础三角形 - 指向左边 */
+.triangleLeft {
+  width: 0;
+  height: 0;
+  border-top: 30px solid transparent;
+  border-bottom: 30px solid transparent;
+  border-right: 52px solid #1890ff;
+}
+
+/* 带圆角的三角形 - 使用 border-radius（效果有限） */
+.triangleLeftRounded {
+  width: 0;
+  height: 0;
+  border-top: 30px solid transparent;
+  border-bottom: 30px solid transparent;
+  border-right: 52px solid #1890ff;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* 使用 clip-path 实现圆角三角形（推荐方案） */
+.triangleClipPath {
+  width: 52px;
+  height: 60px;
+  background: #1890ff;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  border-radius: 8px;
+  /* 注意：clip-path 和 border-radius 一起使用时，圆角效果可能不完美 */
+}
+
+/* SVG 三角形 */
+.triangleSvg {
+  width: 52px;
+  height: 60px;
+}
+
+/* 不同尺寸 */
+.small {
+  width: 26px;
+  height: 30px;
+}
+
+.medium {
+  width: 52px;
+  height: 60px;
+}
+
+.large {
+  width: 78px;
+  height: 90px;
+}
+
+/* 不同颜色 */
+.color1 {
+  background: #1890ff;
+}
+
+.color2 {
+  background: #52c41a;
+}
+
+.color3 {
+  background: #faad14;
+}
+
+.color4 {
+  background: #f5222d;
+}
+
