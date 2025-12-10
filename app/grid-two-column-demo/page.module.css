@@ -1,0 +1,73 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 3rem;
+  font-size: 2rem;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.subtitle {
+  color: #555;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+/* 核心 CSS Grid 布局 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 两列，平均分开 */
+  gap: 16px; /* 列间距 */
+}
+
+/* 如果 item 总数是奇数，最后一个 item 占整行 */
+.grid > *:nth-child(odd):last-child {
+  grid-column: 1 / -1; /* 从第一列到最后一列 */
+}
+
+/* Item 样式 */
+.item {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  padding: 2rem;
+  color: white;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr; /* 移动端单列 */
+  }
+  
+  /* 移动端取消跨列设置 */
+  .grid > *:nth-child(odd):last-child {
+    grid-column: auto;
+  }
+  
+  .container {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+}
+

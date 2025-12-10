@@ -1,48 +1,31 @@
-function isiPhoneBrowser() {
-    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-    // 檢測是否包含 'iPhone' 或 'iPod' 關鍵字，並排除模擬器情況（可選）
-    if (/iPhone|iPod/i.test(userAgent)) {
-        // 進一步判斷是否為 iOS 設備（更通用的判斷）
-        var isiOS = !!userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-        
-        // 判斷是否為 Safari 或 App 內建瀏覽器（兩者都使用 WebKit 核心）
-        // iOS 上的所有瀏覽器都必須使用 WebKit 渲染引擎。
-        return isiOS; 
-    } else {
+/**
+ * 判断两个DOM元素是否重叠（支持部分重叠/完全包含）
+ * @param {HTMLElement} el1 - 第一个元素
+ * @param {HTMLElement} el2 - 第二个元素
+ * @returns {boolean} 重叠返回true，否则返回false（元素不存在返回false）
+ */
+function isElementsOverlap(el1, el2) {
+    // 校验元素是否有效（非null/非HTMLElement则返回false）
+    if (!el1 || !el2 || !(el1 instanceof HTMLElement) || !(el2 instanceof HTMLElement)) {
+        console.warn('传入的参数不是有效的DOM元素');
         return false;
     }
-}
 
+    // 获取元素的边界矩形（视口坐标系）
+    const rect1 = el1.getBoundingClientRect();
+    const rect2 = el2.getBoundingClientRect();
 
-.image-container {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-}
+    // 处理元素隐藏的情况（宽高为0时视为不重叠）
+    if (rect1.width === 0 || rect1.height === 0 || rect2.width === 0 || rect2.height === 0) {
+        return false;
+    }
 
-.image-container::before,
-.image-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 50px; /* 模糊区域的宽度 */
-  height: 100%;
-  z-index: 1;
-}
+    // 判断是否重叠：反向判断“不重叠”，取反即为重叠
+    const isNotOverlap = 
+        rect1.bottom <= rect2.top ||    // el1在el2上方
+        rect1.top >= rect2.bottom ||    // el1在el2下方
+        rect1.right <= rect2.left ||    // el1在el2左侧
+        rect1.left >= rect2.right;      // el1在el2右侧
 
-.image-container::before {
-  left: 0;
-  background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
-}
-
-.image-container::after {
-  right: 0;
-  background: linear-gradient(to left, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
-}
-
-.image-container img {
-  display: block;
-  width: 100%;
-  height: auto;
+    return !isNotOverlap;
 }
