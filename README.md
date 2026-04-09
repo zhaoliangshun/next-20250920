@@ -1,3 +1,11 @@
-https://www.figma.com/design/aJx7jdSIZATeB1pUxBH2NL/Race-Simulator_to-IT?node-id=4975-512289&t=VB0vZNWTNXUaByx0-0
-https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/1000022/
-33
+function openPopup(url) {
+  if (window.myPopup && !window.myPopup.closed) {
+    console.log(window.myPopup)
+    // window.myPopup.location.href = url;
+    // window.myPopup.focus();
+    window?.myPopup?.close?.();
+    // return;
+  }
+  // 关键：用 _blank 避开命名窗口死锁 Bug
+  window.myPopup = window.open(url, '_blank', 'width=800,height=600');
+}
