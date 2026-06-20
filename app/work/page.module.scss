@@ -74,7 +74,7 @@
   }
 }
 
-@media (hover: none) and (pointer: coarse) {
+@media (hover: none) and (pointer: coarse) and (max-width: 1023px) {
   .KeyFactors {
   
     .listContainer { 
